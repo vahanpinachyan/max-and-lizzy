@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+:root {
+  /* Nature Distilled: warm, muted, artisan-earthy palette */
+  --color-cream: #f7f2e6;
+  --color-beige: #eee0c7;
+  --color-tan: #d9c4a0;
+  --color-wood: #8f5c37;
+  --color-wood-dark: #6e4529;
+  --color-espresso: #3d2b1f;
+  --color-sage: #7c9473;
+  --color-sage-dark: #4f6549;
+  --color-sage-light: #9dbb90;
+  --color-terracotta: #b8552a;
+  --color-terracotta-dark: #9c4620;
+  --color-rose: #b44b5a;
+  --color-rose-dark: #963c49;
+}
+
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-beige: var(--color-beige);
+  --color-tan: var(--color-tan);
+  --color-wood: var(--color-wood);
+  --color-wood-dark: var(--color-wood-dark);
+  --color-espresso: var(--color-espresso);
+  --color-sage: var(--color-sage);
+  --color-sage-dark: var(--color-sage-dark);
+  --color-sage-light: var(--color-sage-light);
+  --color-terracotta: var(--color-terracotta);
+  --color-terracotta-dark: var(--color-terracotta-dark);
+  --color-rose: var(--color-rose);
+  --color-rose-dark: var(--color-rose-dark);
+  --font-heading: var(--font-baloo);
+  --font-body: var(--font-nunito);
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-espresso);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+}
+
+/* Visible focus ring for keyboard navigation. Uses box-shadow instead of
+   outline so the ring follows each element's own border-radius (a pill
+   button gets a round ring, not a hard rectangle) without altering its
+   actual shape. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-terracotta);
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--color-espresso);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 0.5rem 0;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@keyframes marquee-ltr {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee-ltr 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(0, -16px) scale(1.03);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+@keyframes float-slow-reverse {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(0, 14px) scale(0.97);
+  }
+}
+
+.animate-float-slow-reverse {
+  animation: float-slow-reverse 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-slow-reverse {
+    animation: none;
+  }
+}

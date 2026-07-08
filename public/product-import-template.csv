@@ -1,0 +1,6 @@
+slug,sku,name,nameHy,nameRu,shortDescription,shortDescriptionHy,shortDescriptionRu,description,descriptionHy,descriptionRu,priceAmd,compareAtPriceAmd,category,subcategory,ageRange,brand,materials,safetyInfo,imageSrcs,imageAlts,inStock,stockQuantity,featured,bestseller,newArrival,dimensions,weightGrams,careInstructions
+example-wooden-train,ML-WT-999,Example Wooden Train,,,A fun example toy for the catalog.,,,"A longer example description that explains the product in detail.
+
+You can use blank lines and multiple paragraphs here.",,,15000,,wooden-toys,vehicles,3-6,Example Brand,"Beechwood
+Non-toxic paint","Tested to EN71 safety standards
+No small parts",/images/products/example-1.jpg,Example wooden train on white background,true,25,false,false,true,"30 x 10 x 8 cm",450,Wipe clean with a dry cloth

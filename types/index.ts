@@ -1,0 +1,87 @@
+export type AgeRange = "0-3" | "3-6" | "6-12";
+
+export type Category =
+  | "educational"
+  | "wooden-toys"
+  | "outdoor-play"
+  | "puzzles-games"
+  | "baby-toddler";
+
+export interface CategoryInfo {
+  slug: Category;
+  name: string;
+  shortDescription: string;
+  image: string;
+  subcategories: { slug: string; name: string }[];
+}
+
+export interface ProductImage {
+  src: string;
+  alt: string;
+}
+
+export interface ProductReview {
+  id: string;
+  productSlug: string;
+  author: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  title: string;
+  body: string;
+  date: string; // ISO date
+  verifiedPurchase: boolean;
+}
+
+export interface Product {
+  slug: string;
+  name: string;
+  shortDescription: string;
+  description: string;
+  priceAmd: number;
+  compareAtPriceAmd?: number;
+  category: Category;
+  subcategory: string;
+  ageRange: AgeRange;
+  materials: string[];
+  safetyInfo: string[];
+  brand: string;
+  images: ProductImage[];
+  inStock: boolean;
+  sku: string;
+  featured?: boolean;
+  bestseller?: boolean;
+  newArrival?: boolean;
+  relatedSlugs?: string[];
+  dimensions?: string;
+  weightGrams?: number;
+  careInstructions?: string;
+}
+
+export interface Testimonial {
+  id: string;
+  author: string;
+  location?: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  quote: string;
+}
+
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string; // markdown-ish, rendered with simple paragraph splitting
+  coverImage: string;
+  coverImageAlt: string;
+  author: string;
+  date: string; // ISO date
+  tags: string[];
+  metaDescription: string;
+}
+
+export interface CartItem {
+  slug: string;
+  name: string;
+  priceAmd: number;
+  image: string;
+  quantity: number;
+  sku: string;
+}

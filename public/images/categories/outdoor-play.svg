@@ -1,0 +1,21 @@
+<svg width="900" height="700" viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Outdoor Play">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f2e5d2"/>
+      <stop offset="100%" stop-color="#ddc4a0"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="700" fill="url(#bg)"/>
+  <rect x="14" y="14" width="872" height="672" fill="none" stroke="#7c4f2e" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round" opacity="0.4"/>
+  
+    <g fill="none" stroke="#a97247" stroke-width="10" stroke-linecap="round">
+      <circle cx="395" cy="355" r="34" stroke="#7c4f2e"/>
+      <circle cx="505" cy="355" r="34" stroke="#7c4f2e"/>
+      <path d="M 395 355 L 450 300 L 505 355" stroke="#d97a4d"/>
+      <path d="M 430 300 L 450 355" stroke="#d97a4d"/>
+    </g>
+  <text x="450" y="630" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
+    <tspan x="450" dy="0">Outdoor Play</tspan>
+  </text>
+  <text x="450" y="676" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
+</svg>

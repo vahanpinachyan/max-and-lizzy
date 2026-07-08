@@ -1,0 +1,139 @@
+// Local development uses SQLite (zero setup, file-based). Production should
+// point DATABASE_URL at a real Postgres instance (e.g. Neon) — the schema
+// below intentionally avoids SQLite- or Postgres-only features (native
+// arrays, JSONB operators) so switching `provider` to "postgresql" for
+// production requires no field changes, just a new DATABASE_URL and
+// `prisma migrate deploy`. See README "Admin panel & database" section.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  name         String
+  // "manager" (full access) or "cashier" (orders only — see lib/admin/permissions.ts)
+  role         String         @default("manager")
+  createdAt    DateTime       @default(now())
+  sessions     AdminSession[]
+}
+
+model AdminSession {
+  token       String    @id
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  adminUserId String
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  @@index([adminUserId])
+}
+
+model Product {
+  id      String @id @default(cuid())
+  slug    String @unique
+  sku     String
+
+  name   String
+  nameHy String?
+  nameRu String?
+
+  shortDescription   String
+  shortDescriptionHy String?
+  shortDescriptionRu String?
+
+  description   String
+  descriptionHy String?
+  descriptionRu String?
+
+  priceAmd          Int
+  compareAtPriceAmd Int?
+
+  category    String
+  subcategory String
+  ageRange    String
+  brand       String
+
+  // JSON-encoded string[] / {src,alt}[] — kept as TEXT for SQLite/Postgres
+  // portability rather than native array/JSON column types.
+  materials    String
+  safetyInfo   String
+  images       String
+  relatedSlugs String?
+
+  inStock       Boolean @default(true)
+  stockQuantity Int?
+
+  featured   Boolean @default(false)
+  bestseller Boolean @default(false)
+  newArrival Boolean @default(false)
+
+  dimensions       String?
+  weightGrams      Int?
+  careInstructions String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+}
+
+model PromoCode {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  percentOff  Int
+  description String
+  active      Boolean   @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+}
+
+model Order {
+  id               String   @id @default(cuid())
+  stripeSessionId  String   @unique
+  customer         Customer @relation(fields: [customerId], references: [id])
+  customerId       String
+  // "pending" | "ready_for_pickup" | "shipped" | "completed" | "cancelled"
+  status           String   @default("pending")
+  // "pickup" | "delivery" | null (unknown / not collected)
+  fulfillmentMethod String?
+  totalAmd         Int
+  promoCode        String?
+  shippingAddress  String?
+  customerName     String?
+  customerPhone    String?
+  items            OrderItem[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  order       Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId     String
+  productSlug String?
+  productName String
+  priceAmd    Int
+  quantity    Int
+
+  @@index([orderId])
+}

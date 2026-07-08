@@ -1,0 +1,20 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Age-Appropriate Toys Checklist">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f2e5d2"/>
+      <stop offset="100%" stop-color="#ddc4a0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="14" y="14" width="1172" height="602" fill="none" stroke="#7c4f2e" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round" opacity="0.4"/>
+  
+    <g fill="none" stroke-linecap="round">
+      <path d="M 530 315 A 70 70 0 0 1 670 315" stroke="#d97a4d" stroke-width="18"/>
+      <path d="M 550 315 A 50 50 0 0 1 650 315" stroke="#7c9473" stroke-width="16"/>
+      <path d="M 570 315 A 30 30 0 0 1 630 315" stroke="#a97247" stroke-width="14"/>
+    </g>
+  <text x="600" y="530" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
+    <tspan x="600" dy="0">Age-Appropriate Toys</tspan><tspan x="600" dy="30">Checklist</tspan>
+  </text>
+  <text x="600" y="606" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
+</svg>
