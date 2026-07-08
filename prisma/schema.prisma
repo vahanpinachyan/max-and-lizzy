@@ -1,15 +1,12 @@
-// Local development uses SQLite (zero setup, file-based). Production should
-// point DATABASE_URL at a real Postgres instance (e.g. Neon) — the schema
-// below intentionally avoids SQLite- or Postgres-only features (native
-// arrays, JSONB operators) so switching `provider` to "postgresql" for
-// production requires no field changes, just a new DATABASE_URL and
-// `prisma migrate deploy`. See README "Admin panel & database" section.
+// Production database (Neon Postgres) — see README "Admin panel & database".
+// The schema intentionally avoids SQLite- or Postgres-only features (native
+// arrays, JSONB operators) so it works unchanged on either provider.
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

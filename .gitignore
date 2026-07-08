@@ -37,9 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
-# local SQLite dev database (migrations/ IS committed — only the data file isn't)
-/prisma/dev.db
-/prisma/dev.db-journal
+# local SQLite dev database — Prisma resolves the "file:./prisma/dev.db" URL
+# relative to schema.prisma's own location, so the real file lands one level
+# deeper than it looks (prisma/prisma/dev.db), not prisma/dev.db
+/prisma/prisma/
 
 # typescript
 *.tsbuildinfo
