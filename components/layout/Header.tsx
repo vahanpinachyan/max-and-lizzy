@@ -18,6 +18,7 @@ import { localizeCategories } from "@/lib/i18n/localize-data";
 export function Header() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const { itemCount, openDrawer } = useCart();
   const { slugs: wishlistSlugs, openDrawer: openWishlistDrawer } = useWishlist();
   const pathname = usePathname();
@@ -26,7 +27,7 @@ export function Header() {
   const categories = localizeCategories(locale);
   const navRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const menuOpen = categoriesOpen || mobileOpen;
+  const menuOpen = categoriesOpen || mobileOpen || languageOpen;
   const hiddenByScroll = useHeaderVisibility();
   const hidden = hiddenByScroll && !menuOpen;
 
@@ -79,14 +80,11 @@ export function Header() {
         {t.nav.skipToContent}
       </a>
       <Container className="flex h-20 items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 shrink-0" aria-label={`${site.name} home`}>
-          <Image src="/images/logo.svg" alt={`${site.name} logo`} width={48} height={48} priority />
-          <span className="font-heading text-2xl font-bold text-espresso hidden sm:inline">
-            {site.name}
-          </span>
+        <Link href="/" className="flex items-center shrink-0" aria-label={`${site.name} home`}>
+          <Image src="/images/logo.png" alt={`${site.name} logo`} width={813} height={560} priority className="h-12 w-auto sm:h-14" />
         </Link>
 
-        <nav aria-label={t.nav.mainNavigation} className="hidden xl:flex items-center gap-1">
+        <nav aria-label={t.nav.mainNavigation} className="hidden lg:flex items-center gap-1">
           <div
             className="relative"
             ref={navRef}
@@ -95,7 +93,7 @@ export function Header() {
           >
             <Link
               href="/shop"
-              className="flex items-center gap-1 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors"
+              className="flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors"
               aria-expanded={categoriesOpen}
               aria-haspopup="true"
               onFocus={openMenuNow}
@@ -160,16 +158,16 @@ export function Header() {
               )}
             </AnimatePresence>
           </div>
-          <Link href="/blog" className="whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
+          <Link href="/blog" className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
             {t.nav.blog}
           </Link>
-          <Link href="/about" className="whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
+          <Link href="/about" className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
             {t.nav.about}
           </Link>
-          <Link href="/visit-us" className="whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
+          <Link href="/visit-us" className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
             {t.nav.visitUs}
           </Link>
-          <Link href="/contact" className="whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
+          <Link href="/contact" className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors">
             {t.nav.contact}
           </Link>
         </nav>
@@ -177,7 +175,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <Link
             href="/shop"
-            className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors"
             aria-label={t.nav.search}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -187,7 +185,7 @@ export function Header() {
           </Link>
           <button
             onClick={openWishlistDrawer}
-            className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors"
             aria-label={`${t.nav.wishlist}, ${wishlistSlugs.length} item${wishlistSlugs.length === 1 ? "" : "s"}`}
           >
             <span className="relative inline-flex">
@@ -231,9 +229,9 @@ export function Header() {
               </AnimatePresence>
             </span>
           </button>
-          <LanguageSwitcher />
+          <LanguageSwitcher onOpenChange={setLanguageOpen} />
           <button
-            className="xl:hidden flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors"
+            className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors"
             aria-label={t.nav.openMenu}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
@@ -249,7 +247,7 @@ export function Header() {
         {mobileOpen && (
           <motion.nav
             aria-label={t.nav.mobileNavigation}
-            className="xl:hidden overflow-hidden border-t border-tan/60 bg-cream"
+            className="lg:hidden overflow-hidden border-t border-tan/60 bg-cream"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

@@ -13,8 +13,4 @@
       <path d="M 550 315 A 50 50 0 0 1 650 315" stroke="#7c9473" stroke-width="16"/>
       <path d="M 570 315 A 30 30 0 0 1 630 315" stroke="#a97247" stroke-width="14"/>
     </g>
-  <text x="600" y="530" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
-    <tspan x="600" dy="0">Age-Appropriate Toys</tspan><tspan x="600" dy="30">Checklist</tspan>
-  </text>
-  <text x="600" y="606" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
 </svg>

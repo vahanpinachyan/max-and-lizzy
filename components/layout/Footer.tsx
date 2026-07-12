@@ -88,7 +88,7 @@ export async function Footer() {
           <address className="not-italic">
             {site.address.street}, {site.address.city}, {site.address.country}
             {" · "}
-            {site.phone === "TBD" ? t.footer.phoneComingSoon : <a href={site.phoneHref} className="hover:text-terracotta">{site.phone}</a>}
+            <a href={site.phoneHref} className="hover:text-terracotta">{site.phone}</a>
           </address>
           <p>© {new Date().getFullYear()} {site.name}. {t.footer.rightsReserved}</p>
         </div>

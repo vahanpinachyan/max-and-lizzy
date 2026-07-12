@@ -15,11 +15,9 @@ export const site = {
     country: "Armenia",
     countryCode: "AM",
   },
-  // TODO: business must supply real phone number
-  phone: "TBD",
-  phoneHref: "tel:+374", // TODO: update once phone number is confirmed
-  // TODO: business must supply real email address
-  email: "TBD",
+  phone: "+374 33 09 50 50",
+  phoneHref: "tel:+37433095050",
+  email: "info@maxandlizzy.com",
   hours: [
     { day: "Monday", hours: "10:00 AM – 9:00 PM" },
     { day: "Tuesday", hours: "10:00 AM – 9:00 PM" },
@@ -31,9 +29,8 @@ export const site = {
   ],
   hoursOpeningSpec: "Mo-Su 10:00-21:00", // schema.org / Google format
   geo: {
-    // TODO: confirm precise coordinates against Google Business Profile
-    latitude: 40.177,
-    longitude: 44.5126,
+    latitude: 40.18932658401767,
+    longitude: 44.51829261168928,
   },
   social: {
     instagram: "https://www.instagram.com/max_and_lizzy_toys/?hl=en",
@@ -42,7 +39,7 @@ export const site = {
   currency: "AMD",
   locale: "en-US",
   googleMapsEmbedSrc:
-    "https://www.google.com/maps?q=50+Mashtots+Avenue,+Yerevan,+Armenia&output=embed",
+    "https://www.google.com/maps?q=40.18932658401767,44.51829261168928&output=embed",
   ageRanges: ["0-3", "3-6"] as const,
 } as const;
 

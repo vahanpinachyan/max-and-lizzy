@@ -12,8 +12,4 @@
       <path d="M 400 305 C 460 305 460 415 400 415 C 340 415 340 305 400 305 Z"/>
     </g>
     <path d="M 400 315 L 400 405" stroke="#5f7857" stroke-width="4" fill="none"/>
-  <text x="400" y="700" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
-    <tspan x="400" dy="0">Behind the scenes:</tspan><tspan x="400" dy="30">sanding down edges</tspan>
-  </text>
-  <text x="400" y="776" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
 </svg>

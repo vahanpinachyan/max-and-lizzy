@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/data/site";
 import type { Product, BlogPost } from "@/types";
-import { getAverageRating, getReviewsForProduct } from "@/data/reviews";
 
 export function absoluteUrl(pathname: string): string {
   return new URL(pathname, site.url).toString();
@@ -50,7 +49,7 @@ export function organizationJsonLd() {
     "@type": "Organization",
     name: site.name,
     url: site.url,
-    logo: absoluteUrl("/images/logo.svg"),
+    logo: absoluteUrl("/images/logo.png"),
     sameAs: [site.social.instagram, site.social.facebook],
   };
 }
@@ -60,10 +59,10 @@ export function localBusinessJsonLd() {
     "@context": "https://schema.org",
     "@type": "ToyStore",
     name: site.name,
-    image: absoluteUrl("/images/store/storefront-exterior.svg"),
+    image: absoluteUrl("/images/store/storefront-exterior.jpg"),
     url: site.url,
-    telephone: site.phone !== "TBD" ? site.phone : undefined,
-    email: site.email !== "TBD" ? site.email : undefined,
+    telephone: site.phone,
+    email: site.email,
     priceRange: "AMD",
     address: {
       "@type": "PostalAddress",
@@ -88,8 +87,8 @@ export function localBusinessJsonLd() {
 }
 
 export function productJsonLd(product: Product) {
-  const avgRating = getAverageRating(product.slug);
-  const reviewCount = getReviewsForProduct(product.slug).length;
+  const avgRating = product.rating ?? null;
+  const reviewCount = product.reviewCount ?? 0;
 
   return {
     "@context": "https://schema.org",

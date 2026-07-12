@@ -5,10 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { locales, localeMeta } from "@/lib/i18n/locales";
 import { useI18n } from "@/lib/i18n/context";
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ onOpenChange }: { onOpenChange?: (open: boolean) => void }) {
   const { locale, setLocale, dict } = useI18n();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Lets Header keep itself pinned (not hidden-on-scroll) while this is
+  // open — otherwise the header can translate off-screen out from under an
+  // open dropdown, leaving it floating with no visible trigger.
+  useEffect(() => {
+    onOpenChange?.(open);
+  }, [open, onOpenChange]);
 
   useEffect(() => {
     if (!open) return;

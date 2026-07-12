@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         unit_amount: discountedPriceAmd * 100,
         product_data: {
           name: promo ? `${product.name} (${promo.code} applied)` : product.name,
-          images: [absoluteUrl(product.images[0]?.src ?? "/images/logo.svg")],
+          images: [absoluteUrl(product.images[0]?.src ?? "/images/logo.png")],
           metadata: { slug: product.slug, sku: product.sku },
         },
       },

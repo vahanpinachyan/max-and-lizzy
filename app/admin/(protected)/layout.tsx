@@ -10,12 +10,14 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
   if (!admin) redirect("/admin/login");
 
   let lowStockCount = 0;
+  let pendingReviewCount = 0;
   if (admin.role === "manager") {
     const products = await prisma.product.findMany({
       where: { inStock: true, stockQuantity: { not: null } },
       select: { inStock: true, stockQuantity: true },
     });
     lowStockCount = products.filter((p) => isLowStock(p)).length;
+    pendingReviewCount = await prisma.review.count({ where: { approved: false } });
   }
 
   return (
@@ -44,6 +46,14 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
               </Link>
               <Link href="/admin/promo-codes" className="block rounded-lg px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige">
                 Promo Codes
+              </Link>
+              <Link href="/admin/reviews" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige">
+                <span>Reviews</span>
+                {pendingReviewCount > 0 && (
+                  <span className="rounded-full bg-terracotta px-2 py-0.5 text-xs font-bold text-white">
+                    {pendingReviewCount}
+                  </span>
+                )}
               </Link>
               <Link href="/admin/staff" className="block rounded-lg px-3 py-2 text-sm font-semibold text-espresso hover:bg-beige">
                 Staff

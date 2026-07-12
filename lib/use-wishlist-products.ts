@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n/context";
 // only runs server-side), unlike Server Component pages which query the
 // database directly.
 export function useWishlistProducts() {
-  const { slugs } = useWishlist();
+  const { slugs, pruneMissing } = useWishlist();
   const { locale } = useI18n();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(slugs.length > 0);
@@ -24,7 +24,13 @@ export function useWishlistProducts() {
     fetch(`/api/products?slugs=${slugs.map(encodeURIComponent).join(",")}&locale=${locale}`)
       .then((res) => res.json())
       .then((data) => {
-        if (!cancelled) setProducts(data.products ?? []);
+        if (cancelled) return;
+        const fetched: Product[] = data.products ?? [];
+        setProducts(fetched);
+        // Slugs saved from a since-removed/renamed product never come back
+        // from the API — drop them so the header badge count matches what's
+        // actually shown here instead of counting phantom items forever.
+        pruneMissing(fetched.map((p) => p.slug));
       })
       .catch(() => {
         if (!cancelled) setProducts([]);
@@ -35,6 +41,7 @@ export function useWishlistProducts() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pruneMissing omitted: it's a stable-per-slugs callback, and including it would just re-run this effect for the same slugs after pruning (a no-op once converged) rather than changing behavior
   }, [slugs, locale]);
 
   if (slugs.length === 0) return { products: [], loading: false };

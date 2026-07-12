@@ -72,6 +72,7 @@ export function QuickViewModal({
             src={product.images[0]?.src}
             alt={product.images[0]?.alt ?? product.name}
             fill
+            quality={90}
             className="object-cover"
             sizes="(min-width: 640px) 40vw, 90vw"
           />

@@ -19,6 +19,7 @@ export function ImageGallery({ images, productName }: { images: ProductImage[]; 
           alt={current.alt}
           fill
           priority
+          quality={95}
           className="object-cover"
           sizes="(min-width: 1024px) 45vw, 100vw"
         />

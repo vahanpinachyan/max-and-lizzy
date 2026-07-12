@@ -34,7 +34,8 @@ const SUBJECT_AND_BODY: Record<OrderStatus, (ctx: OrderEmailContext) => { subjec
     subject: `Thanks for shopping with ${site.name}!`,
     html: `<p>Hi ${ctx.customerName ?? "there"},</p>
            <p>Your order is complete — we hope your little one loves it! If anything's not right, just reply to this email.</p>
-           <p>Order reference: ${ctx.orderId.slice(-10)}</p>`,
+           <p>Order reference: ${ctx.orderId.slice(-10)}</p>
+           <p><a href="${site.url}/orders/${ctx.orderId}/review">Leave a review →</a></p>`,
   }),
   cancelled: (ctx) => ({
     subject: `Your ${site.name} order was cancelled`,

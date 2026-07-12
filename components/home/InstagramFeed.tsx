@@ -1,13 +1,14 @@
 import Image from "next/image";
-import { instagramPosts } from "@/data/instagram-posts";
 import { site } from "@/data/site";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SectionDecorations } from "@/components/ui/Decorations";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { getInstagramPosts } from "@/lib/instagram";
 
 export async function InstagramFeed() {
   const { dict: t } = await getServerDictionary();
+  const instagramPosts = await getInstagramPosts();
   return (
     <section className="relative overflow-hidden bg-beige/60 py-16">
       <SectionDecorations variant="clouds" />
@@ -37,7 +38,7 @@ export async function InstagramFeed() {
           {instagramPosts.map((post) => (
             <a
               key={post.slug}
-              href={site.social.instagram}
+              href={post.permalink || site.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative block aspect-square overflow-hidden rounded-2xl bg-white"
@@ -46,6 +47,7 @@ export async function InstagramFeed() {
                 src={post.image}
                 alt={post.caption}
                 fill
+                unoptimized={post.image.startsWith("https://")}
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 sizes="(min-width: 1024px) 16vw, (min-width: 640px) 33vw, 50vw"
               />

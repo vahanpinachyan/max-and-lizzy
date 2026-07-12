@@ -55,7 +55,7 @@ export default function PrivacyPolicyPage() {
           <p className="mt-2">
             You may request access to, correction of, or deletion of your personal information at
             any time by contacting us at{" "}
-            {site.email === "TBD" ? "our contact page" : <a href={`mailto:${site.email}`} className="underline">{site.email}</a>}.
+            <a href={`mailto:${site.email}`} className="underline">{site.email}</a>.
           </p>
         </section>
         <section>

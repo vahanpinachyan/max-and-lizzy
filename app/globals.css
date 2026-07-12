@@ -31,8 +31,10 @@
   --color-terracotta-dark: var(--color-terracotta-dark);
   --color-rose: var(--color-rose);
   --color-rose-dark: var(--color-rose-dark);
-  --font-heading: var(--font-baloo);
-  --font-body: var(--font-nunito);
+  --font-heading: var(--font-bitter);
+  --font-body: var(--font-golos);
+  --font-heading-armenian: var(--font-noto-serif-armenian);
+  --font-body-armenian: var(--font-noto-sans-armenian);
 }
 
 * {
@@ -47,6 +49,21 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Armenian has no distinctive display-face option on Google Fonts, so it
+   uses the best-available pairing (Noto Serif/Sans Armenian) instead of
+   Bitter/Golos Text, matched to the same serif/sans split. :lang(hy) has
+   higher specificity than the plain element selectors above, so this
+   correctly overrides them without needing !important. */
+:lang(hy) {
+  font-family: var(--font-body-armenian), system-ui, sans-serif;
+}
+
+:lang(hy) h1, :lang(hy) h2, :lang(hy) h3, :lang(hy) h4, :lang(hy) h5, :lang(hy) h6 {
+  font-family: var(--font-heading-armenian), system-ui, sans-serif;
+  letter-spacing: normal;
 }
 
 /* Visible focus ring for keyboard navigation. Uses box-shadow instead of

@@ -10,9 +10,6 @@ import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { WhyUs } from "@/components/home/WhyUs";
 import { Testimonials } from "@/components/home/Testimonials";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
-import { NewsletterForm } from "@/components/home/NewsletterForm";
-import { Container } from "@/components/ui/Container";
-import { SectionDecorations } from "@/components/ui/Decorations";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export const metadata: Metadata = buildMetadata({
@@ -39,12 +36,6 @@ export default async function HomePage() {
       <FeaturedProducts eyebrow={t.home.bestsellersEyebrow} title={t.home.bestsellersTitle} products={bestsellers} />
       <Testimonials />
       <InstagramFeed />
-      <section className="relative overflow-hidden bg-beige py-16">
-        <SectionDecorations />
-        <Container className="relative max-w-3xl">
-          <NewsletterForm />
-        </Container>
-      </section>
     </>
   );
 }

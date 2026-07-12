@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Baloo_2, Nunito } from "next/font/google";
+import { Bitter, Golos_Text, Noto_Serif_Armenian, Noto_Sans_Armenian } from "next/font/google";
 import "../globals.css";
 import { site } from "@/data/site";
 import { CartProvider } from "@/lib/cart-context";
@@ -15,16 +15,36 @@ import { GoogleAnalytics } from "@/components/seo/GoogleAnalytics";
 import { I18nProvider } from "@/lib/i18n/context";
 import { getLocale } from "@/lib/i18n/server";
 
-const baloo = Baloo_2({
-  variable: "--font-baloo",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+// Type system: Bitter (a confident slab serif — its sturdy serif "feet"
+// echo the geometry of the actual product, chunky wooden blocks and
+// stacking toys) for headlines, paired with Golos Text (a clean modern
+// grotesk) for body copy. Armenian has no distinctive-font options on
+// Google Fonts (only Noto + a couple of unsuitable display faces), so it
+// gets the best-available pairing — Noto Serif/Sans Armenian — matched to
+// the same serif/sans split so switching languages doesn't feel like a
+// different brand. See globals.css for the :lang(hy) overrides.
+const bitter = Bitter({
+  variable: "--font-bitter",
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  weight: ["700", "800", "900"],
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+const golosText = Golos_Text({
+  variable: "--font-golos",
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const notoSerifArmenian = Noto_Serif_Armenian({
+  variable: "--font-noto-serif-armenian",
+  subsets: ["armenian", "latin"],
+  weight: ["700", "800", "900"],
+});
+
+const notoSansArmenian = Noto_Sans_Armenian({
+  variable: "--font-noto-sans-armenian",
+  subsets: ["armenian", "latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -58,7 +78,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       data-scroll-behavior="smooth"
-      className={`${baloo.variable} ${nunito.variable} h-full antialiased`}
+      className={`${bitter.variable} ${golosText.variable} ${notoSerifArmenian.variable} ${notoSansArmenian.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <JsonLd data={organizationJsonLd()} />

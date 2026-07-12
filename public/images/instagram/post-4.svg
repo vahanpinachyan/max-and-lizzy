@@ -21,8 +21,4 @@
     <g fill="#7c4f2e">
       <rect x="405" y="365" width="50" height="50" rx="6"/>
     </g>
-  <text x="400" y="700" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
-    <tspan x="400" dy="0">Puzzle table on a</tspan><tspan x="400" dy="30">Saturday morning</tspan>
-  </text>
-  <text x="400" y="776" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
 </svg>

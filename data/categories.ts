@@ -5,7 +5,7 @@ export const categories: CategoryInfo[] = [
     slug: "educational",
     name: "Educational",
     shortDescription: "Toys that build skills through play — counting, sorting, language, and early STEM.",
-    image: "/images/categories/educational.svg",
+    image: "/images/categories/educational.jpg",
     subcategories: [
       { slug: "early-learning", name: "Early Learning" },
       { slug: "stem", name: "STEM & Building" },
@@ -17,7 +17,7 @@ export const categories: CategoryInfo[] = [
     slug: "wooden-toys",
     name: "Wooden Toys",
     shortDescription: "Sustainably sourced solid wood toys built to last through siblings and years.",
-    image: "/images/categories/wooden-toys.svg",
+    image: "/images/categories/wooden-toys.jpg",
     subcategories: [
       { slug: "stacking-sorting", name: "Stacking & Sorting" },
       { slug: "push-pull", name: "Push & Pull" },
@@ -29,7 +29,7 @@ export const categories: CategoryInfo[] = [
     slug: "outdoor-play",
     name: "Outdoor Play",
     shortDescription: "Active, imaginative play for the yard, park, or balcony.",
-    image: "/images/categories/outdoor-play.svg",
+    image: "/images/categories/outdoor-play.jpg",
     subcategories: [
       { slug: "ride-on", name: "Ride-On Toys" },
       { slug: "sand-water", name: "Sand & Water Play" },
@@ -40,7 +40,7 @@ export const categories: CategoryInfo[] = [
     slug: "puzzles-games",
     name: "Puzzles & Games",
     shortDescription: "Chunky first puzzles and cooperative games for growing minds.",
-    image: "/images/categories/puzzles-games.svg",
+    image: "/images/categories/puzzles-games.jpg",
     subcategories: [
       { slug: "wooden-puzzles", name: "Wooden Puzzles" },
       { slug: "matching-memory", name: "Matching & Memory" },
@@ -51,7 +51,7 @@ export const categories: CategoryInfo[] = [
     slug: "baby-toddler",
     name: "Baby & Toddler",
     shortDescription: "Gentle, safe first toys for little hands, from newborn to age three.",
-    image: "/images/categories/baby-toddler.svg",
+    image: "/images/categories/baby-toddler.jpg",
     subcategories: [
       { slug: "rattles-teethers", name: "Rattles & Teethers" },
       { slug: "first-blocks", name: "First Blocks" },

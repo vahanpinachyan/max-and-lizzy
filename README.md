@@ -166,15 +166,27 @@ imports from this one file.
 ### Instagram feed
 
 The homepage "Follow along on Instagram" section (`components/home/InstagramFeed.tsx`)
-currently renders placeholder tiles from `data/instagram-posts.ts`. To go
-live, either:
-- Use the [Instagram Basic Display / Graph API](https://developers.facebook.com/docs/instagram-basic-display-api)
-  to fetch real recent posts server-side and replace the data source, or
-- Use a third-party embed widget (e.g. SnapWidget, Elfsight, or Instagram's
-  own oEmbed) if you'd rather not manage API tokens.
+fetches real, live posts server-side via `lib/instagram.ts` (Instagram Graph
+API), sorted newest-first and re-fetched hourly (`revalidate: 3600`) — new
+posts appear automatically, no redeploy needed. If `INSTAGRAM_ACCESS_TOKEN`
+or `INSTAGRAM_USER_ID` isn't set, it falls back to the static placeholder
+tiles in `data/instagram-posts.ts`.
 
-Either approach needs a Business/Creator Instagram account connected to a
-Meta Developer app — that's a business/account setup step, not a code change.
+To go live:
+1. The Instagram account (`@max_and_lizzy_toys`) must be a Business or
+   Creator account, connected to a Facebook Page.
+2. Create an app at [Meta for Developers](https://developers.facebook.com/apps)
+   and add the **Instagram Graph API** product.
+3. Generate a short-lived user access token for the account (via the
+   Graph API Explorer or an OAuth login flow), then exchange it for a
+   **long-lived token** (~60-day expiry) using the
+   [long-lived token exchange endpoint](https://developers.facebook.com/docs/instagram-basic-display-api/guides/long-lived-access-tokens).
+4. Set `INSTAGRAM_ACCESS_TOKEN` to that long-lived token and
+   `INSTAGRAM_USER_ID` to the account's Instagram user ID (returned
+   alongside the token, or via `GET /me?fields=user_id`).
+5. Long-lived tokens expire after ~60 days — refresh via the same
+   endpoint before expiry (Meta emails a warning ahead of time) and
+   update `INSTAGRAM_ACCESS_TOKEN` in Vercel's environment variables.
 
 ### Adding product/category/blog images
 

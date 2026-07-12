@@ -27,22 +27,6 @@ function escapeXml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function wrapText(text, maxCharsPerLine) {
-  const words = text.split(" ");
-  const lines = [];
-  let current = "";
-  for (const word of words) {
-    if ((current + " " + word).trim().length > maxCharsPerLine) {
-      lines.push(current.trim());
-      current = word;
-    } else {
-      current = (current + " " + word).trim();
-    }
-  }
-  if (current) lines.push(current);
-  return lines;
-}
-
 // A small set of simple decorative icon shapes drawn with primitives,
 // keyed by category/theme so each placeholder feels distinct.
 const ICONS = {
@@ -124,14 +108,19 @@ function iconFor(seed) {
   return ICONS[keys[hash % keys.length]];
 }
 
+// No baked-in title text: every real usage site (product cards, category
+// tiles, blog covers, promo banners, etc.) already renders the real name/
+// title as actual HTML next to the image. Baking a second copy of that text
+// into the placeholder art just duplicates it — worse, since object-cover
+// crops differently per breakpoint, that baked-in text can become visible
+// at aspect ratios where it wasn't meant to show, creating an apparent
+// duplicate-text bug. The `role="img"` + `aria-label` below still gives it
+// an accessible name.
 function placeholderSvg({ width = 800, height = 800, label, iconKey, seed = label }) {
   const c = PALETTE;
   const iconFn = iconKey ? ICONS[iconKey] : iconFor(seed);
   const cx = width / 2;
-  const cy = height / 2 - 40;
-  const lines = wrapText(label, 22);
-  const lineHeight = 30;
-  const textStartY = height - 70 - (lines.length - 1) * lineHeight;
+  const cy = height / 2;
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(label)}">
   <defs>
@@ -143,10 +132,6 @@ function placeholderSvg({ width = 800, height = 800, label, iconKey, seed = labe
   <rect width="${width}" height="${height}" fill="url(#bg)"/>
   <rect x="14" y="14" width="${width - 28}" height="${height - 28}" fill="none" stroke="${c.woodDark}" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round" opacity="0.4"/>
   ${iconFn(cx, cy, c)}
-  <text x="${cx}" y="${textStartY}" font-family="Georgia, serif" font-size="26" fill="${c.espresso}" text-anchor="middle" font-weight="600">
-    ${lines.map((line, i) => `<tspan x="${cx}" dy="${i === 0 ? 0 : lineHeight}">${escapeXml(line)}</tspan>`).join("")}
-  </text>
-  <text x="${cx}" y="${height - 24}" font-family="Georgia, serif" font-size="16" fill="${c.woodDark}" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
 </svg>`;
 }
 

@@ -31,6 +31,11 @@ export interface ProductReview {
   verifiedPurchase: boolean;
 }
 
+export interface ProductRating {
+  average: number | null;
+  count: number;
+}
+
 export interface Product {
   slug: string;
   name: string;
@@ -54,6 +59,8 @@ export interface Product {
   dimensions?: string;
   weightGrams?: number;
   careInstructions?: string;
+  rating?: number | null;
+  reviewCount?: number;
 }
 
 export interface Testimonial {

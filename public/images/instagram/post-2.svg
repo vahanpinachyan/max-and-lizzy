@@ -13,8 +13,4 @@
       <rect x="390" y="320" width="50" height="50" rx="8" fill="#7c9473" transform="rotate(6 415 345)"/>
       <rect x="420" y="355" width="50" height="50" rx="8" fill="#a97247" transform="rotate(-4 445 380)"/>
     </g>
-  <text x="400" y="700" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
-    <tspan x="400" dy="0">New wooden blocks just</tspan><tspan x="400" dy="30">arrived</tspan>
-  </text>
-  <text x="400" y="776" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
 </svg>

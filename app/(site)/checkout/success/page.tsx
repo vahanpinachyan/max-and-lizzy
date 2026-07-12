@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getStripe } from "@/lib/stripe";
 import { formatAmd } from "@/lib/format";
 import { site } from "@/data/site";
+import { prisma } from "@/lib/db";
 import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { ClearCartOnMount } from "@/components/cart/ClearCartOnMount";
@@ -31,6 +32,14 @@ export default async function CheckoutSuccessPage({
   const { session_id: sessionId } = await searchParams;
   const session = sessionId ? await getSessionSummary(sessionId) : null;
   const { dict: t, locale } = await getServerDictionary();
+
+  // The Stripe webhook creates our Order record asynchronously, so it may
+  // not exist yet when this page loads right after checkout — that's fine,
+  // the review link just doesn't render that one time (customers can still
+  // review later via the order-completed email).
+  const order = sessionId
+    ? await prisma.order.findUnique({ where: { stripeSessionId: sessionId } })
+    : null;
 
   return (
     <Container className="max-w-2xl py-16 text-center">
@@ -68,13 +77,18 @@ export default async function CheckoutSuccessPage({
 
       <p className="mt-8 text-sm text-espresso/70">
         {t.checkoutSuccess.questionsNote}{" "}
-        {site.email === "TBD" ? t.checkoutSuccess.ourContactPage : <a href={`mailto:${site.email}`} className="underline">{site.email}</a>} {t.checkoutSuccess.orVisitUsAt}{" "}
+        <a href={`mailto:${site.email}`} className="underline">{site.email}</a> {t.checkoutSuccess.orVisitUsAt}{" "}
         {site.address.street}.
       </p>
 
-      <LinkButton href="/shop" className="mt-8">
-        {t.checkoutSuccess.continueShopping}
-      </LinkButton>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <LinkButton href="/shop">{t.checkoutSuccess.continueShopping}</LinkButton>
+        {order && (
+          <LinkButton href={`/orders/${order.id}/review`} variant="outline">
+            {t.product.leaveAReview}
+          </LinkButton>
+        )}
+      </div>
       <p className="mt-4">
         <Link href="/" className="text-sm text-espresso/70 underline">
           {t.checkoutSuccess.backToHome}

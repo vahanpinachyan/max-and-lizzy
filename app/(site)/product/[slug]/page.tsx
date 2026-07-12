@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProduct, getRelatedProducts, getAllProductSlugs } from "@/data/products";
-import { getReviewsForProduct, getAverageRating } from "@/data/reviews";
+import { getApprovedReviews } from "@/lib/reviews";
 import { buildMetadata, productJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { getCategory } from "@/data/categories";
 import { formatAmd, ageRangeLabel } from "@/lib/format";
@@ -51,8 +51,8 @@ export default async function ProductPage({
   const product = await getProduct(slug, locale);
   if (!product) notFound();
 
-  const reviews = getReviewsForProduct(product.slug);
-  const averageRating = getAverageRating(product.slug);
+  const reviews = await getApprovedReviews(product.slug);
+  const averageRating = product.rating ?? null;
   const related = await getRelatedProducts(product, locale);
   const rawCategory = getCategory(product.category);
   const category = rawCategory ? localizeCategory(rawCategory, locale) : undefined;

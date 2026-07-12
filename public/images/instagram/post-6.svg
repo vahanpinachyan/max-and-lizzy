@@ -15,8 +15,4 @@
       <rect x="390" y="370" width="35" height="50" fill="#fbf6ee" stroke="#7c4f2e" stroke-width="3"/>
       <rect x="440" y="370" width="35" height="50" fill="#fbf6ee" stroke="#7c4f2e" stroke-width="3"/>
     </g>
-  <text x="400" y="700" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
-    <tspan x="400" dy="0">Weekend market pop-up</tspan><tspan x="400" dy="30">stand</tspan>
-  </text>
-  <text x="400" y="776" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
 </svg>

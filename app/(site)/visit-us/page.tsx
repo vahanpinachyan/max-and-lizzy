@@ -7,15 +7,15 @@ import { Container } from "@/components/ui/Container";
 
 export const metadata: Metadata = buildMetadata({
   title: "Visit Us",
-  description: `Visit Max & Lizzy at ${site.address.street}, ${site.address.city}. Open daily 10am–9pm. Get directions, parking info, and store hours.`,
+  description: `Visit Max & Lizzy at ${site.address.street}, ${site.address.city}. Open daily 10am–9pm. Get directions and store hours.`,
   pathname: "/visit-us",
 });
 
 const STORE_PHOTOS = [
-  { src: "/images/store/storefront-exterior.svg", alt: "Max & Lizzy storefront exterior on Mashtots Avenue" },
-  { src: "/images/store/shop-interior.svg", alt: "Inside the Max & Lizzy toy shop" },
-  { src: "/images/store/toy-shelf-display.svg", alt: "Wooden toy display shelves inside the shop" },
-  { src: "/images/store/checkout-counter.svg", alt: "Checkout counter at Max & Lizzy" },
+  { src: "/images/store/storefront-exterior.jpg", alt: "Max & Lizzy storefront awning on Mashtots Avenue" },
+  { src: "/images/store/shop-interior.jpg", alt: "The Max & Lizzy Toys sign inside the shop" },
+  { src: "/images/store/toy-shelf-display.jpg", alt: "Wooden toy display shelves inside the shop" },
+  { src: "/images/store/checkout-counter.jpg", alt: "A parent and child browsing the toy shelves" },
 ];
 
 export default function VisitUsPage() {
@@ -85,31 +85,11 @@ export default function VisitUsPage() {
             </h2>
             <p className="mt-2 text-espresso/80">
               Phone:{" "}
-              {site.phone === "TBD" ? (
-                <span className="text-espresso/70">Coming soon</span>
-              ) : (
-                <a href={site.phoneHref} className="hover:text-terracotta-dark">{site.phone}</a>
-              )}
+              <a href={site.phoneHref} className="hover:text-terracotta-dark">{site.phone}</a>
             </p>
             <p className="mt-1 text-espresso/80">
               Email:{" "}
-              {site.email === "TBD" ? (
-                <span className="text-espresso/70">Coming soon</span>
-              ) : (
-                <a href={`mailto:${site.email}`} className="hover:text-terracotta-dark">{site.email}</a>
-              )}
-            </p>
-          </section>
-
-          <section aria-labelledby="parking-heading">
-            <h2 id="parking-heading" className="text-lg font-bold text-espresso">
-              Parking &amp; Directions
-            </h2>
-            <p className="mt-2 text-espresso/80">
-              {/* Placeholder — replace with real parking/access details */}
-              Street parking is available along Mashtots Avenue, with additional parking on
-              nearby side streets. The shop is a short walk from local public transit stops
-              along the avenue.
+              <a href={`mailto:${site.email}`} className="hover:text-terracotta-dark">{site.email}</a>
             </p>
           </section>
         </div>

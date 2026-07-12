@@ -13,8 +13,4 @@
       <path d="M 750 500 A 50 50 0 0 1 850 500" stroke="#7c9473" stroke-width="16"/>
       <path d="M 770 500 A 30 30 0 0 1 830 500" stroke="#a97247" stroke-width="14"/>
     </g>
-  <text x="800" y="870" font-family="Georgia, serif" font-size="26" fill="#3d2b1f" text-anchor="middle" font-weight="600">
-    <tspan x="800" dy="0">Max &amp; Lizzy —</tspan><tspan x="800" dy="30">Educational Wooden</tspan><tspan x="800" dy="30">Toys</tspan>
-  </text>
-  <text x="800" y="976" font-family="Georgia, serif" font-size="16" fill="#7c4f2e" text-anchor="middle" opacity="0.7">Max &amp; Lizzy — placeholder image</text>
 </svg>

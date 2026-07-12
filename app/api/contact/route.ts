@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   console.log(`[contact] ${name} <${email}> — ${subject}\n${message}`);
 
   const apiKey = process.env.RESEND_API_KEY;
-  if (apiKey && site.email !== "TBD") {
+  if (apiKey) {
     try {
       const { Resend } = await import("resend");
       const resend = new Resend(apiKey);

@@ -116,6 +116,7 @@ model Order {
   customerName     String?
   customerPhone    String?
   items            OrderItem[]
+  reviews          Review[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -133,4 +134,26 @@ model OrderItem {
   quantity    Int
 
   @@index([orderId])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  productSlug String
+  // Links the review back to the order it was written from, proving it's a
+  // verified purchase. Kept optional + onDelete:SetNull so deleting an order
+  // doesn't cascade-delete reviews already published for that product.
+  order       Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  orderId     String?
+  authorName  String
+  rating      Int
+  title       String
+  body        String
+  // Reviews start hidden until a manager approves them in /admin/reviews,
+  // so spam or inappropriate submissions never reach the storefront.
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([productSlug])
+  @@index([orderId])
+  @@index([approved])
 }

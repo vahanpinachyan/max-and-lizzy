@@ -35,13 +35,13 @@ export default async function ContactPage() {
           <div>
             <h2 className="font-semibold text-espresso">{t.contactPage.phone}</h2>
             <p className="mt-1 text-sm text-espresso/70">
-              {site.phone === "TBD" ? t.contactPage.comingSoon : <a href={site.phoneHref} className="hover:text-terracotta-dark">{site.phone}</a>}
+              <a href={site.phoneHref} className="hover:text-terracotta-dark">{site.phone}</a>
             </p>
           </div>
           <div>
             <h2 className="font-semibold text-espresso">{t.contactPage.email}</h2>
             <p className="mt-1 text-sm text-espresso/70">
-              {site.email === "TBD" ? t.contactPage.comingSoon : <a href={`mailto:${site.email}`} className="hover:text-terracotta-dark">{site.email}</a>}
+              <a href={`mailto:${site.email}`} className="hover:text-terracotta-dark">{site.email}</a>
             </p>
           </div>
           <div>

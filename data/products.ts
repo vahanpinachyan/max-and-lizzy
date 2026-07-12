@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import type { Product, ProductImage, AgeRange, Category } from "@/types";
 import type { Locale } from "@/lib/i18n/locales";
 import type { Product as DbProduct } from "@prisma/client";
+import { getRatingsMap } from "@/lib/reviews";
 
 // Product data now lives in the database (see prisma/schema.prisma) so it
 // can be managed from /admin instead of requiring a code change + deploy
@@ -42,9 +43,20 @@ function mapProduct(row: DbProduct, locale: Locale): Product {
   };
 }
 
+// Merges rating/reviewCount (computed from the Review table) onto already-
+// mapped products with a single grouped query, instead of one query per card.
+async function attachRatings(products: Product[]): Promise<Product[]> {
+  if (products.length === 0) return products;
+  const ratings = await getRatingsMap(products.map((p) => p.slug));
+  return products.map((p) => {
+    const r = ratings.get(p.slug);
+    return { ...p, rating: r?.average ?? null, reviewCount: r?.count ?? 0 };
+  });
+}
+
 export async function getAllProducts(locale: Locale = "en"): Promise<Product[]> {
   const rows = await prisma.product.findMany({ orderBy: { createdAt: "asc" } });
-  return rows.map((r) => mapProduct(r, locale));
+  return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
 export async function getAllProductSlugs(): Promise<string[]> {
@@ -54,7 +66,9 @@ export async function getAllProductSlugs(): Promise<string[]> {
 
 export async function getProduct(slug: string, locale: Locale = "en"): Promise<Product | undefined> {
   const row = await prisma.product.findUnique({ where: { slug } });
-  return row ? mapProduct(row, locale) : undefined;
+  if (!row) return undefined;
+  const [withRating] = await attachRatings([mapProduct(row, locale)]);
+  return withRating;
 }
 
 export async function getProductsBySlugs(slugs: string[], locale: Locale = "en"): Promise<Product[]> {
@@ -63,25 +77,26 @@ export async function getProductsBySlugs(slugs: string[], locale: Locale = "en")
   const bySlug = new Map(rows.map((r) => [r.slug, r]));
   // Preserve the caller's slug order (matters for related-products and
   // wishlist display order) rather than whatever order the DB returns.
-  return slugs
+  const products = slugs
     .map((s) => bySlug.get(s))
     .filter((r): r is DbProduct => Boolean(r))
     .map((r) => mapProduct(r, locale));
+  return attachRatings(products);
 }
 
 export async function getProductsByCategory(category: string, locale: Locale = "en"): Promise<Product[]> {
   const rows = await prisma.product.findMany({ where: { category }, orderBy: { createdAt: "asc" } });
-  return rows.map((r) => mapProduct(r, locale));
+  return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
 export async function getFeaturedProducts(locale: Locale = "en"): Promise<Product[]> {
   const rows = await prisma.product.findMany({ where: { featured: true }, orderBy: { createdAt: "asc" } });
-  return rows.map((r) => mapProduct(r, locale));
+  return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
 export async function getBestsellers(locale: Locale = "en"): Promise<Product[]> {
   const rows = await prisma.product.findMany({ where: { bestseller: true }, orderBy: { createdAt: "asc" } });
-  return rows.map((r) => mapProduct(r, locale));
+  return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
 export async function getRelatedProducts(product: Product, locale: Locale = "en"): Promise<Product[]> {

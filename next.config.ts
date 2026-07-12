@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Product photos use quality={90}/{95} for sharper rendering than the
+    // Next.js default (75) allows, so those values must be explicitly permitted.
+    qualities: [75, 90, 95],
   },
 };
 

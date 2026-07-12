@@ -32,8 +32,8 @@ export default function AboutPage() {
       <div className="mt-14 grid items-center gap-10 lg:grid-cols-2">
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
           <Image
-            src="/images/about-story.svg"
-            alt="Max & Lizzy founders selecting wooden toys for the shop"
+            src="/images/about-story.jpg"
+            alt="A mother and daughter browsing wooden toys on the shelves at Max & Lizzy"
             fill
             className="object-cover"
             sizes="(min-width: 1024px) 50vw, 100vw"
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
       <div className="mt-14 grid items-center gap-10 lg:grid-cols-2">
         <div className="order-2 lg:order-1">
-          <h2 className="text-2xl font-bold text-espresso">Meet the founders</h2>
+          <h2 className="text-2xl font-bold text-espresso">Meet the team</h2>
           <p className="mt-4 text-espresso/80">
             {/* Placeholder copy — replace with real founder bios/photo */}
             Max &amp; Lizzy is run by a small, hands-on team based right here in Yerevan. We&apos;re
@@ -68,8 +68,8 @@ export default function AboutPage() {
         </div>
         <div className="relative order-1 aspect-[4/3] overflow-hidden rounded-3xl lg:order-2">
           <Image
-            src="/images/about-founders.svg"
-            alt="Max & Lizzy founders in the store"
+            src="/images/about-team.jpg"
+            alt="The Max & Lizzy team standing together in the store"
             fill
             className="object-cover"
             sizes="(min-width: 1024px) 50vw, 100vw"

@@ -6,7 +6,6 @@ import type { Product } from "@/types";
 import { formatAmd, ageRangeLabel } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/use-wishlist";
-import { getAverageRating, getReviewsForProduct } from "@/data/reviews";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { StarRating } from "@/components/ui/StarRating";
@@ -28,8 +27,8 @@ export function ProductCard({
   const { locale } = useI18n();
   const t = useTranslations();
   const wishlisted = isWishlisted(product.slug);
-  const rating = getAverageRating(product.slug);
-  const reviewCount = getReviewsForProduct(product.slug).length;
+  const rating = product.rating ?? null;
+  const reviewCount = product.reviewCount ?? 0;
   const discountPct =
     product.compareAtPriceAmd && product.compareAtPriceAmd > product.priceAmd
       ? Math.round(100 - (product.priceAmd / product.compareAtPriceAmd) * 100)
@@ -47,6 +46,7 @@ export function ProductCard({
           src={product.images[0]?.src}
           alt={product.images[0]?.alt ?? product.name}
           fill
+          quality={90}
           className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           sizes={
             size === "large"
@@ -54,24 +54,24 @@ export function ProductCard({
               : "(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
           }
         />
-        <div className="absolute left-2 top-2 flex flex-col gap-1">
+        <div className="absolute left-2.5 top-2.5 flex flex-col gap-1">
           {discountPct !== null && (
-            <Badge variant="rose" className="justify-center leading-none">
+            <Badge variant="rose" onImage className="justify-center leading-none">
               -{discountPct}%
             </Badge>
           )}
           {product.bestseller && (
-            <Badge variant="terracotta" className="justify-center leading-none">
+            <Badge variant="terracotta" onImage className="justify-center leading-none">
               {t.badges.bestseller}
             </Badge>
           )}
           {product.newArrival && (
-            <Badge variant="sage" className="justify-center leading-none">
+            <Badge variant="sage" onImage className="justify-center leading-none">
               {t.badges.new}
             </Badge>
           )}
           {!product.inStock && (
-            <Badge variant="neutral" className="justify-center leading-none">
+            <Badge variant="neutral" onImage className="justify-center leading-none">
               {t.badges.outOfStock}
             </Badge>
           )}

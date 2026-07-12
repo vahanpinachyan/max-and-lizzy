@@ -78,8 +78,20 @@ export function useWishlist() {
     drawerOpen = false;
     notify();
   }, []);
+  // Drops slugs that no longer resolve to a real product (e.g. the catalog
+  // was replaced since this was saved) — called by useWishlistProducts once
+  // it knows which requested slugs actually came back from the API, so the
+  // header badge count stays in sync with what the drawer can actually show.
+  const pruneMissing = useCallback((validSlugs: string[]) => {
+    const validSet = new Set(validSlugs);
+    const next = slugs.filter((s) => validSet.has(s));
+    if (next.length !== slugs.length) {
+      setSlugs(next);
+      notify();
+    }
+  }, [slugs]);
 
-  return { slugs, toggle, isWishlisted, isDrawerOpen, openDrawer, closeDrawer };
+  return { slugs, toggle, isWishlisted, isDrawerOpen, openDrawer, closeDrawer, pruneMissing };
 }
 
 function setSlugs(next: string[]) {
