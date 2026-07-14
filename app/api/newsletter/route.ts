@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
+import { upsertContact } from "@/lib/omnisend";
 
-// Minimal newsletter signup endpoint. Currently logs the submission.
-// TODO: wire up to a real list provider (Resend Audiences, Mailchimp, etc.)
-// before launch — see README "Before you launch" checklist.
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const email = typeof body?.email === "string" ? body.email.trim() : "";
@@ -13,6 +11,7 @@ export async function POST(request: Request) {
   }
 
   console.log(`[newsletter] signup: ${email} (source: ${source})`);
+  await upsertContact({ email });
 
   return NextResponse.json({ ok: true });
 }

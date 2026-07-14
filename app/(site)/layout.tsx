@@ -12,6 +12,7 @@ import { WelcomeModal } from "@/components/marketing/WelcomeModal";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationJsonLd } from "@/lib/seo";
 import { GoogleAnalytics } from "@/components/seo/GoogleAnalytics";
+import { OmnisendSnippet } from "@/components/marketing/OmnisendSnippet";
 import { I18nProvider } from "@/lib/i18n/context";
 import { getLocale } from "@/lib/i18n/server";
 
@@ -83,6 +84,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <JsonLd data={organizationJsonLd()} />
         <GoogleAnalytics />
+        <OmnisendSnippet />
         <I18nProvider locale={locale}>
           <CartProvider>
             <Header />

@@ -22,9 +22,9 @@ export const en = {
   },
   hero: {
     eyebrow: "Locally owned in Yerevan",
-    title: "Toys that spark imagination, not screens",
+    title: "Max & Lizzy are waiting for you",
     subtitle:
-      "Educational, wooden, and eco-friendly toys for babies and preschoolers — safety-tested, thoughtfully made, and chosen by parents who care what their kids play with.",
+      "Say hello to Max and Lizzy — the two little friends behind our shelves. Educational, wooden, and eco-friendly toys for babies and preschoolers, chosen with the same care parents give their own kids.",
     shopAll: "Shop All Toys",
     visitStore: "Visit Our Store",
     trustBadge: "Safety-tested & certified",
@@ -37,8 +37,9 @@ export const en = {
     categoryEyebrow: "Shop by category",
     categoryTitle: "Find the right toy, fast",
     categoryDescription: "Five simple categories built around how kids actually play.",
-    whyUsEyebrow: "Why families choose us",
-    whyUsTitle: "Toys you can feel good about",
+    brandTrustEyebrow: "Imported from Europe",
+    brandTrustTitle: "Real craftsmanship, not just marketing",
+    brandTrustSubtitle: "Every toy we carry comes from established European workshops — built from real wood and tested to EN71 safety standards, not mass-produced plastic with a nice photo.",
     testimonialsEyebrow: "Customer love",
     testimonialsTitle: "What parents are saying",
     instagramEyebrow: "@max_and_lizzy_toys",
@@ -61,23 +62,10 @@ export const en = {
     announcementsAria: "Store announcements",
     emailAddressLabel: "Email address",
   },
-  whyUsPoints: [
-    {
-      title: "Eco-conscious materials",
-      description: "Sustainably sourced wood, organic cotton, and non-toxic, plant-based finishes in every product we carry.",
-    },
-    {
-      title: "Safety-tested",
-      description: "Every toy meets ASTM F963 / EN71 safety standards — no small parts, no toxic paints, no shortcuts.",
-    },
-    {
-      title: "Educational value",
-      description: "Every product is chosen for the specific skills it builds, from fine motor control to early problem-solving.",
-    },
-    {
-      title: "Locally owned",
-      description: "A real storefront on Mashtots Avenue, run by parents, for parents — come say hello.",
-    },
+  brands: [
+    { name: "GOKI", origin: "Germany" },
+    { name: "Nattou", origin: "France" },
+    { name: "Holztiger", origin: "Germany" },
   ],
   product: {
     addToCart: "Add to Cart",

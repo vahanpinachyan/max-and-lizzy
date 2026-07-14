@@ -85,7 +85,7 @@ const products: SeedProduct[] = [
     materials: ["Solid wood"],
     safetyInfo: SAFETY_STANDARD,
     brand: "GOKI",
-    images: [{ src: "/images/products/rainbow-sorting-board-1-v2.jpg", alt: "Wooden rainbow color sorting board" }],
+    images: [{ src: "/images/products/rainbow-sorting-board-1-v3.jpg", alt: "Wooden rainbow color sorting board" }],
     inStock: true,
     sku: "58436",
     relatedSlugs: ["color-sorting-board", "counting-frame"],

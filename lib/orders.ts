@@ -2,6 +2,8 @@ import "server-only";
 import type Stripe from "stripe";
 import { prisma } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
+import { site } from "@/data/site";
+import { upsertContact, sendPlacedOrderEvent } from "@/lib/omnisend";
 
 export { ORDER_STATUSES, type OrderStatus } from "@/lib/order-status";
 
@@ -68,13 +70,14 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
     };
   });
 
-  return prisma.order.create({
+  const totalAmd = Math.round((session.amount_total ?? 0) / 100);
+  const order = await prisma.order.create({
     data: {
       stripeSessionId: session.id,
       customerId: customer.id,
       status: "pending",
       fulfillmentMethod,
-      totalAmd: Math.round((session.amount_total ?? 0) / 100),
+      totalAmd,
       promoCode,
       shippingAddress: session.customer_details?.address
         ? JSON.stringify(session.customer_details.address)
@@ -85,4 +88,27 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
     },
     include: { items: true },
   });
+
+  // Best-effort marketing sync — never blocks order creation. Keeps the
+  // Omnisend contact record and segmentation/automation data (post-purchase
+  // flows, revenue reporting) up to date with real orders.
+  const [firstName, ...rest] = (session.customer_details?.name ?? "").trim().split(/\s+/);
+  await upsertContact({
+    email,
+    firstName: firstName || undefined,
+    lastName: rest.join(" ") || undefined,
+  });
+  await sendPlacedOrderEvent({
+    email,
+    orderId: order.id,
+    totalAmd,
+    items: items.map((item) => ({
+      productSlug: item.productSlug,
+      productName: item.productName,
+      priceAmd: item.priceAmd,
+      productUrl: item.productSlug ? `${site.url}/product/${item.productSlug}` : undefined,
+    })),
+  });
+
+  return order;
 }

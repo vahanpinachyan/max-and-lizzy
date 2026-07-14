@@ -46,10 +46,11 @@ export async function Hero() {
         <div className="relative min-w-0">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[2.5rem] shadow-xl">
             <Image
-              src="/images/hero-home.svg"
-              alt="Collection of educational wooden toys including stacking arches and building blocks"
+              src="/images/hero-maxlizzy-v1.jpg"
+              alt="Illustrated portraits of Max and Lizzy, the two children the store is named for, standing together under a rainbow"
               fill
               priority
+              quality={95}
               className="object-cover"
               sizes="(min-width: 1024px) 50vw, 100vw"
             />
