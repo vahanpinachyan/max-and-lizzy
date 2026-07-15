@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import clsx from "clsx";
 import { Button } from "@/components/ui/Button";
 import { useTranslations } from "@/lib/i18n/context";
+import { identifyOmnisendContact } from "@/lib/omnisend-client";
 
 export function NewsletterForm({ variant = "section" }: { variant?: "section" | "footer" }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -20,6 +21,7 @@ export function NewsletterForm({ variant = "section" }: { variant?: "section" | 
         body: JSON.stringify({ email }),
       });
       if (!res.ok) throw new Error("Request failed");
+      identifyOmnisendContact(email);
       setStatus("success");
       setEmail("");
     } catch {

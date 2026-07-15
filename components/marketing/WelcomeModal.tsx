@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mascot } from "@/components/ui/Mascot";
 import { Button } from "@/components/ui/Button";
 import { useTranslations } from "@/lib/i18n/context";
+import { identifyOmnisendContact } from "@/lib/omnisend-client";
 
 const STORAGE_KEY = "max-and-lizzy-welcome-seen";
 const SHOW_DELAY_MS = 1800;
@@ -81,6 +82,7 @@ export function WelcomeModal() {
         body: JSON.stringify({ email, source: "welcome-modal" }),
       });
       if (!res.ok) throw new Error("Request failed");
+      identifyOmnisendContact(email);
       setStatus("success");
       markSeen();
     } catch {

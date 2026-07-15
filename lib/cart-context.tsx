@@ -12,9 +12,11 @@ import {
 import type { CartItem, Product } from "@/types";
 import { useTranslations } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
+import { trackAddedToCart } from "@/lib/omnisend-client";
 
 const STORAGE_KEY = "max-and-lizzy-cart";
 const PROMO_STORAGE_KEY = "max-and-lizzy-promo-code";
+const CART_ID_STORAGE_KEY = "max-and-lizzy-cart-id";
 
 interface AppliedPromo {
   code: string;
@@ -24,6 +26,7 @@ interface AppliedPromo {
 
 interface CartContextValue {
   items: CartItem[];
+  cartId: string;
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (slug: string) => void;
   updateQuantity: (slug: string, quantity: number) => void;
@@ -60,6 +63,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [promo, setPromo] = useState<AppliedPromo | null>(null);
+  // Stable per-browser cart identifier, sent with Omnisend cart/checkout
+  // abandonment events so a returning visitor's activity links back to the
+  // same abandoned cart rather than starting a new one every session.
+  const [cartId, setCartId] = useState("");
 
   useEffect(() => {
     // One-time hydration from localStorage: this value doesn't exist during
@@ -70,6 +77,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       if (raw) setItems(JSON.parse(raw));
       storedPromoCode = window.localStorage.getItem(PROMO_STORAGE_KEY);
+
+      let storedCartId = window.localStorage.getItem(CART_ID_STORAGE_KEY);
+      if (!storedCartId) {
+        storedCartId = crypto.randomUUID();
+        window.localStorage.setItem(CART_ID_STORAGE_KEY, storedCartId);
+      }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCartId(storedCartId);
     } catch {
       // ignore corrupt local storage
     }
@@ -98,25 +113,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = useCallback((product: Product, quantity = 1) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.slug === product.slug);
-      if (existing) {
-        return prev.map((i) =>
-          i.slug === product.slug ? { ...i, quantity: i.quantity + quantity } : i
-        );
-      }
-      return [
-        ...prev,
-        {
-          slug: product.slug,
-          name: product.name,
-          priceAmd: product.priceAmd,
-          image: product.images[0]?.src ?? "",
-          quantity,
-          sku: product.sku,
-        },
-      ];
+      const next = existing
+        ? prev.map((i) =>
+            i.slug === product.slug ? { ...i, quantity: i.quantity + quantity } : i
+          )
+        : [
+            ...prev,
+            {
+              slug: product.slug,
+              name: product.name,
+              priceAmd: product.priceAmd,
+              image: product.images[0]?.src ?? "",
+              quantity,
+              sku: product.sku,
+            },
+          ];
+      // Fired from inside the updater so it always sees the resulting cart
+      // contents/value — a harmless side effect (analytics, not state).
+      if (cartId) trackAddedToCart(product, quantity, next, cartId);
+      return next;
     });
     setIsDrawerOpen(true);
-  }, []);
+  }, [cartId]);
 
   const removeItem = useCallback((slug: string) => {
     setItems((prev) => prev.filter((i) => i.slug !== slug));
@@ -161,6 +179,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value: CartContextValue = {
     items,
+    cartId,
     addItem,
     removeItem,
     updateQuantity,

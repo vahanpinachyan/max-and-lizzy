@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
+import { trackStartedCheckout } from "@/lib/omnisend-client";
 import { formatAmd } from "@/lib/format";
 import { Container } from "@/components/ui/Container";
 import { Button, LinkButton } from "@/components/ui/Button";
@@ -17,6 +18,7 @@ export default function CartPage() {
   const { locale } = useI18n();
   const {
     items,
+    cartId,
     updateQuantity,
     removeItem,
     subtotalAmd,
@@ -43,6 +45,7 @@ export default function CartPage() {
   async function handleCheckout() {
     setLoading(true);
     setError(null);
+    if (cartId) trackStartedCheckout(items, totalAmd, cartId);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
