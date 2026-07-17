@@ -12,16 +12,27 @@ export default function ReturnsPolicyPage() {
   return (
     <Container className="max-w-3xl py-12">
       <h1 className="text-4xl font-bold text-espresso">Returns &amp; Exchanges</h1>
-      <p className="mt-2 text-sm text-espresso/70">Last updated: placeholder — update before launch</p>
+      <p className="mt-2 text-sm text-espresso/70">Last updated: July 18, 2026</p>
 
       <div className="mt-8 space-y-6 text-espresso/80">
         <section>
-          <h2 className="text-xl font-bold text-espresso">30-day returns</h2>
+          <h2 className="text-xl font-bold text-espresso">Your legal right to cancel (14 days)</h2>
           <p className="mt-2">
-            {/* TODO: confirm real return window and conditions before launch */}
+            If you bought online, Armenian law gives you the right to cancel your order and
+            return it within 14 days of receiving it, for any reason — you don&apos;t need to
+            explain why. To use this right, contact us within that window and send the item back
+            in the condition you&apos;d reasonably expect from unwrapping and checking it, the
+            way you would in a physical store. This 14-day right applies on top of, not instead
+            of, our own 30-day policy below.
+          </p>
+        </section>
+        <section>
+          <h2 className="text-xl font-bold text-espresso">Our 30-day return policy</h2>
+          <p className="mt-2">
             We want you and your child to love every toy from Max &amp; Lizzy. If something
             isn&apos;t right, you may return unused, unopened items in original packaging within
-            30 days of purchase for a full refund or exchange.
+            30 days of purchase for a full refund or exchange — no need to fall back on the
+            14-day legal minimum above.
           </p>
         </section>
         <section>
@@ -50,8 +61,9 @@ export default function ReturnsPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Refunds</h2>
           <p className="mt-2">
-            Approved refunds are issued to your original payment method via Stripe and typically
-            appear within 5–10 business days, depending on your bank.
+            Approved refunds are issued back to your original payment method — Telcell, Idram, or
+            ArCa — and typically appear within 5–10 business days, depending on your bank or
+            wallet provider.
           </p>
         </section>
       </div>

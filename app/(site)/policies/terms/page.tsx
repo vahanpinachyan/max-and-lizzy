@@ -13,13 +13,12 @@ export default function TermsPolicyPage() {
   return (
     <Container className="max-w-3xl py-12">
       <h1 className="text-4xl font-bold text-espresso">Terms &amp; Conditions</h1>
-      <p className="mt-2 text-sm text-espresso/70">Last updated: placeholder — update before launch</p>
+      <p className="mt-2 text-sm text-espresso/70">Last updated: July 18, 2026</p>
 
       <div className="mt-8 space-y-6 text-espresso/80">
         <section>
           <h2 className="text-xl font-bold text-espresso">Who you&apos;re buying from</h2>
           <p className="mt-2">
-            {/* TODO: confirm registration number and tax ID before launch */}
             {site.name} is operated by <strong>{site.legalName}</strong> ({site.legalNameHy}), a
             company registered in the Republic of Armenia, trading as &quot;{site.name}&quot;
             from our store at {site.address.street}, {site.address.city}, {site.address.country}.
@@ -41,9 +40,9 @@ export default function TermsPolicyPage() {
           <h2 className="text-xl font-bold text-espresso">Orders &amp; payment</h2>
           <p className="mt-2">
             Placing an order is an offer to buy, which we accept once payment is confirmed.
-            Online payments are processed securely through Stripe — we never see or store your
-            full card details. An order is only confirmed once you receive an order confirmation
-            email.
+            Online payments are processed securely through our payment providers — Telcell,
+            Idram, and ArCa — we never see or store your full card number or wallet credentials.
+            An order is only confirmed once you receive an order confirmation email.
           </p>
         </section>
         <section>
@@ -56,14 +55,16 @@ export default function TermsPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Returns &amp; cancellations</h2>
           <p className="mt-2">
-            See our <a href="/policies/returns" className="underline">Returns &amp; Exchanges
-            policy</a> for how to return or exchange an item, and what isn&apos;t eligible.
+            If you bought online, Armenian law gives you the right to cancel your order and
+            return it within 14 days of receiving it, without needing to give a reason. See our{" "}
+            <a href="/policies/returns" className="underline">Returns &amp; Exchanges policy</a>{" "}
+            for how to use this right, our own extended 30-day return policy, and what isn&apos;t
+            eligible for return.
           </p>
         </section>
         <section>
           <h2 className="text-xl font-bold text-espresso">Product safety &amp; warranty</h2>
           <p className="mt-2">
-            {/* TODO: confirm warranty terms once supplier warranty details are finalized */}
             We only sell toys tested to recognized safety standards for their stated age range.
             If a toy arrives faulty, see the Returns &amp; Exchanges policy above — most items also
             carry a manufacturer warranty against defects, noted on the product page where it
@@ -73,10 +74,11 @@ export default function TermsPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Limitation of liability</h2>
           <p className="mt-2">
-            To the extent permitted by Armenian law, {site.legalName} is not liable for indirect
-            or consequential losses arising from your use of the site or our products, beyond the
-            price you paid for the item in question. Nothing in these terms limits any right you
-            have under Armenian consumer protection law that can&apos;t lawfully be excluded.
+            To the extent permitted by Armenian law, {site.legalName}{" "}
+            is not liable for indirect or consequential losses arising from your use of the site or our products,
+            beyond the price you paid for the item in question. Nothing in these terms limits
+            any right you have under Armenian consumer protection law that can&apos;t lawfully
+            be excluded.
           </p>
         </section>
         <section>

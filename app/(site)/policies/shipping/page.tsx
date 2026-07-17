@@ -12,7 +12,7 @@ export default function ShippingPolicyPage() {
   return (
     <Container className="max-w-3xl py-12">
       <h1 className="text-4xl font-bold text-espresso">Shipping &amp; Delivery Policy</h1>
-      <p className="mt-2 text-sm text-espresso/70">Last updated: placeholder — update before launch</p>
+      <p className="mt-2 text-sm text-espresso/70">Last updated: July 18, 2026</p>
 
       <div className="prose-content mt-8 space-y-6 text-espresso/80">
         <section>
@@ -28,7 +28,6 @@ export default function ShippingPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Local delivery (Yerevan)</h2>
           <p className="mt-2">
-            {/* TODO: confirm real delivery radius, timeframe, and fees before launch */}
             We currently offer local delivery within Yerevan. Choose &quot;Local delivery&quot;
             at checkout and our team will reach out to confirm delivery timing and any applicable
             delivery fee based on your address.
@@ -46,7 +45,6 @@ export default function ShippingPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Order processing time</h2>
           <p className="mt-2">
-            {/* TODO: confirm real processing time */}
             Orders are typically prepared for pickup or delivery within 1–2 business days.
             You&apos;ll receive an email confirmation as soon as your order is placed.
           </p>
