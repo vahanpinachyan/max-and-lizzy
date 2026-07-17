@@ -7,17 +7,14 @@ import type { Product, AgeRange, CategoryInfo } from "@/types";
 import { ageRangeLabel } from "@/lib/format";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { QuickViewModal } from "@/components/shop/QuickViewModal";
+import { PriceRangeFilter } from "@/components/shop/PriceRangeFilter";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
 import { localizeCategories, localizeCategory } from "@/lib/i18n/localize-data";
 
 type SortKey = "featured" | "price-asc" | "price-desc" | "name-asc";
 
-const PRICE_BUCKET_TESTS = [
-  { id: "under-10k", test: (p: number) => p < 10000 },
-  { id: "10k-20k", test: (p: number) => p >= 10000 && p < 20000 },
-  { id: "20k-30k", test: (p: number) => p >= 20000 && p < 30000 },
-  { id: "over-30k", test: (p: number) => p >= 30000 },
-];
+const PRICE_MIN = 0;
+const PRICE_MAX = 100000;
 
 function toggle<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -36,7 +33,7 @@ export function ShopCatalog({
 }) {
   const [subcategory, setSubcategory] = useState<string | null>(null);
   const [ageRanges, setAgeRanges] = useState<AgeRange[]>([]);
-  const [priceBuckets, setPriceBuckets] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, PRICE_MAX]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [sort, setSort] = useState<SortKey>("featured");
@@ -48,13 +45,6 @@ export function ShopCatalog({
   const localizedCategory = category ? localizeCategory(category, locale) : undefined;
   const allCategories = localizeCategories(locale);
 
-  const priceBucketLabels: Record<string, string> = {
-    "under-10k": t.shop.priceUnder10k,
-    "10k-20k": t.shop.price10to20k,
-    "20k-30k": t.shop.price20to30k,
-    "over-30k": t.shop.priceOver30k,
-  };
-
   const availableAgeRanges = useMemo(
     () => Array.from(new Set(products.map((p) => p.ageRange))) as AgeRange[],
     [products]
@@ -65,10 +55,8 @@ export function ShopCatalog({
 
     if (subcategory) result = result.filter((p) => p.subcategory === subcategory);
     if (ageRanges.length) result = result.filter((p) => ageRanges.includes(p.ageRange));
-    if (priceBuckets.length) {
-      result = result.filter((p) =>
-        priceBuckets.some((id) => PRICE_BUCKET_TESTS.find((b) => b.id === id)?.test(p.priceAmd))
-      );
+    if (priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX) {
+      result = result.filter((p) => p.priceAmd >= priceRange[0] && p.priceAmd <= priceRange[1]);
     }
     if (selectedMaterials.length) {
       result = result.filter((p) => p.materials.some((m) => selectedMaterials.includes(m)));
@@ -101,15 +89,16 @@ export function ShopCatalog({
         sorted.sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
     }
     return sorted;
-  }, [products, subcategory, ageRanges, priceBuckets, selectedMaterials, selectedBrands, search, sort]);
+  }, [products, subcategory, ageRanges, priceRange, selectedMaterials, selectedBrands, search, sort]);
 
+  const priceIsActive = priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX;
   const activeFilterCount =
-    (subcategory ? 1 : 0) + ageRanges.length + priceBuckets.length + selectedMaterials.length + selectedBrands.length;
+    (subcategory ? 1 : 0) + ageRanges.length + (priceIsActive ? 1 : 0) + selectedMaterials.length + selectedBrands.length;
 
   function clearFilters() {
     setSubcategory(null);
     setAgeRanges([]);
-    setPriceBuckets([]);
+    setPriceRange([PRICE_MIN, PRICE_MAX]);
     setSelectedMaterials([]);
     setSelectedBrands([]);
     setSearch("");
@@ -177,18 +166,15 @@ export function ShopCatalog({
 
       <fieldset>
         <legend className="font-semibold text-espresso">{t.shop.price}</legend>
-        <div className="mt-3 space-y-2 text-sm">
-          {PRICE_BUCKET_TESTS.map((bucket) => (
-            <label key={bucket.id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={priceBuckets.includes(bucket.id)}
-                onChange={() => setPriceBuckets((prev) => toggle(prev, bucket.id))}
-                className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
-              />
-              {priceBucketLabels[bucket.id]}
-            </label>
-          ))}
+        <div className="mt-3">
+          <PriceRangeFilter
+            min={priceRange[0]}
+            max={priceRange[1]}
+            onApply={(min, max) => setPriceRange([min, max])}
+            applyLabel={t.shop.applyPrice}
+            minAriaLabel={t.shop.minPriceAria}
+            maxAriaLabel={t.shop.maxPriceAria}
+          />
         </div>
       </fieldset>
 
