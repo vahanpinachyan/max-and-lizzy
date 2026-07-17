@@ -13,7 +13,7 @@ import { InstagramFeed } from "@/components/home/InstagramFeed";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Max & Lizzy | Educational, Wooden & Eco-Friendly Toys in Yerevan",
+  title: "Max & Lizzy | Wooden & Eco-Friendly Toys in Yerevan",
   description:
     "Shop safety-tested educational, wooden, and eco-friendly toys for babies and preschoolers. Visit our Yerevan store on Mashtots Avenue or shop online.",
   pathname: "/",

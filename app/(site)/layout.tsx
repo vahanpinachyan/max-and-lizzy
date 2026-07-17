@@ -51,7 +51,7 @@ const notoSansArmenian = Noto_Sans_Armenian({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} | Educational, Wooden & Eco-Friendly Toys in Yerevan`,
+    default: `${site.name} | Wooden & Eco-Friendly Toys in Yerevan`,
     template: `%s | ${site.name}`,
   },
   description: site.description,

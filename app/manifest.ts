@@ -3,7 +3,7 @@ import { site } from "@/data/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${site.name} — Educational, Wooden & Eco-Friendly Toys`,
+    name: `${site.name} — Wooden & Eco-Friendly Toys`,
     short_name: site.name,
     description: site.description,
     start_url: "/",
