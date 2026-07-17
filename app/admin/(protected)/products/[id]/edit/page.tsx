@@ -44,6 +44,16 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     dimensions: product.dimensions ?? "",
     weightGrams: product.weightGrams ?? "",
     careInstructions: product.careInstructions ?? "",
+    countryOfOrigin: product.countryOfOrigin ?? "",
+    packageContents: product.packageContents ?? "",
+    assemblyRequired: product.assemblyRequired ?? false,
+    assemblyNote: product.assemblyNote ?? "",
+    supervisionNote: product.supervisionNote ?? "",
+    warranty: product.warranty ?? "",
+    pickBy: (product.pickBy as "max" | "lizzy" | null) ?? "",
+    pickNote: product.pickNote ?? "",
+    pickNoteHy: product.pickNoteHy ?? "",
+    pickNoteRu: product.pickNoteRu ?? "",
   };
 
   const boundUpdate = updateProduct.bind(null, product.id);

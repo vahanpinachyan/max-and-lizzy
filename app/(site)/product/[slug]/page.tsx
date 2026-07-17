@@ -14,6 +14,7 @@ import { ImageGallery } from "@/components/product/ImageGallery";
 import { AddToCart } from "@/components/product/AddToCart";
 import { StickyAddToCart } from "@/components/product/StickyAddToCart";
 import { ProductFacts } from "@/components/product/ProductFacts";
+import { PickCallout } from "@/components/product/PickCallout";
 import { Reviews } from "@/components/product/Reviews";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -93,6 +94,11 @@ export default async function ProductPage({
                 -{Math.round(100 - (product.priceAmd / product.compareAtPriceAmd) * 100)}%
               </Badge>
             )}
+            {product.pickBy && (
+              <Badge variant={product.pickBy === "max" ? "wood" : "rose"}>
+                {product.pickBy === "max" ? t.badges.maxPick : t.badges.lizzyPick}
+              </Badge>
+            )}
             {product.bestseller && <Badge variant="terracotta">{t.badges.bestseller}</Badge>}
             {product.newArrival && <Badge variant="wood">{t.badges.new}</Badge>}
             {!product.inStock && <Badge variant="neutral">{t.badges.outOfStock}</Badge>}
@@ -113,6 +119,14 @@ export default async function ProductPage({
             )}
           </div>
           <p className="mt-4 text-espresso/80">{product.description}</p>
+
+          {product.pickBy && product.pickNote && (
+            <PickCallout
+              pickBy={product.pickBy}
+              note={product.pickNote}
+              label={product.pickBy === "max" ? t.badges.maxPick : t.badges.lizzyPick}
+            />
+          )}
 
           <div className="mt-6">
             <AddToCart product={product} id={addToCartId} />

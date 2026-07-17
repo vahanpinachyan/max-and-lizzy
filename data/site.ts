@@ -18,6 +18,12 @@ export const site = {
   phone: "+374 33 09 50 50",
   phoneHref: "tel:+37433095050",
   email: "info@maxandlizzy.com",
+  // TODO: fill in registration number, tax/VAT ID, and legal address before
+  // launch — see /policies/terms, which currently carries the same TODO.
+  legalName: "Baby Land LLC",
+  legalNameHy: "«Բեյբի Լենդ» ՍՊԸ",
+  legalRegistrationNumber: "", // TODO
+  legalTaxId: "", // TODO
   hours: [
     { day: "Monday", hours: "10:00 AM – 9:00 PM" },
     { day: "Tuesday", hours: "10:00 AM – 9:00 PM" },

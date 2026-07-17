@@ -74,6 +74,19 @@ model Product {
   weightGrams      Int?
   careInstructions String?
 
+  countryOfOrigin  String?
+  packageContents  String?
+  assemblyRequired Boolean?
+  assemblyNote     String?
+  supervisionNote  String?
+  warranty         String?
+
+  // "max" | "lizzy" | null — powers the Max's Pick / Lizzy's Pick badge.
+  pickBy     String?
+  pickNote   String?
+  pickNoteHy String?
+  pickNoteRu String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

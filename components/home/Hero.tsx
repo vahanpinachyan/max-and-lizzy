@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { LinkButton } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { WaveDivider } from "@/components/ui/WaveDivider";
 import { Cloud, Flower } from "@/components/ui/Decorations";
 import { EqualWidthRow } from "@/components/ui/EqualWidthRow";
+import { HeroCharacters } from "@/components/home/HeroCharacters";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export async function Hero() {
@@ -39,17 +39,7 @@ export async function Hero() {
         </div>
 
         <div className="relative flex min-w-0 justify-center lg:justify-end">
-          <div className="relative aspect-square w-full max-w-[28rem] sm:max-w-[34rem] lg:max-w-[40rem]">
-            <Image
-              src="/images/hero-maxlizzy-transparent-v1.png"
-              alt="Illustrated portraits of Max and Lizzy, the two children the store is named for"
-              fill
-              priority
-              quality={95}
-              className="object-contain"
-              sizes="(min-width: 1024px) 45vw, 90vw"
-            />
-          </div>
+          <HeroCharacters maxIntro={t.hero.maxIntro} lizzyIntro={t.hero.lizzyIntro} />
         </div>
       </Container>
 

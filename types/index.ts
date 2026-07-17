@@ -59,6 +59,14 @@ export interface Product {
   dimensions?: string;
   weightGrams?: number;
   careInstructions?: string;
+  countryOfOrigin?: string;
+  packageContents?: string;
+  assemblyRequired?: boolean;
+  assemblyNote?: string;
+  supervisionNote?: string;
+  warranty?: string;
+  pickBy?: "max" | "lizzy";
+  pickNote?: string;
   rating?: number | null;
   reviewCount?: number;
 }

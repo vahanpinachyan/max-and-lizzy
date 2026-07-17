@@ -71,6 +71,16 @@ function buildProductData(record: Record_) {
     dimensions: str(record.dimensions),
     weightGrams: num(record.weightGrams),
     careInstructions: str(record.careInstructions),
+    countryOfOrigin: str(record.countryOfOrigin),
+    packageContents: str(record.packageContents),
+    assemblyRequired: bool(record.assemblyRequired),
+    assemblyNote: str(record.assemblyNote),
+    supervisionNote: str(record.supervisionNote),
+    warranty: str(record.warranty),
+    pickBy: str(record.pickBy),
+    pickNote: str(record.pickNote),
+    pickNoteHy: str(record.pickNoteHy),
+    pickNoteRu: str(record.pickNoteRu),
   };
 }
 
@@ -85,6 +95,7 @@ function formDataToRecord(formData: FormData): Record_ {
   record.featured = formData.get("featured") === "on" ? "true" : "false";
   record.bestseller = formData.get("bestseller") === "on" ? "true" : "false";
   record.newArrival = formData.get("newArrival") === "on" ? "true" : "false";
+  record.assemblyRequired = formData.get("assemblyRequired") === "on" ? "true" : "false";
   return record;
 }
 

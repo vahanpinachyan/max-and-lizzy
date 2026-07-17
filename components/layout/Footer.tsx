@@ -76,6 +76,7 @@ export async function Footer() {
               <li><Link href="/policies/shipping" className="text-cream/80 hover:text-terracotta">{t.footer.shipping}</Link></li>
               <li><Link href="/policies/returns" className="text-cream/80 hover:text-terracotta">{t.footer.returns}</Link></li>
               <li><Link href="/policies/privacy" className="text-cream/80 hover:text-terracotta">{t.footer.privacy}</Link></li>
+              <li><Link href="/policies/terms" className="text-cream/80 hover:text-terracotta">{t.footer.terms}</Link></li>
             </ul>
           </nav>
         </div>
@@ -90,7 +91,7 @@ export async function Footer() {
             {" · "}
             <a href={site.phoneHref} className="hover:text-terracotta">{site.phone}</a>
           </address>
-          <p>© {new Date().getFullYear()} {site.name}. {t.footer.rightsReserved}</p>
+          <p>© {new Date().getFullYear()} {site.legalName}. {t.footer.rightsReserved}</p>
         </div>
       </Container>
     </footer>

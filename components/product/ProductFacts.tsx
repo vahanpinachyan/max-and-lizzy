@@ -47,10 +47,50 @@ export async function ProductFacts({ product }: { product: Product }) {
           <dd className="mt-1 text-espresso">{product.dimensions}</dd>
         </div>
       )}
+      {product.weightGrams && (
+        <div>
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.weight}</dt>
+          <dd className="mt-1 text-espresso">
+            {product.weightGrams >= 1000 ? `${(product.weightGrams / 1000).toFixed(1)} kg` : `${product.weightGrams} g`}
+          </dd>
+        </div>
+      )}
+      {product.countryOfOrigin && (
+        <div>
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.countryOfOrigin}</dt>
+          <dd className="mt-1 text-espresso">{product.countryOfOrigin}</dd>
+        </div>
+      )}
       {product.careInstructions && (
         <div>
           <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.care}</dt>
           <dd className="mt-1 text-espresso">{product.careInstructions}</dd>
+        </div>
+      )}
+      {product.packageContents && (
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.packageContents}</dt>
+          <dd className="mt-1 text-espresso">{product.packageContents}</dd>
+        </div>
+      )}
+      {product.assemblyRequired !== undefined && (
+        <div>
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.assembly}</dt>
+          <dd className="mt-1 text-espresso">
+            {product.assemblyRequired ? product.assemblyNote || t.product.assemblyRequired : t.product.assemblyNotRequired}
+          </dd>
+        </div>
+      )}
+      {product.supervisionNote && (
+        <div>
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.supervision}</dt>
+          <dd className="mt-1 text-espresso">{product.supervisionNote}</dd>
+        </div>
+      )}
+      {product.warranty && (
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.warranty}</dt>
+          <dd className="mt-1 text-espresso">{product.warranty}</dd>
         </div>
       )}
     </dl>

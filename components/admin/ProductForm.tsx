@@ -34,6 +34,16 @@ export interface ProductFormInitial {
   dimensions: string;
   weightGrams: number | "";
   careInstructions: string;
+  countryOfOrigin: string;
+  packageContents: string;
+  assemblyRequired: boolean;
+  assemblyNote: string;
+  supervisionNote: string;
+  warranty: string;
+  pickBy: "" | "max" | "lizzy";
+  pickNote: string;
+  pickNoteHy: string;
+  pickNoteRu: string;
 }
 
 export const emptyProduct: ProductFormInitial = {
@@ -67,6 +77,16 @@ export const emptyProduct: ProductFormInitial = {
   dimensions: "",
   weightGrams: "",
   careInstructions: "",
+  countryOfOrigin: "",
+  packageContents: "",
+  assemblyRequired: false,
+  assemblyNote: "",
+  supervisionNote: "",
+  warranty: "",
+  pickBy: "",
+  pickNote: "",
+  pickNoteHy: "",
+  pickNoteRu: "",
 };
 
 type ActionFn = (prevState: { error: string | null }, formData: FormData) => Promise<{ error: string | null }>;
@@ -314,9 +334,56 @@ export function ProductForm({
             <input name="weightGrams" type="number" min={0} defaultValue={initial.weightGrams} className={inputClass} />
           </Field>
         </div>
-        <Field label="Care instructions">
-          <input name="careInstructions" defaultValue={initial.careInstructions} className={inputClass} />
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Country of origin">
+            <input name="countryOfOrigin" defaultValue={initial.countryOfOrigin} className={inputClass} placeholder="Made in Germany" />
+          </Field>
+          <Field label="Care instructions">
+            <input name="careInstructions" defaultValue={initial.careInstructions} className={inputClass} />
+          </Field>
+        </div>
+        <Field label="What's in the box">
+          <input name="packageContents" defaultValue={initial.packageContents} className={inputClass} placeholder="1x rocking horse" />
         </Field>
+        <div className="grid grid-cols-2 gap-4">
+          <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
+            <input type="checkbox" name="assemblyRequired" defaultChecked={initial.assemblyRequired} className="h-4 w-4 rounded border-tan text-terracotta" />
+            Some assembly required
+          </label>
+          <Field label="Assembly note (optional, shown if checked above)">
+            <input name="assemblyNote" defaultValue={initial.assemblyNote} className={inputClass} />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Supervision / safety note">
+            <input name="supervisionNote" defaultValue={initial.supervisionNote} className={inputClass} placeholder="Choking hazard — small parts" />
+          </Field>
+          <Field label="Warranty">
+            <input name="warranty" defaultValue={initial.warranty} className={inputClass} />
+          </Field>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-semibold text-espresso">Max &amp; Lizzy&apos;s Pick (optional)</h2>
+        <Field label="Whose pick is this?">
+          <select name="pickBy" defaultValue={initial.pickBy} className={inputClass}>
+            <option value="">Not a pick</option>
+            <option value="max">Max&apos;s Pick</option>
+            <option value="lizzy">Lizzy&apos;s Pick</option>
+          </select>
+        </Field>
+        <Field label="Pick note (English) — short, first-person, shown on the product page">
+          <textarea name="pickNote" defaultValue={initial.pickNote} rows={2} className={inputClass} />
+        </Field>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Pick note (Armenian)">
+            <textarea name="pickNoteHy" defaultValue={initial.pickNoteHy} rows={2} className={inputClass} />
+          </Field>
+          <Field label="Pick note (Russian)">
+            <textarea name="pickNoteRu" defaultValue={initial.pickNoteRu} rows={2} className={inputClass} />
+          </Field>
+        </div>
       </section>
 
       <button

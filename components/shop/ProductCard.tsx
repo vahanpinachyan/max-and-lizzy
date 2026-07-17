@@ -60,6 +60,15 @@ export function ProductCard({
               -{discountPct}%
             </Badge>
           )}
+          {product.pickBy && (
+            <Badge
+              variant={product.pickBy === "max" ? "wood" : "rose"}
+              onImage
+              className="justify-center leading-none"
+            >
+              {product.pickBy === "max" ? t.badges.maxPick : t.badges.lizzyPick}
+            </Badge>
+          )}
           {product.bestseller && (
             <Badge variant="terracotta" onImage className="justify-center leading-none">
               {t.badges.bestseller}

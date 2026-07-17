@@ -40,6 +40,14 @@ function mapProduct(row: DbProduct, locale: Locale): Product {
     dimensions: row.dimensions ?? undefined,
     weightGrams: row.weightGrams ?? undefined,
     careInstructions: row.careInstructions ?? undefined,
+    countryOfOrigin: row.countryOfOrigin ?? undefined,
+    packageContents: row.packageContents ?? undefined,
+    assemblyRequired: row.assemblyRequired ?? undefined,
+    assemblyNote: row.assemblyNote ?? undefined,
+    supervisionNote: row.supervisionNote ?? undefined,
+    warranty: row.warranty ?? undefined,
+    pickBy: (row.pickBy as "max" | "lizzy" | null) ?? undefined,
+    pickNote: pick(locale, row.pickNote ?? "", row.pickNoteHy, row.pickNoteRu) || undefined,
   };
 }
 
