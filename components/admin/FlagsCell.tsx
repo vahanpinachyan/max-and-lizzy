@@ -58,7 +58,7 @@ export function FlagsCell({
           disabled={pending}
           onClick={() => toggleFlag(flag, false)}
           title={`Remove "${FLAG_META[flag].label}"`}
-          className={`group flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${FLAG_META[flag].className} disabled:cursor-not-allowed disabled:opacity-60`}
+          className={`group flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold leading-none ${FLAG_META[flag].className} disabled:cursor-not-allowed disabled:opacity-60`}
         >
           {FLAG_META[flag].label}
           <span className="inline-block w-2 text-center text-espresso/50 opacity-0 transition-opacity group-hover:opacity-100">✕</span>
