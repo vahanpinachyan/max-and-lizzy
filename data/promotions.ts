@@ -28,7 +28,7 @@ export const promotions: Promotion[] = [
     slug: "outdoor-play-season",
     title: "Ready for Outdoor Play",
     subtitle: "Balance bikes, sand & water tables for sunny days",
-    image: "/images/promotions/outdoor-play-season.jpg",
+    image: "/images/promotions/outdoor-play-season-v2.jpg",
     href: "/shop/outdoor-play",
     ctaLabel: "Shop Outdoor Play",
   },

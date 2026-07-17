@@ -43,26 +43,17 @@ export async function Hero() {
           </div>
         </div>
 
-        <div className="relative min-w-0">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[2.5rem] shadow-xl">
+        <div className="relative flex min-w-0 justify-center lg:justify-end">
+          <div className="relative aspect-square w-full max-w-[28rem] sm:max-w-[34rem] lg:max-w-[40rem]">
             <Image
-              src="/images/hero-maxlizzy-v1.jpg"
-              alt="Illustrated portraits of Max and Lizzy, the two children the store is named for, standing together under a rainbow"
+              src="/images/hero-maxlizzy-transparent-v1.png"
+              alt="Illustrated portraits of Max and Lizzy, the two children the store is named for"
               fill
               priority
               quality={95}
-              className="object-cover"
-              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-contain"
+              sizes="(min-width: 1024px) 45vw, 90vw"
             />
-          </div>
-          <div className="absolute -bottom-6 -left-6 hidden max-w-[12rem] items-center gap-2 rounded-2xl border border-tan/60 bg-white/55 px-4 py-3 shadow-lg backdrop-blur-md sm:flex">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-sage-dark)" className="shrink-0" aria-hidden="true">
-              <path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3z" strokeWidth="2" strokeLinejoin="round" />
-              <path d="M9 12l2 2 4-4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="text-xs font-semibold leading-tight text-espresso break-words">
-              {t.hero.trustBadge}
-            </span>
           </div>
         </div>
       </Container>
