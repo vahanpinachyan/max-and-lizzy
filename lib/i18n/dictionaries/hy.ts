@@ -49,7 +49,7 @@ export const hy: Dictionary = {
     instagramDescription: "Պահեստի նորացումներ, կուլիսներ և իրական հաճախորդներ՝ խաղալով իրական խաղալիքներով։",
     followUs: "Հետևել մեզ",
     newsletterTitle: "Ստացեք նվերների ուղեցույցներ և խաղի խորհուրդներ Ձեր փոստարկղում",
-    newsletterSubtitle: "Ամսական մեկ նամակ։ Երբեք սպամ։",
+    newsletterSubtitle: "Ամսական ընդամենը մեկ խորիմաստ նամակ։",
     newsletterPlaceholder: "your@email.com",
     newsletterSubscribe: "Բաժանորդագրվել",
     newsletterJoining: "Բաժանորդագրվում է…",

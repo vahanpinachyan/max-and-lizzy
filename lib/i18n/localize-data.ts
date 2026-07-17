@@ -1,5 +1,6 @@
 import type { CategoryInfo } from "@/types";
 import { categories as baseCategories } from "@/data/categories";
+import { promotions as basePromotions, type Promotion } from "@/data/promotions";
 import type { Locale } from "@/lib/i18n/locales";
 
 interface CategoryTranslation {
@@ -131,4 +132,66 @@ export function localizeCategories(locale: Locale): CategoryInfo[] {
 export function getLocalizedCategory(slug: string, locale: Locale): CategoryInfo | undefined {
   const cat = baseCategories.find((c) => c.slug === slug);
   return cat ? localizeCategory(cat, locale) : undefined;
+}
+
+interface PromotionTranslation {
+  title: string;
+  subtitle: string;
+  ctaLabel: string;
+}
+
+const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTranslation>> = {
+  hy: {
+    "new-stem-arrivals": {
+      title: "Նոր՝ ՍՏԵՄ կառուցողական հավաքածուներ",
+      subtitle: "Մագնիսական սալիկներ, մարմարե ուղիներ և ավելին հետաքրքրասեր փոքրիկների համար",
+      ctaLabel: "Գնել Կրթական",
+    },
+    "gift-guide-under-15000": {
+      title: "Նվերներ մինչև 15,000 դրամ",
+      subtitle: "Խորիմաստ նվերներ՝ առանց բյուջեն գերազանցելու",
+      ctaLabel: "Տեսնել ուղեցույցը",
+    },
+    "outdoor-play-season": {
+      title: "Անժամանակ փայտյա խաղալիքներ",
+      subtitle: "Դասավորում, կառուցում և երևակայական խաղ՝ ստեղծված երկար ծառայելու համար",
+      ctaLabel: "Գնել փայտյա խաղալիքներ",
+    },
+    "visit-yerevan-store": {
+      title: "Այցելեք մեզ Մաշտոցի պողոտայում",
+      subtitle: "Տեսեք և փորձեք ամեն խաղալիք անձամբ, բաց ենք ամեն օր",
+      ctaLabel: "Ուղղություններ",
+    },
+  },
+  ru: {
+    "new-stem-arrivals": {
+      title: "Новинка: STEM-конструкторы",
+      subtitle: "Магнитные плитки, мраморные дорожки и другое для любознательных строителей",
+      ctaLabel: "Развивающие игрушки",
+    },
+    "gift-guide-under-15000": {
+      title: "Подарки до 15 000 драм",
+      subtitle: "Продуманные подарки, которые не ударят по бюджету",
+      ctaLabel: "Смотреть подборку",
+    },
+    "outdoor-play-season": {
+      title: "Деревянные игрушки на века",
+      subtitle: "Сортировка, конструирование и сюжетная игра — сделано на долгие годы",
+      ctaLabel: "Деревянные игрушки",
+    },
+    "visit-yerevan-store": {
+      title: "Приходите к нам на проспект Маштоца",
+      subtitle: "Посмотрите и попробуйте каждую игрушку лично, открыты каждый день",
+      ctaLabel: "Проложить маршрут",
+    },
+  },
+};
+
+export function localizePromotions(locale: Locale): Promotion[] {
+  if (locale === "en") return basePromotions;
+  const translations = promotionTranslations[locale];
+  return basePromotions.map((promo) => {
+    const tr = translations[promo.slug];
+    return tr ? { ...promo, ...tr } : promo;
+  });
 }

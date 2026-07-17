@@ -26,11 +26,11 @@ export const promotions: Promotion[] = [
   },
   {
     slug: "outdoor-play-season",
-    title: "Ready for Outdoor Play",
-    subtitle: "Balance bikes, sand & water tables for sunny days",
+    title: "Timeless Wooden Toys",
+    subtitle: "Stacking, building & imaginative play, made to last",
     image: "/images/promotions/outdoor-play-season-v2.jpg",
-    href: "/shop/outdoor-play",
-    ctaLabel: "Shop Outdoor Play",
+    href: "/shop/wooden-toys",
+    ctaLabel: "Shop Wooden Toys",
   },
   {
     slug: "visit-yerevan-store",

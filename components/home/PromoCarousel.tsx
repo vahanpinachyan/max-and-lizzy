@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { promotions } from "@/data/promotions";
-import { useTranslations } from "@/lib/i18n/context";
+import { useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
+import { localizePromotions } from "@/lib/i18n/localize-data";
 
 const AUTOPLAY_MS = 6000;
 const GESTURE_LOCK_MS = 700;
@@ -13,7 +13,8 @@ const GESTURE_LOCK_MS = 700;
 export function PromoCarousel() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const t = useTranslations();
+  const { dict: t, locale } = useI18n();
+  const promotions = localizePromotions(locale);
   const count = promotions.length;
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const gestureLocked = useRef(false);

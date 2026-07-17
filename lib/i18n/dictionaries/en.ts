@@ -47,7 +47,7 @@ export const en = {
     instagramDescription: "Restocks, behind-the-scenes, and real customers playing with real toys.",
     followUs: "Follow Us",
     newsletterTitle: "Get gift guides & play tips in your inbox",
-    newsletterSubtitle: "One email a month. No spam, ever.",
+    newsletterSubtitle: "Just one thoughtful email a month.",
     newsletterPlaceholder: "your@email.com",
     newsletterSubscribe: "Subscribe",
     newsletterJoining: "Joining…",

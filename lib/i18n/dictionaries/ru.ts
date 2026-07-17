@@ -49,7 +49,7 @@ export const ru: Dictionary = {
     instagramDescription: "Пополнения ассортимента, закулисье и реальные покупатели, играющие с настоящими игрушками.",
     followUs: "Подписаться",
     newsletterTitle: "Получайте подборки подарков и советы по играм на почту",
-    newsletterSubtitle: "Одно письмо в месяц. Никогда никакого спама.",
+    newsletterSubtitle: "Всего одно содержательное письмо в месяц.",
     newsletterPlaceholder: "your@email.com",
     newsletterSubscribe: "Подписаться",
     newsletterJoining: "Подписываем…",
