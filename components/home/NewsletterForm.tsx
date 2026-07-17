@@ -37,9 +37,6 @@ export function NewsletterForm({ variant = "section" }: { variant?: "section" | 
         <h2 className={clsx("font-heading font-bold", isFooter ? "text-lg text-cream" : "text-2xl text-espresso")}>
           {t.home.newsletterTitle}
         </h2>
-        <p className={clsx("mt-1 text-sm", isFooter ? "text-cream/70" : "text-espresso/70")}>
-          {t.home.newsletterSubtitle}
-        </p>
       </div>
       <form onSubmit={handleSubmit} className="mt-4 flex w-full max-w-md gap-2 sm:mt-0" noValidate>
         <label htmlFor="newsletter-email" className="sr-only">
