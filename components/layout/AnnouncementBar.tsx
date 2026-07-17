@@ -18,7 +18,7 @@ function MessageGroup({ ariaHidden, announcements }: { ariaHidden?: boolean; ann
 export async function AnnouncementBar() {
   const { dict } = await getServerDictionary();
   return (
-    <div className="overflow-hidden bg-espresso py-2 text-cream" aria-label={dict.home.announcementsAria}>
+    <div className="overflow-hidden overscroll-x-none bg-espresso py-2 text-cream" aria-label={dict.home.announcementsAria}>
       <div className="flex w-max animate-marquee">
         <MessageGroup announcements={dict.announcements} />
         <MessageGroup ariaHidden announcements={dict.announcements} />
