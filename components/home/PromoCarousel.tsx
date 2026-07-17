@@ -19,6 +19,30 @@ export function PromoCarousel() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const gestureLocked = useRef(false);
   const touchStartX = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // The trackpad "swipe back" gesture in Chrome/Edge only honors
+  // overscroll-behavior-x on the document root, and only while the
+  // triggering scroll happens over an element it recognizes as a scroll
+  // boundary — this carousel slides via `transform`, not native scroll, so
+  // it never qualifies on its own. Toggle the root property instead,
+  // switching it off again once the carousel scrolls out of view so the
+  // gesture keeps working normally over the rest of the page.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        document.documentElement.style.overscrollBehaviorX = entry.isIntersecting ? "none" : "";
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.overscrollBehaviorX = "";
+    };
+  }, []);
 
   const goTo = useCallback((i: number) => setIndex(((i % count) + count) % count), [count]);
   const next = useCallback(() => goTo(index + 1), [goTo, index]);
@@ -70,9 +94,10 @@ export function PromoCarousel() {
 
   return (
     <section
+      ref={sectionRef}
       aria-roledescription="carousel"
       aria-label={t.home.promoRegionAria}
-      className="relative overflow-hidden overscroll-x-none bg-beige"
+      className="relative overflow-hidden bg-beige"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}

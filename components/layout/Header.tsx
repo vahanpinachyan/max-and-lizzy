@@ -74,7 +74,7 @@ export function Header() {
     <motion.header
       animate={{ y: hidden ? "-100%" : "0%" }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="sticky top-0 z-40 overscroll-x-none border-b border-tan/60 bg-cream/95 backdrop-blur"
+      className="sticky top-0 z-40 border-b border-tan/60 bg-cream/95 backdrop-blur"
     >
       <a href="#main-content" className="skip-link">
         {t.nav.skipToContent}
