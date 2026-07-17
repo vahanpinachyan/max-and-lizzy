@@ -21,12 +21,6 @@ export async function Hero() {
 
       <Container className="relative grid min-w-0 items-center gap-10 py-14 lg:grid-cols-2 lg:py-24">
         <div className="min-w-0">
-          <p className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-sage/15 px-4 py-1.5 text-sm font-semibold text-sage-dark">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2 C 8 6, 6 9, 6 13 A6 6 0 0 0 18 13 C18 9, 16 6, 12 2 Z" />
-            </svg>
-            {t.hero.eyebrow}
-          </p>
           <h1 className="break-words text-5xl leading-[1.05] font-bold text-espresso sm:text-6xl lg:text-7xl">
             {t.hero.title}
           </h1>
