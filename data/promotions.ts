@@ -9,12 +9,12 @@ export interface Promotion {
 
 export const promotions: Promotion[] = [
   {
-    slug: "new-stem-arrivals",
-    title: "New: STEM Building Sets",
-    subtitle: "Magnetic tiles, marble runs & more for curious builders",
-    image: "/images/promotions/new-stem-arrivals.jpg",
-    href: "/shop/educational",
-    ctaLabel: "Shop Educational",
+    slug: "musical-toys",
+    title: "New: Musical Toys",
+    subtitle: "Xylophones, drums & mini instruments for tiny musicians",
+    image: "/images/promotions/musical-toys-v1.jpg",
+    href: "/shop/wooden-toys",
+    ctaLabel: "Shop Musical Toys",
   },
   {
     slug: "gift-guide-under-15000",

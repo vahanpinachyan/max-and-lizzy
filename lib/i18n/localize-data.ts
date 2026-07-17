@@ -142,10 +142,10 @@ interface PromotionTranslation {
 
 const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTranslation>> = {
   hy: {
-    "new-stem-arrivals": {
-      title: "Նոր՝ ՍՏԵՄ կառուցողական հավաքածուներ",
-      subtitle: "Մագնիսական սալիկներ, մարմարե ուղիներ և ավելին հետաքրքրասեր փոքրիկների համար",
-      ctaLabel: "Գնել Կրթական",
+    "musical-toys": {
+      title: "Նոր՝ երաժշտական խաղալիքներ",
+      subtitle: "Քսիլոֆոններ, թմբուկներ և մանրանկարային գործիքներ փոքրիկ երաժիշտների համար",
+      ctaLabel: "Գնել երաժշտական խաղալիքներ",
     },
     "gift-guide-under-15000": {
       title: "Նվերներ մինչև 15,000 դրամ",
@@ -164,10 +164,10 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
     },
   },
   ru: {
-    "new-stem-arrivals": {
-      title: "Новинка: STEM-конструкторы",
-      subtitle: "Магнитные плитки, мраморные дорожки и другое для любознательных строителей",
-      ctaLabel: "Развивающие игрушки",
+    "musical-toys": {
+      title: "Новинка: музыкальные игрушки",
+      subtitle: "Ксилофоны, барабаны и мини-инструменты для маленьких музыкантов",
+      ctaLabel: "Музыкальные игрушки",
     },
     "gift-guide-under-15000": {
       title: "Подарки до 15 000 драм",
