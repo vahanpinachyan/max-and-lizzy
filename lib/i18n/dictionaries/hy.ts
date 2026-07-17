@@ -237,6 +237,7 @@ export const hy: Dictionary = {
     shopCategoriesAria: "Խանութի կատեգորիաներ",
     companyAria: "Ընկերություն",
     policiesAria: "Քաղաքականություն",
+    weAccept: "Մենք ընդունում ենք",
   },
   checkoutSuccess: {
     title: "Շնորհակալություն Ձեր պատվերի համար!",

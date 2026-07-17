@@ -2,6 +2,7 @@ import Link from "next/link";
 import { site } from "@/data/site";
 import { Container } from "@/components/ui/Container";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
+import { PaymentLogos } from "@/components/layout/PaymentLogos";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { localizeCategories } from "@/lib/i18n/localize-data";
 
@@ -85,7 +86,11 @@ export async function Footer() {
           <NewsletterForm variant="footer" />
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-cream/15 pt-6 text-sm text-cream/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 border-t border-cream/15 pt-6">
+          <PaymentLogos label={t.footer.weAccept} />
+        </div>
+
+        <div className="mt-6 flex flex-col gap-4 border-t border-cream/15 pt-6 text-sm text-cream/60 sm:flex-row sm:items-center sm:justify-between">
           <address className="not-italic">
             {site.address.street}, {site.address.city}, {site.address.country}
             {" · "}

@@ -237,6 +237,7 @@ export const ru: Dictionary = {
     shopCategoriesAria: "Категории магазина",
     companyAria: "Компания",
     policiesAria: "Политики",
+    weAccept: "Мы принимаем",
   },
   checkoutSuccess: {
     title: "Спасибо за ваш заказ!",

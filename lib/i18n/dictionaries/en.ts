@@ -235,6 +235,7 @@ export const en = {
     shopCategoriesAria: "Shop categories",
     companyAria: "Company",
     policiesAria: "Policies",
+    weAccept: "We accept",
   },
   checkoutSuccess: {
     title: "Thank you for your order!",

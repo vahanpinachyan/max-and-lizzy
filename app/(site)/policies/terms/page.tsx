@@ -58,8 +58,7 @@ export default function TermsPolicyPage() {
             If you bought online, Armenian law gives you the right to cancel your order and
             return it within 14 days of receiving it, without needing to give a reason. See our{" "}
             <a href="/policies/returns" className="underline">Returns &amp; Exchanges policy</a>{" "}
-            for how to use this right, our own extended 30-day return policy, and what isn&apos;t
-            eligible for return.
+            for how to use this right and what isn&apos;t eligible for return.
           </p>
         </section>
         <section>

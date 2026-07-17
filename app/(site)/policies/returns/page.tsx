@@ -16,23 +16,13 @@ export default function ReturnsPolicyPage() {
 
       <div className="mt-8 space-y-6 text-espresso/80">
         <section>
-          <h2 className="text-xl font-bold text-espresso">Your legal right to cancel (14 days)</h2>
+          <h2 className="text-xl font-bold text-espresso">14-day returns</h2>
           <p className="mt-2">
-            If you bought online, Armenian law gives you the right to cancel your order and
-            return it within 14 days of receiving it, for any reason — you don&apos;t need to
-            explain why. To use this right, contact us within that window and send the item back
-            in the condition you&apos;d reasonably expect from unwrapping and checking it, the
-            way you would in a physical store. This 14-day right applies on top of, not instead
-            of, our own 30-day policy below.
-          </p>
-        </section>
-        <section>
-          <h2 className="text-xl font-bold text-espresso">Our 30-day return policy</h2>
-          <p className="mt-2">
-            We want you and your child to love every toy from Max &amp; Lizzy. If something
-            isn&apos;t right, you may return unused, unopened items in original packaging within
-            30 days of purchase for a full refund or exchange — no need to fall back on the
-            14-day legal minimum above.
+            We want you and your child to love every toy from Max &amp; Lizzy. You may return
+            unused, unopened items in original packaging within 14 days of purchase (or of
+            delivery, for online orders) for a full refund or exchange. If you bought online,
+            this window is also your legal right under Armenian consumer protection law — you
+            don&apos;t need to give us a reason.
           </p>
         </section>
         <section>
