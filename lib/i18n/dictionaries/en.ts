@@ -36,7 +36,6 @@ export const en = {
     bestsellersTitle: "Bestsellers",
     categoryEyebrow: "Shop by category",
     categoryTitle: "Find the right toy, fast",
-    categoryDescription: "Five simple categories built around how kids actually play.",
     brandTrustEyebrow: "Imported from Europe",
     brandTrustTitle: "Real craftsmanship, not just marketing",
     brandTrustSubtitle: "Every toy we carry comes from established European workshops — built from real wood and tested to EN71 safety standards, not mass-produced plastic with a nice photo.",

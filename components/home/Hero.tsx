@@ -3,6 +3,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { WaveDivider } from "@/components/ui/WaveDivider";
 import { Cloud, Flower } from "@/components/ui/Decorations";
+import { EqualWidthRow } from "@/components/ui/EqualWidthRow";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export async function Hero() {
@@ -27,14 +28,14 @@ export async function Hero() {
           <p className="mt-5 max-w-lg text-lg text-espresso/75">
             {t.hero.subtitle}
           </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <LinkButton href="/shop" size="lg" className="min-w-[13rem]">
+          <EqualWidthRow className="mt-8 flex flex-wrap gap-4">
+            <LinkButton href="/shop" size="lg">
               {t.hero.shopAll}
             </LinkButton>
-            <LinkButton href="/visit-us" variant="outline" size="lg" className="min-w-[13rem]">
+            <LinkButton href="/visit-us" variant="outline" size="lg">
               {t.hero.visitStore}
             </LinkButton>
-          </div>
+          </EqualWidthRow>
         </div>
 
         <div className="relative flex min-w-0 justify-center lg:justify-end">

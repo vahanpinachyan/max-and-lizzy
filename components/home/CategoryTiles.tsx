@@ -13,11 +13,7 @@ export async function CategoryTiles() {
     <section className="relative overflow-hidden py-16">
       <SectionDecorations variant="flowers" />
       <Container className="relative">
-        <SectionHeading
-          eyebrow={t.home.categoryEyebrow}
-          title={t.home.categoryTitle}
-          description={t.home.categoryDescription}
-        />
+        <SectionHeading eyebrow={t.home.categoryEyebrow} title={t.home.categoryTitle} />
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {categories.map((cat) => (
             <Link
