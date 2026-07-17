@@ -28,10 +28,10 @@ export async function Hero() {
             {t.hero.subtitle}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <LinkButton href="/shop" size="lg">
+            <LinkButton href="/shop" size="lg" className="min-w-[13rem]">
               {t.hero.shopAll}
             </LinkButton>
-            <LinkButton href="/visit-us" variant="outline" size="lg">
+            <LinkButton href="/visit-us" variant="outline" size="lg" className="min-w-[13rem]">
               {t.hero.visitStore}
             </LinkButton>
           </div>
