@@ -72,7 +72,7 @@ export function PromoCarousel() {
     <section
       aria-roledescription="carousel"
       aria-label={t.home.promoRegionAria}
-      className="relative overflow-hidden bg-beige"
+      className="relative overflow-hidden overscroll-x-none bg-beige"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}

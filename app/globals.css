@@ -41,15 +41,10 @@
   scroll-behavior: smooth;
 }
 
-html {
-  overscroll-behavior-x: none;
-}
-
 body {
   background: var(--color-cream);
   color: var(--color-espresso);
   font-family: var(--font-body), system-ui, sans-serif;
-  overscroll-behavior-x: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
