@@ -28,10 +28,11 @@ export default function ReturnsPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">How to return an item</h2>
           <p className="mt-2">
-            Bring your item and proof of purchase (order confirmation email or receipt) to our
-            store at 50 Mashtots Avenue during business hours. For online orders picked up via
-            local delivery, please <a href="/contact" className="underline">contact us</a> first
-            to arrange a return.
+            All returns and exchanges must be brought in person to our store at 50 Mashtots
+            Avenue during business hours, along with proof of purchase (order confirmation email
+            or receipt) — this applies to online orders too, including ones delivered to you. We
+            don&apos;t accept returns sent by courier or mail, since our staff need to inspect
+            the item in person before approving a refund or exchange.
           </p>
         </section>
         <section>
