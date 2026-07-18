@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { site } from "@/data/site";
 import { buildMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/Container";
 
@@ -38,8 +39,13 @@ export default function ReturnsPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Damaged or defective items</h2>
           <p className="mt-2">
-            If an item arrives damaged or defective, contact us within 7 days of receiving your
-            order and we&apos;ll arrange a replacement or refund at no cost to you.
+            If an item arrives damaged or defective, let us know within 14 days of receiving
+            your order. Contact us first to show us the problem — by phone, WhatsApp, or Viber
+            at <a href={site.phoneHref} className="underline">{site.phone}</a>, by message on{" "}
+            <a href={site.social.instagram} className="underline" target="_blank" rel="noreferrer">Instagram</a>{" "}
+            or <a href={site.social.facebook} className="underline" target="_blank" rel="noreferrer">Facebook</a>,
+            or simply by visiting the store and showing us in person. Once we&apos;ve confirmed
+            the issue, come visit us in store for a replacement or full refund at no cost to you.
           </p>
         </section>
         <section>
