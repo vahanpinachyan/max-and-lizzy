@@ -4,6 +4,7 @@ import { getProduct } from "@/data/products";
 import { findPromoCode } from "@/data/promo-codes";
 import { site } from "@/data/site";
 import { absoluteUrl } from "@/lib/seo";
+import { getFulfillmentOption, GIFT_WRAP_FEE_AMD } from "@/data/fulfillment";
 
 interface CheckoutRequestItem {
   slug: string;
@@ -11,7 +12,13 @@ interface CheckoutRequestItem {
 }
 
 export async function POST(request: Request) {
-  let body: { items?: CheckoutRequestItem[]; promoCode?: string | null };
+  let body: {
+    items?: CheckoutRequestItem[];
+    promoCode?: string | null;
+    fulfillmentMethod?: string;
+    giftWrap?: boolean;
+    giftMessage?: string;
+  };
   try {
     body = await request.json();
   } catch {
@@ -22,6 +29,15 @@ export async function POST(request: Request) {
   if (requestedItems.length === 0) {
     return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
   }
+
+  // Never trust a fee amount from the client — only the fulfillment method
+  // id is client-chosen; the price it maps to always comes from our own data.
+  const fulfillment = getFulfillmentOption(body.fulfillmentMethod);
+  if (!fulfillment) {
+    return NextResponse.json({ error: "Please choose a pickup or delivery option" }, { status: 400 });
+  }
+  const giftWrap = body.giftWrap === true;
+  const giftMessage = giftWrap ? (body.giftMessage ?? "").slice(0, 500) : "";
 
   // Re-validate the promo code server-side — never trust a discount amount
   // computed on the client.
@@ -55,6 +71,27 @@ export async function POST(request: Request) {
     });
   }
 
+  if (fulfillment.feeAmd > 0) {
+    lineItems.push({
+      quantity: 1,
+      price_data: {
+        currency: site.currency.toLowerCase(),
+        unit_amount: fulfillment.feeAmd * 100,
+        product_data: { name: fulfillment.label },
+      },
+    });
+  }
+  if (giftWrap) {
+    lineItems.push({
+      quantity: 1,
+      price_data: {
+        currency: site.currency.toLowerCase(),
+        unit_amount: GIFT_WRAP_FEE_AMD * 100,
+        product_data: { name: "Gift wrapping" },
+      },
+    });
+  }
+
   try {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
@@ -64,19 +101,11 @@ export async function POST(request: Request) {
       cancel_url: absoluteUrl("/checkout/cancel"),
       shipping_address_collection: { allowed_countries: ["AM"] },
       phone_number_collection: { enabled: true },
-      custom_fields: [
-        {
-          key: "fulfillment_method",
-          label: { type: "custom", custom: "Pickup in-store or local delivery?" },
-          type: "dropdown",
-          dropdown: {
-            options: [
-              { label: "Pickup — 50 Mashtots Avenue", value: "pickup" },
-              { label: "Local delivery (Yerevan)", value: "delivery" },
-            ],
-          },
-        },
-      ],
+      metadata: {
+        fulfillment_method: fulfillment.id,
+        gift_wrap: giftWrap ? "true" : "false",
+        gift_message: giftMessage,
+      },
     });
 
     return NextResponse.json({ url: session.url });

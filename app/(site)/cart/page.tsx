@@ -12,6 +12,8 @@ import { Mascot } from "@/components/ui/Mascot";
 import { SectionDecorations } from "@/components/ui/Decorations";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
+import { GIFT_WRAP_FEE_AMD, type FulfillmentMethod } from "@/data/fulfillment";
+import { localizeFulfillmentOptions } from "@/lib/i18n/localize-data";
 
 export default function CartPage() {
   const t = useTranslations();
@@ -33,6 +35,15 @@ export default function CartPage() {
   const [error, setError] = useState<string | null>(null);
   const [promoInput, setPromoInput] = useState("");
   const [promoMessage, setPromoMessage] = useState<{ text: string; ok: boolean } | null>(null);
+  const [fulfillmentMethod, setFulfillmentMethod] = useState<FulfillmentMethod>("pickup");
+  const [giftWrap, setGiftWrap] = useState(false);
+  const [giftMessage, setGiftMessage] = useState("");
+
+  const fulfillmentOptions = localizeFulfillmentOptions(locale);
+  const selectedFulfillment = fulfillmentOptions.find((o) => o.id === fulfillmentMethod);
+  const deliveryFeeAmd = selectedFulfillment?.feeAmd ?? 0;
+  const giftWrapFeeAmd = giftWrap ? GIFT_WRAP_FEE_AMD : 0;
+  const grandTotalAmd = totalAmd + deliveryFeeAmd + giftWrapFeeAmd;
 
   async function handleApplyPromo(e: React.FormEvent) {
     e.preventDefault();
@@ -45,7 +56,7 @@ export default function CartPage() {
   async function handleCheckout() {
     setLoading(true);
     setError(null);
-    if (cartId) trackStartedCheckout(items, totalAmd, cartId);
+    if (cartId) trackStartedCheckout(items, grandTotalAmd, cartId);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -53,6 +64,9 @@ export default function CartPage() {
         body: JSON.stringify({
           items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),
           promoCode,
+          fulfillmentMethod,
+          giftWrap,
+          giftMessage: giftWrap ? giftMessage : undefined,
         }),
       });
       const data = await res.json();
@@ -174,7 +188,72 @@ export default function CartPage() {
               )}
             </div>
 
-            <div className="mt-4 space-y-1.5">
+            <fieldset className="mt-6 border-t border-tan/50 pt-4">
+              <legend className="text-sm font-semibold text-espresso">{t.cart.fulfillmentLabel}</legend>
+              <div className="mt-2 space-y-2">
+                {fulfillmentOptions.map((option) => (
+                  <label
+                    key={option.id}
+                    className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
+                      fulfillmentMethod === option.id
+                        ? "border-terracotta bg-terracotta/5"
+                        : "border-tan/60 hover:border-tan"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="fulfillment-method"
+                      value={option.id}
+                      checked={fulfillmentMethod === option.id}
+                      onChange={() => setFulfillmentMethod(option.id)}
+                      className="mt-0.5 h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
+                    />
+                    <span className="flex-1">
+                      <span className="flex items-center justify-between gap-2 font-semibold text-espresso">
+                        {option.label}
+                        <span className="font-normal text-espresso/70">
+                          {option.feeAmd > 0 ? `+${formatAmd(option.feeAmd, locale)}` : t.cart.free}
+                        </span>
+                      </span>
+                      <span className="mt-0.5 block text-espresso/70">{option.eta}</span>
+                      {option.note && <span className="mt-0.5 block text-xs text-espresso/50">{option.note}</span>}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="mt-4 border-t border-tan/50 pt-4">
+              <label className="flex cursor-pointer items-center gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={giftWrap}
+                  onChange={(e) => setGiftWrap(e.target.checked)}
+                  className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+                />
+                <span className="font-semibold text-espresso">
+                  {interpolate(t.cart.giftWrapCheckboxLabel, { fee: formatAmd(GIFT_WRAP_FEE_AMD, locale) })}
+                </span>
+              </label>
+              {giftWrap && (
+                <div className="mt-3">
+                  <label htmlFor="gift-message" className="sr-only">
+                    {t.cart.giftMessageLabel}
+                  </label>
+                  <textarea
+                    id="gift-message"
+                    value={giftMessage}
+                    onChange={(e) => setGiftMessage(e.target.value)}
+                    placeholder={t.cart.giftMessagePlaceholder}
+                    rows={3}
+                    maxLength={500}
+                    className="w-full rounded-xl border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 space-y-1.5 border-t border-tan/50 pt-4">
               <div className="flex justify-between text-espresso/80">
                 <span>{t.cart.subtotal}</span>
                 <span>{formatAmd(subtotalAmd, locale)}</span>
@@ -185,9 +264,21 @@ export default function CartPage() {
                   <span>−{formatAmd(discountAmd, locale)}</span>
                 </div>
               )}
+              {deliveryFeeAmd > 0 && (
+                <div className="flex justify-between text-espresso/80">
+                  <span>{t.cart.deliveryFeeLineLabel}</span>
+                  <span>{formatAmd(deliveryFeeAmd, locale)}</span>
+                </div>
+              )}
+              {giftWrapFeeAmd > 0 && (
+                <div className="flex justify-between text-espresso/80">
+                  <span>{t.cart.giftWrapLineLabel}</span>
+                  <span>{formatAmd(giftWrapFeeAmd, locale)}</span>
+                </div>
+              )}
               <div className="flex justify-between border-t border-tan/50 pt-1.5 text-lg font-bold text-espresso">
                 <span>{t.cart.total}</span>
-                <span>{formatAmd(totalAmd, locale)}</span>
+                <span>{formatAmd(grandTotalAmd, locale)}</span>
               </div>
             </div>
 

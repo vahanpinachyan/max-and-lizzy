@@ -16,30 +16,35 @@ export default function ShippingPolicyPage() {
 
       <div className="prose-content mt-8 space-y-6 text-espresso/80">
         <section>
-          <h2 className="text-xl font-bold text-espresso">In-store pickup</h2>
+          <h2 className="text-xl font-bold text-espresso">In-store pickup — free</h2>
           <p className="mt-2">
-            Every online order can be picked up free of charge at our store, {" "}
-            <strong>50 Mashtots Avenue, Yerevan</strong>, during regular business hours
+            Every online order can be picked up free of charge, ready the same day, at our
+            store, <strong>50 Mashtots Avenue, Yerevan</strong>, during regular business hours
             (10:00 AM – 9:00 PM daily). Choose &quot;Pickup&quot; at checkout and we&apos;ll have
             your order ready — we&apos;ll contact you using the phone number or email provided
             once it&apos;s prepared.
           </p>
         </section>
         <section>
-          <h2 className="text-xl font-bold text-espresso">Local delivery (Yerevan)</h2>
+          <h2 className="text-xl font-bold text-espresso">Delivery within Yerevan — 500 AMD</h2>
           <p className="mt-2">
-            We currently offer local delivery within Yerevan. Choose &quot;Local delivery&quot;
-            at checkout and our team will reach out to confirm delivery timing and any applicable
-            delivery fee based on your address.
+            Choose &quot;Delivery within Yerevan&quot; at checkout for delivery within 24 hours,
+            for a flat 500 AMD fee.
           </p>
         </section>
         <section>
-          <h2 className="text-xl font-bold text-espresso">Shipping outside Yerevan</h2>
+          <h2 className="text-xl font-bold text-espresso">Delivery outside Yerevan — from 1,000 AMD</h2>
           <p className="mt-2">
-            At this time we do not offer shipping outside the Yerevan area. If you&apos;re
-            located elsewhere in Armenia and would like to arrange delivery, please{" "}
-            <a href="/contact" className="underline">contact us</a> directly and we&apos;ll do our
-            best to help.
+            We ship anywhere else in Armenia via Haypost courier, arriving in 3–5 days. The
+            checkout price is 1,000 AMD; the final courier cost can vary with the weight of what
+            you&apos;ve ordered, and we&apos;ll contact you first if it comes to more than that.
+          </p>
+        </section>
+        <section>
+          <h2 className="text-xl font-bold text-espresso">Gift wrapping</h2>
+          <p className="mt-2">
+            Add gift wrapping and an optional custom message to any order at checkout for 600
+            AMD.
           </p>
         </section>
         <section>

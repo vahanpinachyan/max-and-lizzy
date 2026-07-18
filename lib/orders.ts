@@ -49,8 +49,9 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
     },
   });
 
-  const fulfillmentField = session.custom_fields?.find((f) => f.key === "fulfillment_method");
-  const fulfillmentMethod = fulfillmentField?.dropdown?.value ?? null;
+  const fulfillmentMethod = session.metadata?.fulfillment_method ?? null;
+  const giftWrap = session.metadata?.gift_wrap === "true";
+  const giftMessage = session.metadata?.gift_message || null;
 
   // The checkout route suffixes the line item name with "(CODE applied)"
   // when a promo code was used — recovered here best-effort for display.
@@ -84,6 +85,8 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
         : null,
       customerName: session.customer_details?.name ?? null,
       customerPhone: session.customer_details?.phone ?? null,
+      giftWrap,
+      giftMessage,
       items: { create: items },
     },
     include: { items: true },

@@ -46,7 +46,13 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <div className="rounded-2xl border border-tan/50 bg-white p-5">
           <h2 className="font-semibold text-espresso">Fulfillment</h2>
           <p className="mt-2 text-sm text-espresso">
-            {order.fulfillmentMethod === "pickup" ? "Pickup in-store" : order.fulfillmentMethod === "delivery" ? "Local delivery" : "Not specified"}
+            {order.fulfillmentMethod === "pickup"
+              ? "Pickup in-store"
+              : order.fulfillmentMethod === "delivery_yerevan"
+                ? "Delivery — Yerevan"
+                : order.fulfillmentMethod === "delivery_outside"
+                  ? "Delivery — outside Yerevan (Haypost)"
+                  : "Not specified"}
           </p>
           {address && (
             <p className="mt-1 text-sm text-espresso/70">
@@ -55,6 +61,14 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           )}
           {order.promoCode && (
             <p className="mt-2 text-sm text-sage-dark">Promo code used: {order.promoCode}</p>
+          )}
+          {order.giftWrap && (
+            <div className="mt-3 rounded-xl bg-terracotta/10 px-3 py-2">
+              <p className="text-sm font-semibold text-terracotta-dark">🎁 Gift wrapping requested</p>
+              {order.giftMessage && (
+                <p className="mt-1 text-sm text-espresso/80">&ldquo;{order.giftMessage}&rdquo;</p>
+              )}
+            </div>
           )}
         </div>
       </div>

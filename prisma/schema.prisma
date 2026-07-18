@@ -121,13 +121,15 @@ model Order {
   customerId       String
   // "pending" | "ready_for_pickup" | "shipped" | "completed" | "cancelled"
   status           String   @default("pending")
-  // "pickup" | "delivery" | null (unknown / not collected)
+  // "pickup" | "delivery_yerevan" | "delivery_outside" | null (unknown / not collected)
   fulfillmentMethod String?
   totalAmd         Int
   promoCode        String?
   shippingAddress  String?
   customerName     String?
   customerPhone    String?
+  giftWrap         Boolean  @default(false)
+  giftMessage      String?
   items            OrderItem[]
   reviews          Review[]
   createdAt        DateTime @default(now())

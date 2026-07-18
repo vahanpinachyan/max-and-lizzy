@@ -1,6 +1,7 @@
 import type { CategoryInfo } from "@/types";
 import { categories as baseCategories } from "@/data/categories";
 import { promotions as basePromotions, type Promotion } from "@/data/promotions";
+import { FULFILLMENT_OPTIONS, type FulfillmentOption } from "@/data/fulfillment";
 import type { Locale } from "@/lib/i18n/locales";
 
 interface CategoryTranslation {
@@ -193,5 +194,53 @@ export function localizePromotions(locale: Locale): Promotion[] {
   return basePromotions.map((promo) => {
     const tr = translations[promo.slug];
     return tr ? { ...promo, ...tr } : promo;
+  });
+}
+
+interface FulfillmentTranslation {
+  label: string;
+  eta: string;
+  note?: string;
+}
+
+const fulfillmentTranslations: Record<"hy" | "ru", Record<string, FulfillmentTranslation>> = {
+  hy: {
+    pickup: {
+      label: "Վերցնել — Մաշտոցի պող. 50",
+      eta: "Անվճար, պատրաստ նույն օրը",
+    },
+    delivery_yerevan: {
+      label: "Առաքում Երևանում",
+      eta: "24 ժամվա ընթացքում",
+    },
+    delivery_outside: {
+      label: "Առաքում Երևանից դուրս",
+      eta: "3–5 օր, Հայփոստի կուրիերով",
+      note: "Վերջնական գինը կարող է տարբերվել՝ կախված ապրանքի քաշից",
+    },
+  },
+  ru: {
+    pickup: {
+      label: "Самовывоз — просп. Маштоца, 50",
+      eta: "Бесплатно, готово в тот же день",
+    },
+    delivery_yerevan: {
+      label: "Доставка по Еревану",
+      eta: "В течение 24 часов",
+    },
+    delivery_outside: {
+      label: "Доставка за пределы Еревана",
+      eta: "3–5 дней, курьером Айпоста",
+      note: "Итоговая стоимость может зависеть от веса товара",
+    },
+  },
+};
+
+export function localizeFulfillmentOptions(locale: Locale): FulfillmentOption[] {
+  if (locale === "en") return FULFILLMENT_OPTIONS;
+  const translations = fulfillmentTranslations[locale];
+  return FULFILLMENT_OPTIONS.map((option) => {
+    const tr = translations[option.id];
+    return tr ? { ...option, ...tr } : option;
   });
 }
