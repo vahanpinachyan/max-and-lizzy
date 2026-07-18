@@ -80,9 +80,7 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
       fulfillmentMethod,
       totalAmd,
       promoCode,
-      shippingAddress: session.customer_details?.address
-        ? JSON.stringify(session.customer_details.address)
-        : null,
+      shippingAddress: session.metadata?.delivery_address || null,
       customerName: session.customer_details?.name ?? null,
       customerPhone: session.customer_details?.phone ?? null,
       giftWrap,

@@ -4,6 +4,16 @@ import { prisma } from "@/lib/db";
 import { formatAmd, formatDate } from "@/lib/format";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
 import { SendOrderEmailButton } from "@/components/admin/SendOrderEmailButton";
+import { ARMENIA_REGIONS } from "@/data/armenia-regions";
+
+interface StoredDeliveryAddress {
+  region?: string;
+  city?: string;
+  street?: string;
+  apartment?: string;
+  entrance?: string;
+  floor?: string;
+}
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -13,7 +23,20 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   });
   if (!order) notFound();
 
-  const address = order.shippingAddress ? JSON.parse(order.shippingAddress) : null;
+  const address: StoredDeliveryAddress | null = order.shippingAddress
+    ? JSON.parse(order.shippingAddress)
+    : null;
+  const regionLabel = address?.region ? ARMENIA_REGIONS.find((r) => r.id === address.region)?.label : undefined;
+  const addressParts = address
+    ? [
+        regionLabel,
+        address.city,
+        address.street,
+        address.apartment && `Apt. ${address.apartment}`,
+        address.entrance && `Entrance ${address.entrance}`,
+        address.floor && `Floor ${address.floor}`,
+      ].filter(Boolean)
+    : [];
 
   return (
     <div className="max-w-3xl">
@@ -54,10 +77,8 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                   ? "Delivery — outside Yerevan (Haypost)"
                   : "Not specified"}
           </p>
-          {address && (
-            <p className="mt-1 text-sm text-espresso/70">
-              {[address.line1, address.line2, address.city, address.postal_code].filter(Boolean).join(", ")}
-            </p>
+          {addressParts.length > 0 && (
+            <p className="mt-1 text-sm text-espresso/70">{addressParts.join(", ")}</p>
           )}
           {order.promoCode && (
             <p className="mt-2 text-sm text-sage-dark">Promo code used: {order.promoCode}</p>

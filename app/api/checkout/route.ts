@@ -5,10 +5,20 @@ import { findPromoCode } from "@/data/promo-codes";
 import { site } from "@/data/site";
 import { absoluteUrl } from "@/lib/seo";
 import { getFulfillmentOption, GIFT_WRAP_FEE_AMD } from "@/data/fulfillment";
+import { ARMENIA_REGIONS } from "@/data/armenia-regions";
 
 interface CheckoutRequestItem {
   slug: string;
   quantity: number;
+}
+
+interface DeliveryAddressInput {
+  region?: string;
+  city?: string;
+  street?: string;
+  apartment?: string;
+  entrance?: string;
+  floor?: string;
 }
 
 export async function POST(request: Request) {
@@ -18,6 +28,7 @@ export async function POST(request: Request) {
     fulfillmentMethod?: string;
     giftWrap?: boolean;
     giftMessage?: string;
+    deliveryAddress?: DeliveryAddressInput;
   };
   try {
     body = await request.json();
@@ -38,6 +49,30 @@ export async function POST(request: Request) {
   }
   const giftWrap = body.giftWrap === true;
   const giftMessage = giftWrap ? (body.giftMessage ?? "").slice(0, 500) : "";
+
+  // Never trust the client's address validation either — re-check the
+  // required fields for the chosen fulfillment method server-side.
+  const rawAddress = body.deliveryAddress ?? {};
+  if (fulfillment.id === "delivery_yerevan" && !String(rawAddress.street ?? "").trim()) {
+    return NextResponse.json({ error: "Please fill in your delivery address" }, { status: 400 });
+  }
+  if (fulfillment.id === "delivery_outside") {
+    const validRegion = ARMENIA_REGIONS.some((r) => r.id === rawAddress.region);
+    if (!validRegion || !String(rawAddress.city ?? "").trim() || !String(rawAddress.street ?? "").trim()) {
+      return NextResponse.json({ error: "Please fill in your delivery address" }, { status: 400 });
+    }
+  }
+  const deliveryAddress =
+    fulfillment.id === "pickup"
+      ? null
+      : {
+          region: rawAddress.region ?? "",
+          city: String(rawAddress.city ?? "").slice(0, 100),
+          street: String(rawAddress.street ?? "").slice(0, 200),
+          apartment: String(rawAddress.apartment ?? "").slice(0, 50),
+          entrance: String(rawAddress.entrance ?? "").slice(0, 50),
+          floor: String(rawAddress.floor ?? "").slice(0, 50),
+        };
 
   // Re-validate the promo code server-side — never trust a discount amount
   // computed on the client.
@@ -99,12 +134,12 @@ export async function POST(request: Request) {
       line_items: lineItems,
       success_url: absoluteUrl("/checkout/success?session_id={CHECKOUT_SESSION_ID}"),
       cancel_url: absoluteUrl("/checkout/cancel"),
-      shipping_address_collection: { allowed_countries: ["AM"] },
       phone_number_collection: { enabled: true },
       metadata: {
         fulfillment_method: fulfillment.id,
         gift_wrap: giftWrap ? "true" : "false",
         gift_message: giftMessage,
+        delivery_address: deliveryAddress ? JSON.stringify(deliveryAddress) : "",
       },
     });
 

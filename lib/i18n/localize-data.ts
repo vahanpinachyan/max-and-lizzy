@@ -2,6 +2,7 @@ import type { CategoryInfo } from "@/types";
 import { categories as baseCategories } from "@/data/categories";
 import { promotions as basePromotions, type Promotion } from "@/data/promotions";
 import { FULFILLMENT_OPTIONS, type FulfillmentOption } from "@/data/fulfillment";
+import { ARMENIA_REGIONS, type ArmeniaRegion } from "@/data/armenia-regions";
 import type { Locale } from "@/lib/i18n/locales";
 
 interface CategoryTranslation {
@@ -243,4 +244,37 @@ export function localizeFulfillmentOptions(locale: Locale): FulfillmentOption[] 
     const tr = translations[option.id];
     return tr ? { ...option, ...tr } : option;
   });
+}
+
+const regionTranslations: Record<"hy" | "ru", Record<string, string>> = {
+  hy: {
+    aragatsotn: "Արագածոտն",
+    ararat: "Արարատ",
+    armavir: "Արմավիր",
+    gegharkunik: "Գեղարքունիք",
+    kotayk: "Կոտայք",
+    lori: "Լոռի",
+    shirak: "Շիրակ",
+    syunik: "Սյունիք",
+    tavush: "Տավուշ",
+    vayots_dzor: "Վայոց ձոր",
+  },
+  ru: {
+    aragatsotn: "Арагацотн",
+    ararat: "Арарат",
+    armavir: "Армавир",
+    gegharkunik: "Гегаркуник",
+    kotayk: "Котайк",
+    lori: "Лори",
+    shirak: "Ширак",
+    syunik: "Сюник",
+    tavush: "Тавуш",
+    vayots_dzor: "Вайоц Дзор",
+  },
+};
+
+export function localizeArmeniaRegions(locale: Locale): ArmeniaRegion[] {
+  if (locale === "en") return ARMENIA_REGIONS;
+  const translations = regionTranslations[locale];
+  return ARMENIA_REGIONS.map((region) => ({ ...region, label: translations[region.id] ?? region.label }));
 }

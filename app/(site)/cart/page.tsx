@@ -13,7 +13,18 @@ import { SectionDecorations } from "@/components/ui/Decorations";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
 import { GIFT_WRAP_FEE_AMD, type FulfillmentMethod } from "@/data/fulfillment";
-import { localizeFulfillmentOptions } from "@/lib/i18n/localize-data";
+import { localizeFulfillmentOptions, localizeArmeniaRegions } from "@/lib/i18n/localize-data";
+
+interface DeliveryAddress {
+  region: string;
+  city: string;
+  street: string;
+  apartment: string;
+  entrance: string;
+  floor: string;
+}
+
+const EMPTY_ADDRESS: DeliveryAddress = { region: "", city: "", street: "", apartment: "", entrance: "", floor: "" };
 
 export default function CartPage() {
   const t = useTranslations();
@@ -38,12 +49,28 @@ export default function CartPage() {
   const [fulfillmentMethod, setFulfillmentMethod] = useState<FulfillmentMethod>("pickup");
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
+  const [address, setAddress] = useState<DeliveryAddress>(EMPTY_ADDRESS);
 
   const fulfillmentOptions = localizeFulfillmentOptions(locale);
+  const regions = localizeArmeniaRegions(locale);
   const selectedFulfillment = fulfillmentOptions.find((o) => o.id === fulfillmentMethod);
   const deliveryFeeAmd = selectedFulfillment?.feeAmd ?? 0;
   const giftWrapFeeAmd = giftWrap ? GIFT_WRAP_FEE_AMD : 0;
   const grandTotalAmd = totalAmd + deliveryFeeAmd + giftWrapFeeAmd;
+
+  function updateAddress(field: keyof DeliveryAddress, value: string) {
+    setAddress((a) => ({ ...a, [field]: value }));
+  }
+
+  function validateAddress(): string | null {
+    if (fulfillmentMethod === "delivery_yerevan" && !address.street.trim()) {
+      return t.cart.addressRequiredError;
+    }
+    if (fulfillmentMethod === "delivery_outside" && (!address.region || !address.city.trim() || !address.street.trim())) {
+      return t.cart.addressRequiredError;
+    }
+    return null;
+  }
 
   async function handleApplyPromo(e: React.FormEvent) {
     e.preventDefault();
@@ -54,6 +81,11 @@ export default function CartPage() {
   }
 
   async function handleCheckout() {
+    const addressError = validateAddress();
+    if (addressError) {
+      setError(addressError);
+      return;
+    }
     setLoading(true);
     setError(null);
     if (cartId) trackStartedCheckout(items, grandTotalAmd, cartId);
@@ -67,6 +99,7 @@ export default function CartPage() {
           fulfillmentMethod,
           giftWrap,
           giftMessage: giftWrap ? giftMessage : undefined,
+          deliveryAddress: fulfillmentMethod !== "pickup" ? address : undefined,
         }),
       });
       const data = await res.json();
@@ -222,6 +255,87 @@ export default function CartPage() {
                 ))}
               </div>
             </fieldset>
+
+            {fulfillmentMethod === "pickup" ? (
+              <p className="mt-4 rounded-xl bg-sage/10 px-3 py-2 text-sm text-sage-dark">
+                {t.cart.pickupReadyNote}
+              </p>
+            ) : (
+              <fieldset className="mt-4 border-t border-tan/50 pt-4">
+                <legend className="text-sm font-semibold text-espresso">{t.cart.deliveryAddressLabel}</legend>
+                <div className="mt-2 space-y-2">
+                  {fulfillmentMethod === "delivery_outside" && (
+                    <>
+                      <label htmlFor="address-region" className="sr-only">{t.cart.regionLabel}</label>
+                      <select
+                        id="address-region"
+                        value={address.region}
+                        onChange={(e) => updateAddress("region", e.target.value)}
+                        className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
+                      >
+                        <option value="">{t.cart.regionPlaceholder}</option>
+                        {regions.map((r) => (
+                          <option key={r.id} value={r.id}>{r.label}</option>
+                        ))}
+                      </select>
+                      <label htmlFor="address-city" className="sr-only">{t.cart.cityLabel}</label>
+                      <input
+                        id="address-city"
+                        type="text"
+                        value={address.city}
+                        onChange={(e) => updateAddress("city", e.target.value)}
+                        placeholder={t.cart.cityPlaceholder}
+                        className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
+                      />
+                    </>
+                  )}
+                  <label htmlFor="address-street" className="sr-only">{t.cart.streetLabel}</label>
+                  <input
+                    id="address-street"
+                    type="text"
+                    value={address.street}
+                    onChange={(e) => updateAddress("street", e.target.value)}
+                    placeholder={t.cart.streetPlaceholder}
+                    className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
+                  />
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label htmlFor="address-apartment" className="sr-only">{t.cart.apartmentLabel}</label>
+                      <input
+                        id="address-apartment"
+                        type="text"
+                        value={address.apartment}
+                        onChange={(e) => updateAddress("apartment", e.target.value)}
+                        placeholder={t.cart.apartmentLabel}
+                        className="w-full rounded-full border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="address-entrance" className="sr-only">{t.cart.entranceLabel}</label>
+                      <input
+                        id="address-entrance"
+                        type="text"
+                        value={address.entrance}
+                        onChange={(e) => updateAddress("entrance", e.target.value)}
+                        placeholder={t.cart.entranceLabel}
+                        className="w-full rounded-full border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="address-floor" className="sr-only">{t.cart.floorLabel}</label>
+                      <input
+                        id="address-floor"
+                        type="text"
+                        value={address.floor}
+                        onChange={(e) => updateAddress("floor", e.target.value)}
+                        placeholder={t.cart.floorLabel}
+                        className="w-full rounded-full border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            )}
 
             <div className="mt-4 border-t border-tan/50 pt-4">
               <label className="flex cursor-pointer items-center gap-3 text-sm">
