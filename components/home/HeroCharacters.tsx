@@ -37,23 +37,32 @@ export function HeroCharacters({ maxIntro, lizzyIntro }: { maxIntro: string; liz
         className="absolute right-[2%] top-0 h-[80%] w-[45%] cursor-pointer rounded-full"
       />
 
+      {/* Bubbles are anchored by their bottom edge (where the tail is), just
+          above each character's hair — so they grow upward with longer text
+          instead of drifting away from the head. */}
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-none absolute left-[2%] top-[2%] max-w-[11rem] origin-bottom-left rounded-2xl rounded-bl-sm border border-wood/30 bg-white px-3 py-2 text-xs font-medium text-espresso shadow-lg transition-all duration-200 ${
-          active === "max" ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
+        className={`pointer-events-none absolute bottom-[78%] left-[21%] w-[10.5rem] -translate-x-1/2 transition-all duration-200 ${
+          active === "max" ? "translate-y-0 scale-100 opacity-100" : "translate-y-1 scale-95 opacity-0"
         }`}
       >
-        {maxIntro}
+        <div className="relative rounded-3xl border-2 border-sage/50 bg-cream px-4 py-2.5 text-xs font-semibold leading-snug text-espresso shadow-[0_4px_14px_rgba(61,43,31,0.15)]">
+          {maxIntro}
+          <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-[2px] border-b-2 border-r-2 border-sage/50 bg-cream" />
+        </div>
       </div>
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-none absolute right-[0%] top-0 max-w-[11rem] origin-bottom-right rounded-2xl rounded-br-sm border border-rose/30 bg-white px-3 py-2 text-xs font-medium text-espresso shadow-lg transition-all duration-200 ${
-          active === "lizzy" ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
+        className={`pointer-events-none absolute bottom-[90%] left-[75%] w-[10.5rem] -translate-x-1/2 transition-all duration-200 ${
+          active === "lizzy" ? "translate-y-0 scale-100 opacity-100" : "translate-y-1 scale-95 opacity-0"
         }`}
       >
-        {lizzyIntro}
+        <div className="relative rounded-3xl border-2 border-rose/50 bg-cream px-4 py-2.5 text-xs font-semibold leading-snug text-espresso shadow-[0_4px_14px_rgba(61,43,31,0.15)]">
+          {lizzyIntro}
+          <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-[2px] border-b-2 border-r-2 border-rose/50 bg-cream" />
+        </div>
       </div>
     </div>
   );
