@@ -9,6 +9,7 @@ import { formatAmd } from "@/lib/format";
 import { Container } from "@/components/ui/Container";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Mascot } from "@/components/ui/Mascot";
+import { Select } from "@/components/ui/Select";
 import { SectionDecorations } from "@/components/ui/Decorations";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
@@ -267,17 +268,13 @@ export default function CartPage() {
                   {fulfillmentMethod === "delivery_outside" && (
                     <>
                       <label htmlFor="address-region" className="sr-only">{t.cart.regionLabel}</label>
-                      <select
+                      <Select
                         id="address-region"
                         value={address.region}
-                        onChange={(e) => updateAddress("region", e.target.value)}
-                        className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
-                      >
-                        <option value="">{t.cart.regionPlaceholder}</option>
-                        {regions.map((r) => (
-                          <option key={r.id} value={r.id}>{r.label}</option>
-                        ))}
-                      </select>
+                        onChange={(v) => updateAddress("region", v)}
+                        placeholder={t.cart.regionPlaceholder}
+                        options={regions.map((r) => ({ value: r.id, label: r.label }))}
+                      />
                       <label htmlFor="address-city" className="sr-only">{t.cart.cityLabel}</label>
                       <input
                         id="address-city"
