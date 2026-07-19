@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { setFlag } from "@/app/admin/(protected)/products/actions";
+import { setFlag, setPickBy } from "@/app/admin/(protected)/products/actions";
 
-type FlagKey = "featured" | "bestseller" | "newArrival";
+type FlagKey = "featured" | "bestseller" | "newArrival" | "maxPick" | "lizzyPick";
+const ALL_FLAGS: FlagKey[] = ["featured", "bestseller", "newArrival", "maxPick", "lizzyPick"];
 
 const FLAG_META: Record<FlagKey, { label: string; className: string }> = {
   featured: { label: "Featured", className: "bg-terracotta/15 text-terracotta-dark" },
   bestseller: { label: "Bestseller", className: "bg-wood/15 text-wood-dark" },
   newArrival: { label: "New", className: "bg-sage/15 text-sage-dark" },
+  maxPick: { label: "Max's Pick", className: "bg-sage/15 text-sage-dark" },
+  lizzyPick: { label: "Lizzy's Pick", className: "bg-rose/15 text-rose-dark" },
 };
 
 export function FlagsCell({
@@ -16,18 +19,22 @@ export function FlagsCell({
   featured,
   bestseller,
   newArrival,
+  pickBy,
 }: {
   productId: string;
   featured: boolean;
   bestseller: boolean;
   newArrival: boolean;
+  pickBy: string | null;
 }) {
   const active: FlagKey[] = [
     ...(featured ? (["featured"] as const) : []),
     ...(bestseller ? (["bestseller"] as const) : []),
     ...(newArrival ? (["newArrival"] as const) : []),
+    ...(pickBy === "max" ? (["maxPick"] as const) : []),
+    ...(pickBy === "lizzy" ? (["lizzyPick"] as const) : []),
   ];
-  const inactive = (["featured", "bestseller", "newArrival"] as FlagKey[]).filter((f) => !active.includes(f));
+  const inactive = ALL_FLAGS.filter((f) => !active.includes(f));
 
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -44,7 +51,13 @@ export function FlagsCell({
 
   function toggleFlag(flag: FlagKey, value: boolean) {
     startTransition(async () => {
-      await setFlag(productId, flag, value);
+      if (flag === "maxPick") {
+        await setPickBy(productId, value ? "max" : null);
+      } else if (flag === "lizzyPick") {
+        await setPickBy(productId, value ? "lizzy" : null);
+      } else {
+        await setFlag(productId, flag, value);
+      }
       setOpen(false);
     });
   }

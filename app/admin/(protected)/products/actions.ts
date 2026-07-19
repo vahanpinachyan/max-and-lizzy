@@ -150,6 +150,17 @@ export async function setFlag(id: string, flag: "featured" | "bestseller" | "new
   revalidatePath("/");
 }
 
+// pickBy is a single field ("max" | "lizzy" | null), not an independent
+// boolean like the other flags — assigning one character automatically
+// clears the other, so there's no separate "unset the other one" step.
+export async function setPickBy(id: string, pickBy: "max" | "lizzy" | null) {
+  await requireManagerAction();
+  await prisma.product.update({ where: { id }, data: { pickBy } });
+  revalidatePath("/admin/products");
+  revalidatePath("/shop");
+  revalidatePath("/");
+}
+
 export type BulkFlagUpdates = Partial<Record<"featured" | "bestseller" | "newArrival", boolean>>;
 
 export async function bulkUpdateProducts(input: {

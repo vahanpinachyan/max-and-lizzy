@@ -30,6 +30,7 @@ export default async function AdminProductsPage({
         featured: p.featured,
         bestseller: p.bestseller,
         newArrival: p.newArrival,
+        pickBy: p.pickBy,
         image: images[0]?.src ?? null,
       };
     })

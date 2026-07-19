@@ -23,6 +23,7 @@ export type ProductRow = {
   featured: boolean;
   bestseller: boolean;
   newArrival: boolean;
+  pickBy: string | null;
   image: string | null;
 };
 
@@ -244,6 +245,7 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                       featured={p.featured}
                       bestseller={p.bestseller}
                       newArrival={p.newArrival}
+                      pickBy={p.pickBy}
                     />
                   </td>
                   <td className="px-4 py-3">
