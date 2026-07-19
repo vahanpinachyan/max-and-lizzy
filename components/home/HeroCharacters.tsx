@@ -67,7 +67,7 @@ export function HeroCharacters({ maxIntro, lizzyIntro }: { maxIntro: string; liz
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-none absolute bottom-[78%] left-[21%] w-[10.5rem] -translate-x-1/2 transition-all duration-200 ${
+        className={`pointer-events-none absolute bottom-[90%] left-[24%] w-[10.5rem] -translate-x-1/2 transition-all duration-200 ${
           active === "max" ? "translate-y-0 scale-100 opacity-100" : "translate-y-1 scale-95 opacity-0"
         }`}
       >
@@ -79,7 +79,7 @@ export function HeroCharacters({ maxIntro, lizzyIntro }: { maxIntro: string; liz
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-none absolute bottom-[90%] left-[75%] w-[10.5rem] -translate-x-1/2 transition-all duration-200 ${
+        className={`pointer-events-none absolute bottom-[97%] left-[71%] w-[10.5rem] -translate-x-1/2 transition-all duration-200 ${
           active === "lizzy" ? "translate-y-0 scale-100 opacity-100" : "translate-y-1 scale-95 opacity-0"
         }`}
       >
