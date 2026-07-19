@@ -17,12 +17,12 @@ export const promotions: Promotion[] = [
     ctaLabel: "Shop Musical Toys",
   },
   {
-    slug: "gift-guide-under-15000",
-    title: "Gifts Under 15,000 AMD",
-    subtitle: "Thoughtful presents that don't break the bank",
-    image: "/images/promotions/gift-guide-under-15000.jpg",
-    href: "/blog/best-wooden-toys-for-1-year-olds",
-    ctaLabel: "See The Guide",
+    slug: "wooden-play-collection",
+    title: "A World of Wooden Play",
+    subtitle: "Trucks, instruments, stackers & more — something for every little explorer",
+    image: "/images/promotions/wooden-play-collection-v1.jpg",
+    href: "/shop",
+    ctaLabel: "Shop the Collection",
   },
   {
     slug: "outdoor-play-season",

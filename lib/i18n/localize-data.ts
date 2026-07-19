@@ -149,10 +149,10 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
       subtitle: "Քսիլոֆոններ, թմբուկներ և մանրանկարային գործիքներ փոքրիկ երաժիշտների համար",
       ctaLabel: "Գնել երաժշտական խաղալիքներ",
     },
-    "gift-guide-under-15000": {
-      title: "Նվերներ մինչև 15,000 դրամ",
-      subtitle: "Խորիմաստ նվերներ՝ առանց բյուջեն գերազանցելու",
-      ctaLabel: "Տեսնել ուղեցույցը",
+    "wooden-play-collection": {
+      title: "Փայտյա խաղալիքների աշխարհ",
+      subtitle: "Մեքենաներ, նվագարաններ, աշտարակող խաղալիքներ և ավելին՝ ամեն փոքրիկ հետազոտողի համար",
+      ctaLabel: "Գնել հավաքածուն",
     },
     "outdoor-play-season": {
       title: "Անժամանակ փայտյա խաղալիքներ",
@@ -171,10 +171,10 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
       subtitle: "Ксилофоны, барабаны и мини-инструменты для маленьких музыкантов",
       ctaLabel: "Музыкальные игрушки",
     },
-    "gift-guide-under-15000": {
-      title: "Подарки до 15 000 драм",
-      subtitle: "Продуманные подарки, которые не ударят по бюджету",
-      ctaLabel: "Смотреть подборку",
+    "wooden-play-collection": {
+      title: "Мир деревянных игрушек",
+      subtitle: "Грузовики, музыкальные инструменты, пирамидки и многое другое — для каждого маленького исследователя",
+      ctaLabel: "Смотреть коллекцию",
     },
     "outdoor-play-season": {
       title: "Деревянные игрушки на века",
