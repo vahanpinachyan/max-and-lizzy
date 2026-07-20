@@ -66,8 +66,9 @@ export async function sendOrderStatusEmail(
     const { Resend } = await import("resend");
     const resend = new Resend(apiKey);
     await resend.emails.send({
-      from: `${site.name} <orders@${new URL(site.url).hostname}>`,
+      from: `${site.name} <info@${new URL(site.url).hostname}>`,
       to: ctx.customerEmail,
+      replyTo: site.email,
       subject,
       html,
     });

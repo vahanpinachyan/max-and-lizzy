@@ -52,8 +52,9 @@ async function sendOrderConfirmationEmail(session: Stripe.Checkout.Session) {
     const { Resend } = await import("resend");
     const resend = new Resend(apiKey);
     await resend.emails.send({
-      from: `${site.name} <orders@${new URL(site.url).hostname}>`,
+      from: `${site.name} <info@${new URL(site.url).hostname}>`,
       to: toEmail,
+      replyTo: site.email,
       subject: `Your ${site.name} order is confirmed`,
       html: `<p>Thank you for your order! We'll have it ready for pickup or delivery soon.</p>
              <p>Order reference: ${session.id.slice(-12)}</p>

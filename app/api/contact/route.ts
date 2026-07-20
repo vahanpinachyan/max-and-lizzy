@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       const { Resend } = await import("resend");
       const resend = new Resend(apiKey);
       await resend.emails.send({
-        from: `${site.name} Website <contact@${new URL(site.url).hostname}>`,
+        from: `${site.name} Website <info@${new URL(site.url).hostname}>`,
         to: site.email,
         replyTo: email,
         subject: `Contact form: ${subject || "New message"}`,

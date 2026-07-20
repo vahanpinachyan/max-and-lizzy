@@ -312,7 +312,7 @@ sending, so you can develop/test the flow without a Resend account.
   once that choice is made.
 - **Automated marketing emails.** Order-status emails are manual
   (one click per order); there's no scheduled newsletter/campaign sender
-  yet. `contact@maxandlizzy.com`-style sending is already wired through
+  yet. `info@maxandlizzy.com`-style sending is already wired through
   Resend, so a campaign feature would reuse the same infrastructure.
 
 ## Security

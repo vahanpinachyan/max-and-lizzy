@@ -5,8 +5,7 @@ export const site = {
   tagline: "Educational, wooden & eco-friendly toys",
   description:
     "Max & Lizzy is a Yerevan toy store specializing in educational, wooden, and eco-friendly toys for babies and preschoolers. Visit us on Mashtots Avenue or shop online.",
-  // TODO: replace the fallback with your real production domain once live
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://maxandlizzy.am",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://maxandlizzy.com",
   address: {
     street: "50 Mashtots Avenue",
     city: "Yerevan",
