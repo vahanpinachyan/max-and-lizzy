@@ -39,7 +39,7 @@ export function AddToCart({ product, id }: { product: Product; id?: string }) {
           +
         </button>
       </div>
-      <Button size="lg" disabled={!product.inStock} onClick={handleAdd}>
+      <Button size="lg" className="h-11" disabled={!product.inStock} onClick={handleAdd}>
         {!product.inStock ? t.product.soldOut : justAdded ? t.product.addedConfirmation : t.product.addToCart}
       </Button>
     </div>

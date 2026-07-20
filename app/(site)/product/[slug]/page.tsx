@@ -13,6 +13,7 @@ import { StarRating } from "@/components/ui/StarRating";
 import { ImageGallery } from "@/components/product/ImageGallery";
 import { AddToCart } from "@/components/product/AddToCart";
 import { StickyAddToCart } from "@/components/product/StickyAddToCart";
+import { WishlistButton } from "@/components/product/WishlistButton";
 import { ProductFacts } from "@/components/product/ProductFacts";
 import { PickCallout } from "@/components/product/PickCallout";
 import { Reviews } from "@/components/product/Reviews";
@@ -128,8 +129,9 @@ export default async function ProductPage({
             />
           )}
 
-          <div className="mt-6">
+          <div className="mt-6 flex items-center gap-3">
             <AddToCart product={product} id={addToCartId} />
+            <WishlistButton slug={product.slug} productName={product.name} />
           </div>
 
           <p className="mt-4 text-sm text-espresso/70">{t.product.sku}: {product.sku}</p>
