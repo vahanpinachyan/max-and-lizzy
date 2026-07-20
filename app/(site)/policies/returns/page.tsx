@@ -20,32 +20,33 @@ export default function ReturnsPolicyPage() {
           <h2 className="text-xl font-bold text-espresso">14-day returns</h2>
           <p className="mt-2">
             We want you and your child to love every toy from Max &amp; Lizzy. You may return
-            unused, unopened items in original packaging within 14 days of purchase (or of
+            unused, unopened items in their original packaging within 14 days of purchase (or of
             delivery, for online orders) for a full refund or exchange. If you bought online,
-            this window is also your legal right under Armenian consumer protection law — you
-            don&apos;t need to give us a reason.
+            this window also reflects your legal right under Armenian consumer protection law,
+            and you do not need to give us a reason.
           </p>
         </section>
         <section>
           <h2 className="text-xl font-bold text-espresso">How to return an item</h2>
           <p className="mt-2">
             All returns and exchanges must be brought in person to our store at 50 Mashtots
-            Avenue during business hours, along with proof of purchase (order confirmation email
-            or receipt) — this applies to online orders too, including ones delivered to you. We
-            don&apos;t accept returns sent by courier or mail, since our staff need to inspect
-            the item in person before approving a refund or exchange.
+            Avenue during business hours, along with proof of purchase (an order confirmation
+            email or receipt). This applies to online orders as well, including those delivered
+            to you. We do not accept returns sent by courier or mail, since our staff need to
+            inspect each item in person before approving a refund or exchange.
           </p>
         </section>
         <section>
           <h2 className="text-xl font-bold text-espresso">Damaged or defective items</h2>
           <p className="mt-2">
-            If an item arrives damaged or defective, let us know within 14 days of receiving
-            your order. Contact us first to show us the problem — by phone, WhatsApp, or Viber
-            at <a href={site.phoneHref} className="underline">{site.phone}</a>, by message on{" "}
+            If an item arrives damaged or defective, please let us know within 14 days of
+            receiving your order. Contact us first so we can review the issue: by phone,
+            WhatsApp, or Viber at{" "}
+            <a href={site.phoneHref} className="underline">{site.phone}</a>, by message on{" "}
             <a href={site.social.instagram} className="underline" target="_blank" rel="noreferrer">Instagram</a>{" "}
             or <a href={site.social.facebook} className="underline" target="_blank" rel="noreferrer">Facebook</a>,
-            or simply by visiting the store and showing us in person. Once we&apos;ve confirmed
-            the issue, come visit us in store for a replacement or full refund at no cost to you.
+            or by visiting the store in person. Once we have confirmed the issue, visit us in
+            store for a replacement or full refund at no cost to you.
           </p>
         </section>
         <section>
@@ -58,8 +59,8 @@ export default function ReturnsPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Refunds</h2>
           <p className="mt-2">
-            Approved refunds are issued back to your original payment method — Telcell, Idram, or
-            ArCa — and typically appear within 5–10 business days, depending on your bank or
+            Approved refunds are issued to your original payment method (Telcell, Idram, or
+            ArCa) and typically appear within 5–10 business days, depending on your bank or
             wallet provider.
           </p>
         </section>

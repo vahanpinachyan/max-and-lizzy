@@ -22,7 +22,7 @@ export default function PrivacyPolicyPage() {
             When you shop with us online, we collect the information necessary to process your
             order: your name, email address, phone number, delivery address (if applicable), and
             payment details. Payment information is collected and processed directly by our
-            payment providers — Telcell, Idram, and ArCa — we never see or store your full card
+            payment providers, Telcell, Idram, and ArCa. We never see or store your full card
             number or wallet credentials.
           </p>
         </section>
@@ -45,9 +45,10 @@ export default function PrivacyPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Third-party services</h2>
           <p className="mt-2">
-            We share order information with our payment providers (Telcell, Idram, and ArCa, for
-            payment processing) and, where applicable, our email service provider (order and
-            newsletter emails) solely to provide our services to you.
+            We share order information with our payment providers (Telcell, Idram, and ArCa)
+            for payment processing, and, where applicable, with our email service provider for
+            order and newsletter emails. This information is shared solely to provide our
+            services to you.
           </p>
         </section>
         <section>

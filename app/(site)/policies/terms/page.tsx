@@ -31,17 +31,17 @@ export default function TermsPolicyPage() {
           <p className="mt-2">
             All prices on the site are listed in Armenian dram (AMD) and include any applicable
             taxes unless stated otherwise. We work to keep product photos, descriptions, and
-            stock levels accurate, but occasionally a listing may contain an error — if we catch a
-            pricing or availability mistake after you&apos;ve ordered, we&apos;ll contact you
-            before charging or fulfilling anything.
+            stock levels accurate, but occasionally a listing may contain an error. If we catch
+            a pricing or availability mistake after you have ordered, we will contact you before
+            charging or fulfilling anything.
           </p>
         </section>
         <section>
           <h2 className="text-xl font-bold text-espresso">Orders &amp; payment</h2>
           <p className="mt-2">
             Placing an order is an offer to buy, which we accept once payment is confirmed.
-            Online payments are processed securely through our payment providers — Telcell,
-            Idram, and ArCa — we never see or store your full card number or wallet credentials.
+            Online payments are processed securely through our payment providers, Telcell,
+            Idram, and ArCa. We never see or store your full card number or wallet credentials.
             An order is only confirmed once you receive an order confirmation email.
           </p>
         </section>
@@ -65,9 +65,9 @@ export default function TermsPolicyPage() {
           <h2 className="text-xl font-bold text-espresso">Product safety &amp; warranty</h2>
           <p className="mt-2">
             We only sell toys tested to recognized safety standards for their stated age range.
-            If a toy arrives faulty, see the Returns &amp; Exchanges policy above — most items also
-            carry a manufacturer warranty against defects, noted on the product page where it
-            applies.
+            If a toy arrives faulty, see the Returns &amp; Exchanges policy above. Most items
+            also carry a manufacturer warranty against defects, noted on the product page where
+            it applies.
           </p>
         </section>
         <section>
@@ -100,9 +100,9 @@ export default function TermsPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-espresso">Changes to these terms</h2>
           <p className="mt-2">
-            We may update these terms from time to time — the &quot;Last updated&quot; date at the
-            top of this page reflects the latest version. Continuing to use the site or place
-            orders after a change means you accept the updated terms.
+            We may update these terms from time to time. The &quot;Last updated&quot; date at
+            the top of this page reflects the most recent version. Continuing to use the site or
+            place orders after a change means you accept the updated terms.
           </p>
         </section>
         <section>
