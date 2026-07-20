@@ -142,6 +142,7 @@ export const ru: Dictionary = {
     price: "Цена",
     material: "Материал",
     brand: "Бренд",
+    pickedBy: "Выбор",
     clearFilters: "Сбросить все фильтры",
     filters: "Фильтры",
     searchPlaceholder: "Поиск игрушек…",

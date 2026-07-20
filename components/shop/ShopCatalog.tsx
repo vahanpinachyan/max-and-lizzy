@@ -14,7 +14,7 @@ import { localizeCategories, localizeCategory } from "@/lib/i18n/localize-data";
 type SortKey = "featured" | "price-asc" | "price-desc" | "name-asc";
 
 const PRICE_MIN = 0;
-const PRICE_MAX = 100000;
+const PRICE_MAX = 200000;
 
 function toggle<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -36,6 +36,7 @@ export function ShopCatalog({
   const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, PRICE_MAX]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedPicks, setSelectedPicks] = useState<("max" | "lizzy")[]>([]);
   const [sort, setSort] = useState<SortKey>("featured");
   const [search, setSearch] = useState("");
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
@@ -64,6 +65,9 @@ export function ShopCatalog({
     if (selectedBrands.length) {
       result = result.filter((p) => selectedBrands.includes(p.brand));
     }
+    if (selectedPicks.length) {
+      result = result.filter((p) => p.pickBy && selectedPicks.includes(p.pickBy));
+    }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       result = result.filter(
@@ -89,11 +93,16 @@ export function ShopCatalog({
         sorted.sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
     }
     return sorted;
-  }, [products, subcategory, ageRanges, priceRange, selectedMaterials, selectedBrands, search, sort]);
+  }, [products, subcategory, ageRanges, priceRange, selectedMaterials, selectedBrands, selectedPicks, search, sort]);
 
   const priceIsActive = priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX;
   const activeFilterCount =
-    (subcategory ? 1 : 0) + ageRanges.length + (priceIsActive ? 1 : 0) + selectedMaterials.length + selectedBrands.length;
+    (subcategory ? 1 : 0) +
+    ageRanges.length +
+    (priceIsActive ? 1 : 0) +
+    selectedMaterials.length +
+    selectedBrands.length +
+    selectedPicks.length;
 
   function clearFilters() {
     setSubcategory(null);
@@ -101,6 +110,7 @@ export function ShopCatalog({
     setPriceRange([PRICE_MIN, PRICE_MAX]);
     setSelectedMaterials([]);
     setSelectedBrands([]);
+    setSelectedPicks([]);
     setSearch("");
   }
 
@@ -161,6 +171,30 @@ export function ShopCatalog({
               {ageRangeLabel(range, locale)}
             </label>
           ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="font-semibold text-espresso">{t.shop.pickedBy}</legend>
+        <div className="mt-3 space-y-2 text-sm">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={selectedPicks.includes("max")}
+              onChange={() => setSelectedPicks((prev) => toggle(prev, "max"))}
+              className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+            />
+            {t.badges.maxPick}
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={selectedPicks.includes("lizzy")}
+              onChange={() => setSelectedPicks((prev) => toggle(prev, "lizzy"))}
+              className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+            />
+            {t.badges.lizzyPick}
+          </label>
         </div>
       </fieldset>
 

@@ -142,6 +142,7 @@ export const hy: Dictionary = {
     price: "Գին",
     material: "Նյութ",
     brand: "Ապրանքանիշ",
+    pickedBy: "Ընտրված է",
     clearFilters: "Մաքրել բոլոր զտիչները",
     filters: "Զտիչներ",
     searchPlaceholder: "Փնտրել խաղալիքներ…",

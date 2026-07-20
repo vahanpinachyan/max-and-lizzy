@@ -5,7 +5,7 @@ import { formatAmd } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
 
 const MIN = 0;
-const MAX = 100000;
+const MAX = 200000;
 const STEP = 1000;
 
 function clamp(v: number, lo: number, hi: number) {

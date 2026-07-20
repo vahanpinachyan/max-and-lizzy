@@ -140,6 +140,7 @@ export const en = {
     price: "Price",
     material: "Material",
     brand: "Brand",
+    pickedBy: "Picked By",
     clearFilters: "Clear all filters",
     filters: "Filters",
     searchPlaceholder: "Search toys…",
