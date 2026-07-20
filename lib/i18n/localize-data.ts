@@ -150,9 +150,9 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
       ctaLabel: "Գնել երաժշտական խաղալիքներ",
     },
     "wooden-play-collection": {
-      title: "Փայտյա խաղալիքների աշխարհ",
-      subtitle: "Մեքենաներ, նվագարաններ, աշտարակող խաղալիքներ և ավելին՝ ամեն փոքրիկ հետազոտողի համար",
-      ctaLabel: "Գնել հավաքածուն",
+      title: "Նվերներ մինչև 15,000 դրամ",
+      subtitle: "Խորիմաստ նվերներ աճող երևակայության համար",
+      ctaLabel: "Տեսնել ուղեցույցը",
     },
     "outdoor-play-season": {
       title: "Անժամանակ փայտյա խաղալիքներ",
@@ -172,9 +172,9 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
       ctaLabel: "Музыкальные игрушки",
     },
     "wooden-play-collection": {
-      title: "Мир деревянных игрушек",
-      subtitle: "Грузовики, музыкальные инструменты, пирамидки и многое другое — для каждого маленького исследователя",
-      ctaLabel: "Смотреть коллекцию",
+      title: "Подарки до 15 000 драм",
+      subtitle: "Продуманные подарки для растущего воображения",
+      ctaLabel: "Смотреть подборку",
     },
     "outdoor-play-season": {
       title: "Деревянные игрушки на века",

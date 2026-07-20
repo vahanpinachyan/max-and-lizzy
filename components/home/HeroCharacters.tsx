@@ -71,9 +71,9 @@ export function HeroCharacters({ maxIntro, lizzyIntro }: { maxIntro: string; liz
           active === "max" ? "translate-y-0 scale-100 opacity-100" : "translate-y-1 scale-95 opacity-0"
         }`}
       >
-        <div className="relative rounded-3xl border-2 border-sage/50 bg-cream px-4 py-2.5 text-xs font-semibold leading-snug text-espresso shadow-[0_4px_14px_rgba(61,43,31,0.15)]">
+        <div className="relative rounded-3xl bg-sage-dark px-4 py-2.5 text-xs font-semibold leading-snug text-white shadow-[0_4px_14px_rgba(61,43,31,0.25)]">
           {maxIntro}
-          <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-[2px] border-b-2 border-r-2 border-sage/50 bg-cream" />
+          <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-[2px] bg-sage-dark" />
         </div>
       </div>
       <div
@@ -83,9 +83,9 @@ export function HeroCharacters({ maxIntro, lizzyIntro }: { maxIntro: string; liz
           active === "lizzy" ? "translate-y-0 scale-100 opacity-100" : "translate-y-1 scale-95 opacity-0"
         }`}
       >
-        <div className="relative rounded-3xl border-2 border-rose/50 bg-cream px-4 py-2.5 text-xs font-semibold leading-snug text-espresso shadow-[0_4px_14px_rgba(61,43,31,0.15)]">
+        <div className="relative rounded-3xl bg-rose px-4 py-2.5 text-xs font-semibold leading-snug text-white shadow-[0_4px_14px_rgba(61,43,31,0.25)]">
           {lizzyIntro}
-          <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-[2px] border-b-2 border-r-2 border-rose/50 bg-cream" />
+          <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-[2px] bg-rose" />
         </div>
       </div>
     </div>
