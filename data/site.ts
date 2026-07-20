@@ -17,7 +17,7 @@ export const site = {
   },
   phone: "+374 33 09 50 50",
   phoneHref: "tel:+37433095050",
-  email: "info@maxandlizzy.com",
+  email: "maxandlizzy.toys@gmail.com",
   // TODO: fill in registration number, tax/VAT ID, and legal address before
   // launch — see /policies/terms, which currently carries the same TODO.
   legalName: "Baby Land LLC",
