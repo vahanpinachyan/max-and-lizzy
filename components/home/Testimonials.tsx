@@ -12,7 +12,7 @@ export async function Testimonials() {
     <section className="relative overflow-hidden py-16">
       <SectionDecorations variant="flowers" />
       <Container className="relative">
-        <SectionHeading align="center" eyebrow={dict.home.testimonialsEyebrow} title={dict.home.testimonialsTitle} />
+        <SectionHeading eyebrow={dict.home.testimonialsEyebrow} title={dict.home.testimonialsTitle} />
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {testimonials.map((item) => (
             <figure key={item.id} className="flex flex-col rounded-3xl border border-tan/50 bg-white p-6">
