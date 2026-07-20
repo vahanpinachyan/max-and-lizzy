@@ -40,7 +40,7 @@ export function LanguageSwitcher({ onOpenChange }: { onOpenChange?: (open: boole
         aria-haspopup="true"
         aria-expanded={open}
         aria-label={dict.languageSwitcher.label}
-        className="flex h-10 items-center gap-1 rounded-full px-2.5 text-sm font-semibold text-espresso hover:bg-beige transition-colors"
+        className="flex h-10 items-center gap-1 rounded-full pl-3 pr-2.5 text-sm font-semibold text-espresso hover:bg-beige transition-colors"
       >
         {localeMeta[locale].short}
         <motion.svg

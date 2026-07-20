@@ -191,7 +191,7 @@ export function Header() {
             <span className="relative inline-flex">
               <HeartIcon filled={wishlistSlugs.length > 0} size={20} />
               {wishlistSlugs.length > 0 && (
-                <span className="absolute -top-1 -right-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-terracotta px-0.5 text-[10px] font-bold leading-none text-white ring-2 ring-cream">
+                <span className="absolute top-0 right-0 flex h-3.5 min-w-3.5 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-terracotta px-0.5 text-[10px] font-bold leading-none text-white ring-2 ring-cream">
                   {wishlistSlugs.length}
                 </span>
               )}
@@ -221,7 +221,7 @@ export function Header() {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.5, opacity: 0 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute -top-1 -right-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-terracotta px-0.5 text-[10px] font-bold leading-none text-white ring-2 ring-cream"
+                    className="absolute top-0 right-0 flex h-3.5 min-w-3.5 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-terracotta px-0.5 text-[10px] font-bold leading-none text-white ring-2 ring-cream"
                   >
                     {itemCount}
                   </motion.span>
