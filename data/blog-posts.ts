@@ -10,8 +10,8 @@ export const blogPosts: BlogPost[] = [
       "Choosing a first birthday gift can feel overwhelming. Here are our favorite wooden, educational toys for one-year-olds — and why they're worth the investment.",
     metaDescription:
       "Our gift guide to the best wooden toys for 1-year-olds, chosen for safety, durability, and developmental value. Shop educational toys at Max & Lizzy.",
-    coverImage: "/images/blog/gift-guide-1-year-olds.svg",
-    coverImageAlt: "Collection of wooden toys arranged for a first birthday gift guide",
+    coverImage: "/images/blog/gift-guide-1-year-olds-v1.jpg",
+    coverImageAlt: "A wooden pull-along cart, stacking rings, and building blocks arranged on a wood floor by an entryway",
     author: "Max & Lizzy Team",
     date: "2026-04-02",
     tags: ["gift guides", "wooden toys", "0-3"],
@@ -47,8 +47,8 @@ Visit us on Mashtots Avenue to see and handle any of these before you buy, or sh
       "Wooden toys are having a moment on social media, but the appeal goes deeper than a matching nursery aesthetic. Here's what the research and our own experience say.",
     metaDescription:
       "Discover the developmental, safety, and environmental benefits of wooden toys versus plastic — and how to choose quality wooden toys for your child.",
-    coverImage: "/images/blog/why-wooden-toys.svg",
-    coverImageAlt: "Close-up of natural wooden toy blocks and textures",
+    coverImage: "/images/blog/why-wooden-toys-v1.jpg",
+    coverImageAlt: "Colorful wooden building blocks stacked into an arch and towers on a wood floor",
     author: "Max & Lizzy Team",
     date: "2026-03-18",
     tags: ["wooden toys", "eco-friendly", "parenting tips"],
@@ -90,8 +90,8 @@ Every product page on our site lists the exact materials and safety testing stan
       "Looking for a gift that doesn't involve a screen? These educational, hands-on toys keep toddlers engaged through imaginative and skill-building play.",
     metaDescription:
       "A curated screen-free gift guide for toddlers ages 2-4, featuring educational wooden toys, puzzles, and pretend play sets from Max & Lizzy.",
-    coverImage: "/images/blog/screen-free-gift-guide.svg",
-    coverImageAlt: "Toddler playing with wooden puzzles and blocks, screen-free play setup",
+    coverImage: "/images/blog/screen-free-gift-guide-v1.jpg",
+    coverImageAlt: "Shelves of wooden jigsaw puzzles and memory games at Max & Lizzy",
     author: "Max & Lizzy Team",
     date: "2026-02-25",
     tags: ["gift guides", "screen-free", "3-6"],
@@ -124,8 +124,8 @@ Most of our wooden and educational toys ship in simple kraft packaging that's ea
       "Age labels on toy packaging aren't just marketing — they're safety and development guidance. Here's how to actually use them when shopping.",
     metaDescription:
       "A practical checklist for choosing age-appropriate, safe, and developmentally suited toys for babies, toddlers, and preschoolers.",
-    coverImage: "/images/blog/age-appropriate-toys-checklist.svg",
-    coverImageAlt: "Parent and child selecting toys together in a toy store",
+    coverImage: "/images/blog/age-appropriate-toys-checklist-v1.jpg",
+    coverImageAlt: "A toddler reaching for a toy on a display shelf at Max & Lizzy",
     author: "Max & Lizzy Team",
     date: "2026-01-15",
     tags: ["parenting tips", "safety", "buying guide"],
