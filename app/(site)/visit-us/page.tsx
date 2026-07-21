@@ -42,9 +42,7 @@ export default function VisitUsPage() {
             />
           </div>
           <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-              `${site.address.street}, ${site.address.city}, ${site.address.country}`
-            )}`}
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(site.googleMapsQuery)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 inline-block font-semibold text-terracotta-dark hover:underline"

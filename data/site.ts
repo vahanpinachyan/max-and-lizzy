@@ -1,5 +1,13 @@
 // Central business/config data. Update these values with real business
 // details before launch — see README.md "Before you launch" checklist.
+
+// Matches the verified Google Business Profile listing exactly ("Max &
+// Lizzy Toys", 5.0 stars) — used for both the embedded map and the "Get
+// directions" link so both reliably resolve to the real store rather than
+// a geocoded guess at a bare street address (which was landing several km
+// away, near Tsitsernakaberd, before this fix).
+const GOOGLE_MAPS_QUERY = "Max & Lizzy Toys, 50 Mesrop Mashtots Avenue, Yerevan 0009, Armenia";
+
 export const site = {
   name: "Max & Lizzy",
   tagline: "Educational, wooden & eco-friendly toys",
@@ -7,10 +15,10 @@ export const site = {
     "Max & Lizzy is a Yerevan toy store specializing in educational, wooden, and eco-friendly toys for babies and preschoolers. Visit us on Mashtots Avenue or shop online.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://maxandlizzy.com",
   address: {
-    street: "50 Mashtots Avenue",
+    street: "50 Mesrop Mashtots Avenue",
     city: "Yerevan",
     region: "Yerevan",
-    postalCode: "", // TODO: add postal code
+    postalCode: "0009",
     country: "Armenia",
     countryCode: "AM",
   },
@@ -34,8 +42,8 @@ export const site = {
   ],
   hoursOpeningSpec: "Mo-Su 10:00-21:00", // schema.org / Google format
   geo: {
-    latitude: 40.18932658401767,
-    longitude: 44.51829261168928,
+    latitude: 40.1892633,
+    longitude: 44.518151,
   },
   social: {
     instagram: "https://www.instagram.com/max_and_lizzy_toys/?hl=en",
@@ -43,8 +51,8 @@ export const site = {
   },
   currency: "AMD",
   locale: "en-US",
-  googleMapsEmbedSrc:
-    "https://www.google.com/maps?q=40.18932658401767,44.51829261168928&output=embed",
+  googleMapsEmbedSrc: `https://www.google.com/maps?q=${encodeURIComponent(GOOGLE_MAPS_QUERY)}&output=embed`,
+  googleMapsQuery: GOOGLE_MAPS_QUERY,
   ageRanges: ["0-3", "3-6"] as const,
 } as const;
 
