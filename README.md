@@ -291,12 +291,17 @@ editing the database directly.
   can't reach those pages by URL either). You can't demote or delete your
   own account, so there's always at least one manager who can manage staff.
 
-**Order status emails:** clicking "Email customer this status" on an order's
-detail page sends a templated email (via Resend) reflecting the order's
-*current* status — pending, ready for pickup, shipped, completed, or
-cancelled — to the customer's email on file. Without `RESEND_API_KEY` set,
-the email content is logged to the server console instead of actually
-sending, so you can develop/test the flow without a Resend account.
+**Order status emails:** changing an order's status in the status dropdown
+on its detail page automatically sends a templated email (via Resend)
+reflecting the new status — pending, ready for pickup, shipped, completed,
+or cancelled — to the customer's email on file. Since this has a real
+side effect, the dropdown shows a confirm/cancel step before applying the
+change. A separate "Resend status email" button re-sends the email for the
+order's current status without changing anything, for retries. Placing a
+new order also emails a summary to the store's own inbox (`site.email`) so
+staff know to start fulfilling it. Without `RESEND_API_KEY` set, all of
+this is logged to the server console instead of actually sending, so you
+can develop/test the flow without a Resend account.
 
 **What's intentionally not built yet:**
 - **Image upload.** The image fields take URLs, not file uploads — you still
@@ -310,10 +315,12 @@ sending, so you can develop/test the flow without a Resend account.
   in-store point-of-sale system. If the physical store uses (or will use) a
   specific POS/inventory package, wiring up a sync is a well-scoped follow-up
   once that choice is made.
-- **Automated marketing emails.** Order-status emails are manual
-  (one click per order); there's no scheduled newsletter/campaign sender
-  yet. `info@maxandlizzy.com`-style sending is already wired through
-  Resend, so a campaign feature would reuse the same infrastructure.
+- **Automated marketing emails.** Order-status emails send automatically
+  when staff change an order's status in `/admin/orders/[id]` (with a
+  confirm step first, since it emails the customer); there's no scheduled
+  newsletter/campaign sender yet. `info@maxandlizzy.com`-style sending is
+  already wired through Resend, so a campaign feature would reuse the same
+  infrastructure.
 
 ## Security
 

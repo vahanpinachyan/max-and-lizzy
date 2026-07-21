@@ -22,7 +22,10 @@ function extractProductMetadata(
  * event, so this is safe to call more than once for the same session.
  */
 export async function createOrderFromSession(session: Stripe.Checkout.Session) {
-  const existing = await prisma.order.findUnique({ where: { stripeSessionId: session.id } });
+  const existing = await prisma.order.findUnique({
+    where: { stripeSessionId: session.id },
+    include: { items: true },
+  });
   if (existing) return existing;
 
   const email = session.customer_details?.email;
