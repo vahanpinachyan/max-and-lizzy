@@ -25,13 +25,15 @@ export function ShopCatalog({
   category,
   materials,
   brands,
+  initialSubcategory,
 }: {
   products: Product[];
   category?: CategoryInfo;
   materials: string[];
   brands: string[];
+  initialSubcategory?: string;
 }) {
-  const [subcategory, setSubcategory] = useState<string | null>(null);
+  const [subcategory, setSubcategory] = useState<string | null>(initialSubcategory ?? null);
   const [ageRanges, setAgeRanges] = useState<AgeRange[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_MIN, PRICE_MAX]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);

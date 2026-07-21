@@ -32,12 +32,17 @@ export async function generateMetadata({
 
 export default async function CategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ category: string }>;
+  searchParams: Promise<{ sub?: string }>;
 }) {
   const { category: slug } = await params;
   const rawCategory = getCategory(slug);
   if (!rawCategory) notFound();
+
+  const { sub } = await searchParams;
+  const initialSubcategory = rawCategory.subcategories.some((s) => s.slug === sub) ? sub : undefined;
 
   const { dict: t, locale } = await getServerDictionary();
   const category = localizeCategory(rawCategory, locale);
@@ -63,7 +68,13 @@ export default async function CategoryPage({
       <h1 className="text-4xl font-bold text-espresso">{category.name}</h1>
       <p className="mt-2 max-w-2xl text-espresso/70">{category.shortDescription}</p>
       <div className="mt-8">
-        <ShopCatalog products={categoryProducts} category={category} materials={materials} brands={brands} />
+        <ShopCatalog
+          products={categoryProducts}
+          category={category}
+          materials={materials}
+          brands={brands}
+          initialSubcategory={initialSubcategory}
+        />
       </div>
     </Container>
   );

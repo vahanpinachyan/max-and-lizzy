@@ -13,7 +13,7 @@ export const promotions: Promotion[] = [
     title: "New: Musical Toys",
     subtitle: "Xylophones, drums & mini instruments for tiny musicians",
     image: "/images/promotions/musical-toys-v1.jpg",
-    href: "/shop/wooden-toys",
+    href: "/shop/wooden-toys?sub=musical",
     ctaLabel: "Shop Musical Toys",
   },
   {
