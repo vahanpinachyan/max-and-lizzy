@@ -1,37 +1,36 @@
 import type { Testimonial } from "@/types";
 
-// Placeholder testimonials — replace with genuine customer quotes.
-// See README "Before you launch" checklist.
+// Real customer quotes, sourced from the store's Google Maps reviews
+// (5.0 stars, maxandlizzy.com listing) — see README "Before you launch" checklist.
 export const testimonials: Testimonial[] = [
   {
     id: "t1",
-    author: "Anahit K.",
+    author: "Karina V.",
     location: "Yerevan",
     rating: 5,
     quote:
-      "The staff helped me pick out the perfect first puzzle for my daughter's second birthday. You can tell every toy in the shop is chosen with real care.",
+      "I've been searching for toys that are eco-friendly, educational, and built to last for a long time. Finally, I found the perfect toy store: Max and Lizzy! My 2-year-old daughter absolutely adores her new toys. The quality is excellent, and I love knowing they're both safe and engaging for her.",
   },
   {
     id: "t2",
-    author: "David M.",
+    author: "Donlus E.",
     location: "Yerevan",
     rating: 5,
     quote:
-      "We've bought three sets of the stacking blocks as gifts now — beautiful quality wood and they hold up to two very energetic toddlers.",
+      "I'm obsessed with this store! … Everything is made out of quality materials, and super beautiful. I noticed even parents were taking their time checking out the toys as if transported back into their childhoods with such nostalgic awe in their eyes.",
   },
   {
     id: "t3",
-    author: "Lucy T.",
+    author: "Vahe P.",
     location: "Yerevan",
     rating: 5,
-    quote:
-      "Finally a toy store that isn't all plastic and batteries. My son plays with his wooden kitchen set more than anything else he owns.",
+    quote: "Amazing toy store with great wooden toys!",
   },
   {
     id: "t4",
-    author: "Karen A.",
-    rating: 4,
-    quote:
-      "Lovely little shop on Mashtots Avenue — easy to find parking nearby and the staff let my kids try out the toys before we bought anything.",
+    author: "Tigran P.",
+    location: "Yerevan",
+    rating: 5,
+    quote: "Best toy store in Yerevan.",
   },
 ];
