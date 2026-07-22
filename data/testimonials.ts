@@ -28,9 +28,10 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "t4",
-    author: "Tigran P.",
+    author: "Lily G.",
     location: "Yerevan",
     rating: 5,
-    quote: "Best toy store in Yerevan.",
+    quote:
+      "If you are looking for a top-notch toy store in Armenia, Max and Lizzy is a must-visit! Wonderful atmosphere, excellent customer service, and a fantastic variety of educational and fun toys. Highly recommended!",
   },
 ];
