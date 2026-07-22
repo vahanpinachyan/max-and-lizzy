@@ -28,7 +28,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "t4",
-    author: "Lily G.",
+    author: "Lily",
     location: "Yerevan",
     rating: 5,
     quote:
