@@ -4,6 +4,8 @@ import { site } from "@/data/site";
 import { buildMetadata, localBusinessJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/ui/Container";
+import { getServerDictionary } from "@/lib/i18n/server";
+import { interpolate } from "@/lib/i18n/interpolate";
 
 export const metadata: Metadata = buildMetadata({
   title: "Visit Us",
@@ -11,28 +13,27 @@ export const metadata: Metadata = buildMetadata({
   pathname: "/visit-us",
 });
 
-const STORE_PHOTOS = [
-  { src: "/images/store/storefront-exterior.jpg", alt: "Max & Lizzy storefront awning on Mashtots Avenue" },
-  { src: "/images/store/shop-interior.jpg", alt: "The Max & Lizzy Toys sign inside the shop" },
-  { src: "/images/store/toy-shelf-display.jpg", alt: "Wooden toy display shelves inside the shop" },
-  { src: "/images/store/checkout-counter.jpg", alt: "A parent and child browsing the toy shelves" },
-];
+export default async function VisitUsPage() {
+  const { dict: t } = await getServerDictionary();
 
-export default function VisitUsPage() {
+  const STORE_PHOTOS = [
+    { src: "/images/store/storefront-exterior.jpg", alt: t.visitUsPage.exteriorAlt },
+    { src: "/images/store/shop-interior.jpg", alt: t.visitUsPage.interiorAlt },
+    { src: "/images/store/toy-shelf-display.jpg", alt: t.visitUsPage.shelfAlt },
+    { src: "/images/store/checkout-counter.jpg", alt: t.visitUsPage.counterAlt },
+  ];
+
   return (
     <Container className="py-12">
       <JsonLd data={localBusinessJsonLd()} />
-      <h1 className="text-4xl font-bold text-espresso sm:text-5xl">Visit Our Store</h1>
-      <p className="mt-3 max-w-2xl text-espresso/70">
-        We love meeting the families who shop with us. Come see, touch, and try the toys in
-        person — our team is always on hand to help you find the right fit.
-      </p>
+      <h1 className="text-4xl font-bold text-espresso sm:text-5xl">{t.visitUsPage.title}</h1>
+      <p className="mt-3 max-w-2xl text-espresso/70">{t.visitUsPage.subtitle}</p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-2">
         <div>
           <div className="overflow-hidden rounded-2xl border border-tan/50">
             <iframe
-              title={`Map showing ${site.name} location at ${site.address.street}`}
+              title={interpolate(t.visitUsPage.mapAria, { name: site.name, address: site.address.street })}
               src={site.googleMapsEmbedSrc}
               width="100%"
               height="360"
@@ -47,14 +48,14 @@ export default function VisitUsPage() {
             rel="noopener noreferrer"
             className="mt-3 inline-block font-semibold text-terracotta-dark hover:underline"
           >
-            Get directions →
+            {t.visitUsPage.getDirections}
           </a>
         </div>
 
         <div className="space-y-8">
           <section aria-labelledby="address-heading">
             <h2 id="address-heading" className="text-lg font-bold text-espresso">
-              Address
+              {t.visitUsPage.addressHeading}
             </h2>
             <address className="mt-2 not-italic text-espresso/80">
               {site.address.street}
@@ -65,13 +66,13 @@ export default function VisitUsPage() {
 
           <section aria-labelledby="hours-heading">
             <h2 id="hours-heading" className="text-lg font-bold text-espresso">
-              Hours
+              {t.visitUsPage.hoursHeading}
             </h2>
             <dl className="mt-2 grid grid-cols-2 gap-y-1 text-sm text-espresso/80 max-w-xs">
               {site.hours.map((h) => (
                 <div key={h.day} className="contents">
-                  <dt className="font-medium">{h.day}</dt>
-                  <dd>{h.hours}</dd>
+                  <dt className="font-medium">{t.visitUsPage.days[h.day]}</dt>
+                  <dd>{t.visitUsPage.hoursValue}</dd>
                 </div>
               ))}
             </dl>
@@ -79,14 +80,14 @@ export default function VisitUsPage() {
 
           <section aria-labelledby="contact-heading">
             <h2 id="contact-heading" className="text-lg font-bold text-espresso">
-              Contact
+              {t.visitUsPage.contactHeading}
             </h2>
             <p className="mt-2 text-espresso/80">
-              Phone:{" "}
+              {t.visitUsPage.phoneLabel}{" "}
               <a href={site.phoneHref} className="hover:text-terracotta-dark">{site.phone}</a>
             </p>
             <p className="mt-1 text-espresso/80">
-              Email:{" "}
+              {t.visitUsPage.emailLabel}{" "}
               <a href={`mailto:${site.email}`} className="hover:text-terracotta-dark">{site.email}</a>
             </p>
           </section>
@@ -95,7 +96,7 @@ export default function VisitUsPage() {
 
       <section className="mt-16" aria-labelledby="photos-heading">
         <h2 id="photos-heading" className="text-2xl font-bold text-espresso">
-          Inside the Shop
+          {t.visitUsPage.insideShopHeading}
         </h2>
         <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {STORE_PHOTOS.map((photo) => (

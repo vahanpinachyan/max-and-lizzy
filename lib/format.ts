@@ -2,12 +2,23 @@ import type { Locale } from "@/lib/i18n/locales";
 
 const dateFormatLocale: Record<Locale, string> = { en: "en-US", hy: "hy-AM", ru: "ru-RU" };
 
+// Currency symbol/placement and digit grouping are both hardcoded rather
+// than left to Intl's currency-style resolution — Node's and the browser's
+// ICU data disagree on both the AMD display symbol and grouping behavior
+// for hy-AM/ru-RU at some magnitudes, which produces a server/client
+// hydration mismatch. Plain string manipulation is identical everywhere.
+const currencyDisplay: Record<Locale, { symbol: string; prefix: boolean }> = {
+  en: { symbol: "AMD", prefix: true },
+  hy: { symbol: "֏", prefix: false },
+  ru: { symbol: "AMD", prefix: false },
+};
+
 export function formatAmd(amount: number, locale: Locale = "en"): string {
-  return new Intl.NumberFormat(dateFormatLocale[locale], {
-    style: "currency",
-    currency: "AMD",
-    maximumFractionDigits: 0,
-  }).format(amount);
+  const grouped = Math.round(amount)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const { symbol, prefix } = currencyDisplay[locale];
+  return prefix ? `${symbol} ${grouped}` : `${grouped} ${symbol}`;
 }
 
 export function formatDate(iso: string, locale: Locale = "en"): string {

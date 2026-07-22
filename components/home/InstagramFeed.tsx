@@ -17,7 +17,6 @@ export async function InstagramFeed() {
           <SectionHeading
             eyebrow={t.home.instagramEyebrow}
             title={t.home.instagramTitle}
-            description={t.home.instagramDescription}
           />
           <a
             href={site.social.instagram}

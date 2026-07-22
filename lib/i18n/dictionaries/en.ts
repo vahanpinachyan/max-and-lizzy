@@ -45,7 +45,6 @@ export const en = {
     testimonialsTitle: "What parents are saying",
     instagramEyebrow: "@max_and_lizzy_toys",
     instagramTitle: "Follow along on Instagram",
-    instagramDescription: "Restocks, behind-the-scenes, and real customers playing with real toys.",
     followUs: "Follow Us",
     newsletterTitle: "Get gift guides & play tips in your inbox",
     newsletterPlaceholder: "your@email.com",
@@ -314,6 +313,52 @@ export const en = {
       "Gift guides, age-appropriate toy advice, and educational play tips — written by our team to help you choose well, not just often.",
     moreGuides: "More guides",
     readMore: "Read more →",
+  },
+  aboutPage: {
+    eyebrow: "Our Story",
+    title: "Toys chosen the way we'd choose them for our own kids",
+    intro:
+      "We started Max & Lizzy because we wanted a toy store we could trust for our own kids — real wood over plastic, toys built to survive years of play, and picked because they actually help children learn, not just because they're loud or trendy.",
+    whyTitle: "Why wooden, educational, and eco-friendly?",
+    whyParagraph1:
+      "Every product on our shelves is chosen against three questions. Is it made from honest, sustainable materials? Does it hold up to real, everyday play? And does it actually build a skill, such as fine motor control, early language, or spatial reasoning, rather than just occupying a few minutes of attention?",
+    whyParagraph2:
+      "We work directly with manufacturers who share that philosophy, and every toy we carry is safety-tested to ASTM F963 and EN71 standards before it reaches our shelves.",
+    teamTitle: "Meet the team",
+    teamParagraph:
+      "Max & Lizzy is run by a small, hands-on team based here in Yerevan. We test and select every toy ourselves before it goes on the shelf, and we're usually the ones behind the counter when you visit, ready to help you find the right fit for your child.",
+    visitTitle: "Come see us in person",
+    visitParagraph:
+      "The best way to find the right toy is to see and handle it. Stop by our store on Mashtots Avenue; our team is always happy to help you choose.",
+    storyImageAlt: "A mother and daughter browsing wooden toys on the shelves at Max & Lizzy",
+    teamImageAlt: "The Max & Lizzy team standing together in the store",
+  },
+  visitUsPage: {
+    title: "Visit Our Store",
+    subtitle:
+      "We love meeting the families who shop with us. Come see, touch, and try the toys in person — our team is always on hand to help you find the right fit.",
+    getDirections: "Get directions →",
+    addressHeading: "Address",
+    hoursHeading: "Hours",
+    contactHeading: "Contact",
+    phoneLabel: "Phone:",
+    emailLabel: "Email:",
+    insideShopHeading: "Inside the Shop",
+    mapAria: "Map showing {name} location at {address}",
+    hoursValue: "10:00 AM – 9:00 PM",
+    days: {
+      Monday: "Monday",
+      Tuesday: "Tuesday",
+      Wednesday: "Wednesday",
+      Thursday: "Thursday",
+      Friday: "Friday",
+      Saturday: "Saturday",
+      Sunday: "Sunday",
+    },
+    exteriorAlt: "Max & Lizzy storefront awning on Mashtots Avenue",
+    interiorAlt: "The Max & Lizzy Toys sign inside the shop",
+    shelfAlt: "Wooden toy display shelves inside the shop",
+    counterAlt: "A parent and child browsing the toy shelves",
   },
 } as const;
 

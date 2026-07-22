@@ -44,7 +44,7 @@ const categoryTranslations: Record<"hy" | "ru", Record<string, CategoryTranslati
       },
     },
     "puzzles-games": {
-      name: "Գլուխկոտրուկներ և խաղեր",
+      name: "Գլուխկոտրուկներ և փազլներ",
       shortDescription: "Խոշոր առաջին գլուխկոտրուկներ և համագործակցային խաղեր աճող մտքերի համար։",
       subcategories: {
         "wooden-puzzles": "Փայտյա գլուխկոտրուկներ",
@@ -53,7 +53,7 @@ const categoryTranslations: Record<"hy" | "ru", Record<string, CategoryTranslati
       },
     },
     "baby-toddler": {
-      name: "Երեխա և փոքրիկ",
+      name: "Փոքրիկների համար",
       shortDescription: "Մեղմ, անվտանգ առաջին խաղալիքներ փոքրիկ ձեռքերի համար՝ նորածնից մինչև երեք տարեկան։",
       subcategories: {
         "rattles-teethers": "Զնգոցներ և ատամնահանողներ",
