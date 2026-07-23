@@ -5,10 +5,12 @@ import Link from "next/link";
 import type { BlogPost } from "@/types";
 import { formatDate } from "@/lib/format";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
+import { localizeBlogPost } from "@/data/blog-posts";
 
-export function BlogCard({ post }: { post: BlogPost }) {
+export function BlogCard({ post: rawPost }: { post: BlogPost }) {
   const t = useTranslations();
   const { locale } = useI18n();
+  const post = localizeBlogPost(rawPost, locale);
   return (
     <article className="group flex flex-col overflow-hidden rounded-3xl border border-tan/50 bg-white">
       <Link href={`/blog/${post.slug}`} className="relative block aspect-[16/9] bg-beige">

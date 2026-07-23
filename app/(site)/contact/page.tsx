@@ -16,9 +16,6 @@ export default async function ContactPage() {
   return (
     <Container className="py-12">
       <h1 className="text-4xl font-bold text-espresso sm:text-5xl">{t.contactPage.title}</h1>
-      <p className="mt-3 max-w-2xl text-espresso/70">
-        {t.contactPage.subtitle}
-      </p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px]">
         <ContactForm />
@@ -27,9 +24,9 @@ export default async function ContactPage() {
           <div>
             <h2 className="font-semibold text-espresso">{t.contactPage.visit}</h2>
             <address className="mt-1 not-italic text-sm text-espresso/70">
-              {site.address.street}
+              {t.visitUsPage.addressStreet}
               <br />
-              {site.address.city}, {site.address.country}
+              {t.visitUsPage.addressCityCountry}
             </address>
           </div>
           <div>

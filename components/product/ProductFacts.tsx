@@ -1,5 +1,5 @@
 import type { Product } from "@/types";
-import { ageRangeLabel } from "@/lib/format";
+import { ageRangeLabel, materialLabel } from "@/lib/format";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export async function ProductFacts({ product }: { product: Product }) {
@@ -16,7 +16,7 @@ export async function ProductFacts({ product }: { product: Product }) {
       </div>
       <div className="sm:col-span-2">
         <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.materials}</dt>
-        <dd className="mt-1 text-espresso">{product.materials.join(", ")}</dd>
+        <dd className="mt-1 text-espresso">{product.materials.map((m) => materialLabel(m, locale)).join(", ")}</dd>
       </div>
       <div className="sm:col-span-2">
         <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.safety}</dt>

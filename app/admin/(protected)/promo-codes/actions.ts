@@ -9,6 +9,8 @@ export async function createPromoCode(_prevState: { error: string | null }, form
   const code = String(formData.get("code") ?? "").trim().toUpperCase();
   const percentOff = Number(formData.get("percentOff"));
   const description = String(formData.get("description") ?? "").trim();
+  const descriptionHy = String(formData.get("descriptionHy") ?? "").trim();
+  const descriptionRu = String(formData.get("descriptionRu") ?? "").trim();
   const expiresAtRaw = String(formData.get("expiresAt") ?? "").trim();
 
   if (!code) return { error: "Enter a code." };
@@ -25,6 +27,8 @@ export async function createPromoCode(_prevState: { error: string | null }, form
       code,
       percentOff: Math.round(percentOff),
       description,
+      descriptionHy: descriptionHy || null,
+      descriptionRu: descriptionRu || null,
       active: true,
       expiresAt: expiresAtRaw ? new Date(expiresAtRaw) : null,
     },

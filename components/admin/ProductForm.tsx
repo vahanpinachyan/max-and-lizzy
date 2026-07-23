@@ -233,7 +233,7 @@ export function ProductForm({
         </div>
         <div className="flex flex-wrap items-center gap-6">
           <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
-            <input type="checkbox" name="inStock" defaultChecked={initial.inStock} className="h-4 w-4 rounded border-tan text-terracotta" />
+            <input type="checkbox" name="inStock" defaultChecked={initial.inStock} className="form-checkbox" />
             In stock
           </label>
           <Field label="Stock quantity (optional — just for your own tracking)">
@@ -284,15 +284,15 @@ export function ProductForm({
         </div>
         <div className="flex flex-wrap gap-6">
           <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
-            <input type="checkbox" name="featured" defaultChecked={initial.featured} className="h-4 w-4 rounded border-tan text-terracotta" />
+            <input type="checkbox" name="featured" defaultChecked={initial.featured} className="form-checkbox" />
             Featured (shows on homepage)
           </label>
           <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
-            <input type="checkbox" name="bestseller" defaultChecked={initial.bestseller} className="h-4 w-4 rounded border-tan text-terracotta" />
+            <input type="checkbox" name="bestseller" defaultChecked={initial.bestseller} className="form-checkbox" />
             Bestseller badge
           </label>
           <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
-            <input type="checkbox" name="newArrival" defaultChecked={initial.newArrival} className="h-4 w-4 rounded border-tan text-terracotta" />
+            <input type="checkbox" name="newArrival" defaultChecked={initial.newArrival} className="form-checkbox" />
             New badge
           </label>
         </div>
@@ -347,7 +347,7 @@ export function ProductForm({
         </Field>
         <div className="grid grid-cols-2 gap-4">
           <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
-            <input type="checkbox" name="assemblyRequired" defaultChecked={initial.assemblyRequired} className="h-4 w-4 rounded border-tan text-terracotta" />
+            <input type="checkbox" name="assemblyRequired" defaultChecked={initial.assemblyRequired} className="form-checkbox" />
             Some assembly required
           </label>
           <Field label="Assembly note (optional, shown if checked above)">

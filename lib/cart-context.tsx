@@ -10,7 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import type { CartItem, Product } from "@/types";
-import { useTranslations } from "@/lib/i18n/context";
+import type { Locale } from "@/lib/i18n/locales";
+import { useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
 import { trackAddedToCart } from "@/lib/omnisend-client";
 
@@ -46,9 +47,9 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
-async function validatePromoCode(code: string): Promise<AppliedPromo | null> {
+async function validatePromoCode(code: string, locale: Locale): Promise<AppliedPromo | null> {
   try {
-    const res = await fetch(`/api/promo-codes?code=${encodeURIComponent(code)}`);
+    const res = await fetch(`/api/promo-codes?code=${encodeURIComponent(code)}&locale=${locale}`);
     if (!res.ok) return null;
     const data = await res.json();
     return data.promo ?? null;
@@ -58,7 +59,7 @@ async function validatePromoCode(code: string): Promise<AppliedPromo | null> {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const t = useTranslations();
+  const { dict: t, locale } = useI18n();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -93,10 +94,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Re-validate against the DB rather than trusting whatever was saved —
     // a promo could have been deactivated since the last visit.
     if (storedPromoCode) {
-      validatePromoCode(storedPromoCode).then((found) => {
+      validatePromoCode(storedPromoCode, locale).then((found) => {
         if (found) setPromo(found);
       });
     }
+    // Only re-run this hydration effect once on mount, regardless of locale.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -154,14 +157,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const applyPromoCode = useCallback(
     async (code: string) => {
-      const found = await validatePromoCode(code);
+      const found = await validatePromoCode(code, locale);
       if (!found) {
         return { success: false, message: t.cart.promoInvalid };
       }
       setPromo(found);
       return { success: true, message: interpolate(t.cart.promoAppliedMessage, { description: found.description }) };
     },
-    [t]
+    [t, locale]
   );
 
   const removePromoCode = useCallback(() => setPromo(null), []);

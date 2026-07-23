@@ -340,7 +340,7 @@ export default function CartPage() {
                   type="checkbox"
                   checked={giftWrap}
                   onChange={(e) => setGiftWrap(e.target.checked)}
-                  className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+                  className="form-checkbox"
                 />
                 <span className="font-semibold text-espresso">
                   {interpolate(t.cart.giftWrapCheckboxLabel, { fee: formatAmd(GIFT_WRAP_FEE_AMD, locale) })}

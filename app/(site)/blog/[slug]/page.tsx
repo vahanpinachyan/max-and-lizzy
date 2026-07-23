@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { blogPosts, getBlogPost } from "@/data/blog-posts";
+import { blogPosts, getBlogPost, localizeBlogPost } from "@/data/blog-posts";
 import { buildMetadata, blogPostJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { formatDate } from "@/lib/format";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -21,8 +21,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
-  if (!post) return {};
+  const rawPost = getBlogPost(slug);
+  if (!rawPost) return {};
+  const { locale } = await getServerDictionary();
+  const post = localizeBlogPost(rawPost, locale);
   return buildMetadata({
     title: post.title,
     description: post.metaDescription,
@@ -37,10 +39,11 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
-  if (!post) notFound();
+  const rawPost = getBlogPost(slug);
+  if (!rawPost) notFound();
 
   const { dict: t, locale } = await getServerDictionary();
+  const post = localizeBlogPost(rawPost, locale);
   const related = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
 
   return (

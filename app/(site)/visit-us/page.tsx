@@ -27,7 +27,6 @@ export default async function VisitUsPage() {
     <Container className="py-12">
       <JsonLd data={localBusinessJsonLd()} />
       <h1 className="text-4xl font-bold text-espresso sm:text-5xl">{t.visitUsPage.title}</h1>
-      <p className="mt-3 max-w-2xl text-espresso/70">{t.visitUsPage.subtitle}</p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-2">
         <div>
@@ -58,9 +57,9 @@ export default async function VisitUsPage() {
               {t.visitUsPage.addressHeading}
             </h2>
             <address className="mt-2 not-italic text-espresso/80">
-              {site.address.street}
+              {t.visitUsPage.addressStreet}
               <br />
-              {site.address.city}, {site.address.country}
+              {t.visitUsPage.addressCityCountry}
             </address>
           </section>
 

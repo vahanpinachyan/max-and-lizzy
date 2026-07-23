@@ -95,6 +95,30 @@ textarea:focus-visible,
   left: 0;
 }
 
+/* Native checkboxes ignore author border-color for their unchecked state in
+   most browsers (accent-color only reliably tints the checked fill), so the
+   box is drawn by hand here to match the site's warm border palette instead
+   of falling back to the OS default. */
+.form-checkbox {
+  appearance: none;
+  height: 1rem;
+  width: 1rem;
+  flex-shrink: 0;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-tan);
+  background-color: white;
+  cursor: pointer;
+}
+
+.form-checkbox:checked {
+  border-color: var(--color-terracotta);
+  background-color: var(--color-terracotta);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0.65rem;
+}
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;

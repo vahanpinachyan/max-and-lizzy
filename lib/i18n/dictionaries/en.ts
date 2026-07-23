@@ -297,7 +297,6 @@ export const en = {
   },
   contactPage: {
     title: "Contact Us",
-    subtitle: "Questions about a product, an order, or just want toy advice? We'd love to hear from you.",
     visit: "Visit",
     phone: "Phone",
     comingSoon: "Coming soon",
@@ -335,10 +334,10 @@ export const en = {
   },
   visitUsPage: {
     title: "Visit Our Store",
-    subtitle:
-      "We love meeting the families who shop with us. Come see, touch, and try the toys in person — our team is always on hand to help you find the right fit.",
     getDirections: "Get directions →",
     addressHeading: "Address",
+    addressStreet: "50 Mesrop Mashtots Avenue",
+    addressCityCountry: "Yerevan, Armenia",
     hoursHeading: "Hours",
     contactHeading: "Contact",
     phoneLabel: "Phone:",

@@ -82,14 +82,26 @@ export interface Testimonial {
 export interface BlogPost {
   slug: string;
   title: string;
+  titleHy?: string;
+  titleRu?: string;
   excerpt: string;
+  excerptHy?: string;
+  excerptRu?: string;
   content: string; // markdown-ish, rendered with simple paragraph splitting
+  contentHy?: string;
+  contentRu?: string;
   coverImage: string;
   coverImageAlt: string;
+  coverImageAltHy?: string;
+  coverImageAltRu?: string;
   author: string;
   date: string; // ISO date
   tags: string[];
+  tagsHy?: string[];
+  tagsRu?: string[];
   metaDescription: string;
+  metaDescriptionHy?: string;
+  metaDescriptionRu?: string;
 }
 
 export interface CartItem {

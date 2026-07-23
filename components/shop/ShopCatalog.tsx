@@ -4,10 +4,11 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
 import type { Product, AgeRange, CategoryInfo } from "@/types";
-import { ageRangeLabel } from "@/lib/format";
+import { ageRangeLabel, materialLabel } from "@/lib/format";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { QuickViewModal } from "@/components/shop/QuickViewModal";
 import { PriceRangeFilter } from "@/components/shop/PriceRangeFilter";
+import { Select } from "@/components/ui/Select";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
 import { localizeCategories, localizeCategory } from "@/lib/i18n/localize-data";
 
@@ -168,7 +169,7 @@ export function ShopCatalog({
                 type="checkbox"
                 checked={ageRanges.includes(range)}
                 onChange={() => setAgeRanges((prev) => toggle(prev, range))}
-                className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+                className="form-checkbox"
               />
               {ageRangeLabel(range, locale)}
             </label>
@@ -184,7 +185,7 @@ export function ShopCatalog({
               type="checkbox"
               checked={selectedPicks.includes("max")}
               onChange={() => setSelectedPicks((prev) => toggle(prev, "max"))}
-              className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+              className="form-checkbox"
             />
             {t.badges.maxPick}
           </label>
@@ -193,7 +194,7 @@ export function ShopCatalog({
               type="checkbox"
               checked={selectedPicks.includes("lizzy")}
               onChange={() => setSelectedPicks((prev) => toggle(prev, "lizzy"))}
-              className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+              className="form-checkbox"
             />
             {t.badges.lizzyPick}
           </label>
@@ -223,9 +224,9 @@ export function ShopCatalog({
                 type="checkbox"
                 checked={selectedMaterials.includes(material)}
                 onChange={() => setSelectedMaterials((prev) => toggle(prev, material))}
-                className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+                className="form-checkbox"
               />
-              {material}
+              {materialLabel(material, locale)}
             </label>
           ))}
         </div>
@@ -240,7 +241,7 @@ export function ShopCatalog({
                 type="checkbox"
                 checked={selectedBrands.includes(brand)}
                 onChange={() => setSelectedBrands((prev) => toggle(prev, brand))}
-                className="h-4 w-4 rounded border-tan text-terracotta focus-visible:outline-terracotta"
+                className="form-checkbox"
               />
               {brand}
             </label>
@@ -281,19 +282,21 @@ export function ShopCatalog({
           >
             {t.shop.filters}{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
           </button>
-          <label className="flex items-center gap-2 text-sm">
-            <span className="sr-only">{t.shop.sortAria}</span>
-            <select
+          <div className="w-48 shrink-0">
+            <label htmlFor="shop-sort" className="sr-only">{t.shop.sortAria}</label>
+            <Select
+              id="shop-sort"
               value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              className="rounded-full border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
-            >
-              <option value="featured">{t.shop.sortFeatured}</option>
-              <option value="price-asc">{t.shop.sortPriceAsc}</option>
-              <option value="price-desc">{t.shop.sortPriceDesc}</option>
-              <option value="name-asc">{t.shop.sortNameAsc}</option>
-            </select>
-          </label>
+              onChange={(v) => setSort(v as SortKey)}
+              placeholder={t.shop.sortFeatured}
+              options={[
+                { value: "featured", label: t.shop.sortFeatured },
+                { value: "price-asc", label: t.shop.sortPriceAsc },
+                { value: "price-desc", label: t.shop.sortPriceDesc },
+                { value: "name-asc", label: t.shop.sortNameAsc },
+              ]}
+            />
+          </div>
         </div>
 
         {filtersOpen && <div className="mt-4 lg:hidden">{filterPanel}</div>}

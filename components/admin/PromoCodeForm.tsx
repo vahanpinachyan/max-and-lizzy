@@ -29,12 +29,20 @@ export function PromoCodeForm() {
         <input name="percentOff" type="number" min={1} max={100} required className={`${inputClass} mt-1.5`} />
       </label>
       <label className="block sm:col-span-2">
-        <span className="block text-sm font-semibold text-espresso">Description (shown to customers)</span>
+        <span className="block text-sm font-semibold text-espresso">Description (English)</span>
         <input name="description" placeholder="5% off your first order" required className={`${inputClass} mt-1.5`} />
       </label>
       <label className="block">
         <span className="block text-sm font-semibold text-espresso">Expires (optional)</span>
         <input name="expiresAt" type="date" className={`${inputClass} mt-1.5`} />
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="block text-sm font-semibold text-espresso">Description (Armenian, optional)</span>
+        <input name="descriptionHy" placeholder="5% զեղչ առաջին պատվերի համար" className={`${inputClass} mt-1.5`} />
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="block text-sm font-semibold text-espresso">Description (Russian, optional)</span>
+        <input name="descriptionRu" placeholder="Скидка 5% на первый заказ" className={`${inputClass} mt-1.5`} />
       </label>
       <div className="col-span-2 sm:col-span-5">
         {state.error && (

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mascot } from "@/components/ui/Mascot";
 import { Button } from "@/components/ui/Button";
-import { useTranslations } from "@/lib/i18n/context";
+import { useI18n } from "@/lib/i18n/context";
 import { identifyOmnisendContact } from "@/lib/omnisend-client";
 
 const STORAGE_KEY = "max-and-lizzy-welcome-seen";
@@ -21,7 +21,7 @@ export function WelcomeModal() {
   // code (fetched below) resolves, e.g. on a fresh install before seeding.
   const [welcomeCode, setWelcomeCode] = useState({ code: WELCOME_CODE, description: "" });
   const closeRef = useRef<HTMLButtonElement>(null);
-  const t = useTranslations();
+  const { dict: t, locale } = useI18n();
   const welcomeDescription = welcomeCode.description || t.welcomeModal.fallbackDescription;
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export function WelcomeModal() {
     }
     if (seen) return;
 
-    fetch(`/api/promo-codes?code=${WELCOME_CODE}`)
+    fetch(`/api/promo-codes?code=${WELCOME_CODE}&locale=${locale}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.promo) setWelcomeCode(data.promo);
@@ -44,6 +44,7 @@ export function WelcomeModal() {
 
     const timer = setTimeout(() => setOpen(true), SHOW_DELAY_MS);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

@@ -299,7 +299,6 @@ export const ru: Dictionary = {
   },
   contactPage: {
     title: "Свяжитесь с нами",
-    subtitle: "Вопросы о товаре, заказе или просто нужен совет по выбору игрушки? Будем рады услышать вас.",
     visit: "Адрес",
     phone: "Телефон",
     comingSoon: "Скоро",
@@ -337,10 +336,10 @@ export const ru: Dictionary = {
   },
   visitUsPage: {
     title: "Посетите наш магазин",
-    subtitle:
-      "Мы любим встречать семьи, которые делают покупки у нас. Приходите увидеть, потрогать и попробовать игрушки лично — наша команда всегда готова помочь вам с выбором.",
     getDirections: "Проложить маршрут →",
     addressHeading: "Адрес",
+    addressStreet: "Проспект Месропа Маштоца 50",
+    addressCityCountry: "Ереван, Армения",
     hoursHeading: "Часы работы",
     contactHeading: "Контакты",
     phoneLabel: "Телефон:",

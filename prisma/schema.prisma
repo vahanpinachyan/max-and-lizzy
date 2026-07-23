@@ -94,13 +94,15 @@ model Product {
 }
 
 model PromoCode {
-  id          String    @id @default(cuid())
-  code        String    @unique
-  percentOff  Int
-  description String
-  active      Boolean   @default(true)
-  expiresAt   DateTime?
-  createdAt   DateTime  @default(now())
+  id            String    @id @default(cuid())
+  code          String    @unique
+  percentOff    Int
+  description   String
+  descriptionHy String?
+  descriptionRu String?
+  active        Boolean   @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
 }
 
 model Customer {

@@ -1,7 +1,5 @@
 import type { Locale } from "@/lib/i18n/locales";
 
-const dateFormatLocale: Record<Locale, string> = { en: "en-US", hy: "hy-AM", ru: "ru-RU" };
-
 // Currency symbol/placement and digit grouping are both hardcoded rather
 // than left to Intl's currency-style resolution — Node's and the browser's
 // ICU data disagree on both the AMD display symbol and grouping behavior
@@ -21,12 +19,23 @@ export function formatAmd(amount: number, locale: Locale = "en"): string {
   return prefix ? `${symbol} ${grouped}` : `${grouped} ${symbol}`;
 }
 
+// Month names are hardcoded for the same reason as formatAmd above — this
+// browser's ICU data has no hy-AM locale data and silently falls back to
+// French month names for Intl.DateTimeFormat, rather than erroring.
+const monthNames: Record<Locale, string[]> = {
+  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  hy: ["հունվարի", "փետրվարի", "մարտի", "ապրիլի", "մայիսի", "հունիսի", "հուլիսի", "օգոստոսի", "սեպտեմբերի", "հոկտեմբերի", "նոյեմբերի", "դեկտեմբերի"],
+  ru: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
+};
+
 export function formatDate(iso: string, locale: Locale = "en"): string {
-  return new Intl.DateTimeFormat(dateFormatLocale[locale], {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(iso));
+  const d = new Date(iso);
+  const day = d.getUTCDate();
+  const month = monthNames[locale][d.getUTCMonth()];
+  const year = d.getUTCFullYear();
+  if (locale === "hy") return `${day} ${month}, ${year} թ.`;
+  if (locale === "ru") return `${day} ${month} ${year} г.`;
+  return `${month} ${day}, ${year}`;
 }
 
 const ageRangeLabels: Record<Locale, Record<string, string>> = {
@@ -37,4 +46,50 @@ const ageRangeLabels: Record<Locale, Record<string, string>> = {
 
 export function ageRangeLabel(range: string, locale: Locale = "en"): string {
   return ageRangeLabels[locale][range] ?? range;
+}
+
+// Product materials are free-text on the Product row (English only), so
+// translated labels are looked up here rather than stored per-locale.
+// Filtering still matches on the original English value — only the
+// displayed label changes.
+const materialLabels: Record<Locale, Record<string, string>> = {
+  en: {},
+  hy: {
+    Cardboard: "Ստվարաթուղթ",
+    "Cardboard pattern cards": "Ստվարաթղթե նմուշի քարտեր",
+    Cork: "Խցան",
+    Fabric: "Գործվածք",
+    "Felt wool": "Ֆետրե բուրդ",
+    "Maple wood": "Թխկու փայտ",
+    Metal: "Մետաղ",
+    "Metal tone bars": "Մետաղական հնչողական սալիկներ",
+    "Metal wire": "Մետաղալար",
+    Plastic: "Պլաստիկ",
+    Silicone: "Սիլիկոն",
+    Sisal: "Սիզալ",
+    "Solid beechwood": "Զանգվածեղեն բոխու փայտ",
+    "Solid wood": "Զանգվածեղեն փայտ",
+    Wood: "Փայտ",
+  },
+  ru: {
+    Cardboard: "Картон",
+    "Cardboard pattern cards": "Картонные карточки-образцы",
+    Cork: "Пробка",
+    Fabric: "Ткань",
+    "Felt wool": "Фетр",
+    "Maple wood": "Древесина клёна",
+    Metal: "Металл",
+    "Metal tone bars": "Металлические тон-пластины",
+    "Metal wire": "Металлическая проволока",
+    Plastic: "Пластик",
+    Silicone: "Силикон",
+    Sisal: "Сизаль",
+    "Solid beechwood": "Массив бука",
+    "Solid wood": "Массив дерева",
+    Wood: "Дерево",
+  },
+};
+
+export function materialLabel(material: string, locale: Locale = "en"): string {
+  return materialLabels[locale][material] ?? material;
 }

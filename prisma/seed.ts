@@ -1447,7 +1447,14 @@ async function main() {
   await prisma.promoCode.upsert({
     where: { code: "WELCOME5" },
     update: {},
-    create: { code: "WELCOME5", percentOff: 5, description: "5% off your first order", active: true },
+    create: {
+      code: "WELCOME5",
+      percentOff: 5,
+      description: "5% off your first order",
+      descriptionHy: "5% զեղչ առաջին պատվերի համար",
+      descriptionRu: "Скидка 5% на первый заказ",
+      active: true,
+    },
   });
 
   const adminCount = await prisma.adminUser.count();
