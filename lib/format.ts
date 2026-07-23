@@ -93,3 +93,22 @@ const materialLabels: Record<Locale, Record<string, string>> = {
 export function materialLabel(material: string, locale: Locale = "en"): string {
   return materialLabels[locale][material] ?? material;
 }
+
+// Safety info bullets are also free-text on the Product row (English only).
+const safetyInfoLabels: Record<Locale, Record<string, string>> = {
+  en: {},
+  hy: {
+    "Tested to ASTM F963 & EN71 safety standards": "Փորձարկված է ASTM F963 և EN71 անվտանգության ստանդարտներով",
+    "Non-toxic, water-based paints and finishes": "Ոչ թունավոր, ջրահիմք ներկեր և ծածկույթներ",
+    "No small parts hazard for stated age range": "Չունի մանր մասերի վտանգ նշված տարիքային խմբի համար",
+  },
+  ru: {
+    "Tested to ASTM F963 & EN71 safety standards": "Проверено на соответствие стандартам безопасности ASTM F963 и EN71",
+    "Non-toxic, water-based paints and finishes": "Нетоксичные краски и покрытия на водной основе",
+    "No small parts hazard for stated age range": "Не содержит мелких деталей, опасных для указанного возраста",
+  },
+};
+
+export function safetyInfoLabel(info: string, locale: Locale = "en"): string {
+  return safetyInfoLabels[locale][info] ?? info;
+}

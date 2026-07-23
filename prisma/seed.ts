@@ -1010,7 +1010,7 @@ const products: SeedProduct[] = [
     materials: ["Solid wood"],
     safetyInfo: SAFETY_STANDARD,
     brand: "GOKI",
-    images: [{ src: "/images/products/ladybird-race-dice-game-1.jpg", alt: "Ladybird race dice board game" }, { src: "/images/products/ladybird-race-dice-game-2.jpg", alt: "Ladybird race dice game, close-up of the board" }, { src: "/images/products/ladybird-race-dice-game-3.jpg", alt: "Ladybird race dice game pieces and dice" }],
+    images: [{ src: "/images/products/ladybird-race-dice-game-1.jpg", alt: "Ladybird race dice board game" }, { src: "/images/products/ladybird-race-dice-game-2-v2.jpg", alt: "Ladybird race dice game, close-up of the board" }, { src: "/images/products/ladybird-race-dice-game-3-v2.jpg", alt: "Ladybird race dice game pieces and dice" }],
     inStock: true,
     sku: "56319",
     relatedSlugs: ["color-dice-game", "domino-game-ladybirds"],
@@ -1148,7 +1148,7 @@ const products: SeedProduct[] = [
     materials: ["Solid wood"],
     safetyInfo: SAFETY_STANDARD,
     brand: "GOKI",
-    images: [{ src: "/images/products/balance-board-wave-1-v2.jpg", alt: "Wooden wave balance board" }, { src: "/images/products/balance-board-wave-2.jpg", alt: "Child balancing on the wave balance board at home" }, { src: "/images/products/balance-board-wave-3.jpg", alt: "Child playing on the wave balance board in a play tent" }, { src: "/images/products/balance-board-wave-4.jpg", alt: "Child using the wave balance board indoors" }, { src: "/images/products/balance-board-wave-5.jpg", alt: "Wave balance board with wooden toy animals nearby" }],
+    images: [{ src: "/images/products/balance-board-wave-1-v2.jpg", alt: "Wooden wave balance board" }, { src: "/images/products/balance-board-wave-2-v2.jpg", alt: "Child balancing on the wave balance board at home" }, { src: "/images/products/balance-board-wave-3-v2.jpg", alt: "Child playing on the wave balance board in a play tent" }, { src: "/images/products/balance-board-wave-4-v2.jpg", alt: "Child using the wave balance board indoors" }, { src: "/images/products/balance-board-wave-5-v2.jpg", alt: "Wave balance board with wooden toy animals nearby" }],
     inStock: true,
     sku: "59968",
     newArrival: true,
@@ -1406,6 +1406,13 @@ const products: SeedProduct[] = [
 
 async function main() {
   console.log(`Seeding ${products.length} products...`);
+  // update stays {} deliberately: this DB is shared with the live admin
+  // panel, and staff may have edited stock/price/featured flags on a
+  // product since it was first seeded. Re-running this script must not
+  // clobber those. To push a source-of-truth edit (e.g. this file's
+  // images/description/etc.) into an EXISTING row, write a one-off
+  // script that calls prisma.product.update() for that slug directly —
+  // don't rely on re-running this seed.
   for (const p of products) {
     await prisma.product.upsert({
       where: { slug: p.slug },

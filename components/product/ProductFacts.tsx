@@ -1,5 +1,5 @@
 import type { Product } from "@/types";
-import { ageRangeLabel, materialLabel } from "@/lib/format";
+import { ageRangeLabel, materialLabel, safetyInfoLabel } from "@/lib/format";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export async function ProductFacts({ product }: { product: Product }) {
@@ -35,7 +35,7 @@ export async function ProductFacts({ product }: { product: Product }) {
                 >
                   <path d="M20 6L9 17l-5-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                {info}
+                {safetyInfoLabel(info, locale)}
               </li>
             ))}
           </ul>
