@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ProductImage } from "@/types";
 import { useTranslations } from "@/lib/i18n/context";
@@ -13,6 +13,7 @@ export function ImageGallery({ images, productName }: { images: ProductImage[]; 
   const current = images[active] ?? images[0];
   const t = useTranslations();
   const hasMultiple = images.length > 1;
+  const touchStartX = useRef<number | null>(null);
 
   const goTo = useCallback(
     (index: number) => {
@@ -35,17 +36,34 @@ export function ImageGallery({ images, productName }: { images: ProductImage[]; 
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [hasMultiple, prev, next]);
 
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const deltaX = (e.changedTouches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(deltaX) < 40) return;
+    if (deltaX < 0) next();
+    else prev();
+  }
+
   return (
     <div>
-      <div className="relative aspect-square overflow-hidden rounded-3xl bg-beige">
-        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+      <div
+        className="group relative aspect-square touch-pan-y overflow-hidden rounded-3xl bg-beige"
+        onTouchStart={hasMultiple ? handleTouchStart : undefined}
+        onTouchEnd={hasMultiple ? handleTouchEnd : undefined}
+      >
+        <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={current.src}
             custom={direction}
-            initial={{ opacity: 0, x: direction * 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: direction * -40 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ x: `${direction * 100}%` }}
+            animate={{ x: "0%" }}
+            exit={{ x: `${direction * -100}%` }}
+            transition={{ type: "spring", stiffness: 380, damping: 42, mass: 0.9 }}
             className="absolute inset-0"
           >
             <Image
@@ -65,7 +83,7 @@ export function ImageGallery({ images, productName }: { images: ProductImage[]; 
             <button
               type="button"
               onClick={prev}
-              className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-cream/90 text-espresso shadow transition-colors hover:bg-cream"
+              className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-cream/90 text-espresso opacity-100 shadow transition-opacity duration-200 hover:bg-cream sm:opacity-60 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
               aria-label={t.product.prevImageAria}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -75,7 +93,7 @@ export function ImageGallery({ images, productName }: { images: ProductImage[]; 
             <button
               type="button"
               onClick={next}
-              className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-cream/90 text-espresso shadow transition-colors hover:bg-cream"
+              className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-cream/90 text-espresso opacity-100 shadow transition-opacity duration-200 hover:bg-cream sm:opacity-60 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
               aria-label={t.product.nextImageAria}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
