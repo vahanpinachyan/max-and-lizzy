@@ -121,6 +121,8 @@ export const en = {
     soldOutAria: "{name} is sold out",
     imagesAria: "{name} images",
     showImageAria: "Show image {n} of {count}",
+    prevImageAria: "Previous image",
+    nextImageAria: "Next image",
     ratedAria: "Rated {rating} out of 5 stars",
     quickViewCloseAria: "Close quick view",
   },

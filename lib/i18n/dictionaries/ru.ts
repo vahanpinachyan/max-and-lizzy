@@ -123,6 +123,8 @@ export const ru: Dictionary = {
     soldOutAria: "{name} распродано",
     imagesAria: "Фотографии {name}",
     showImageAria: "Показать фото {n} из {count}",
+    prevImageAria: "Предыдущее фото",
+    nextImageAria: "Следующее фото",
     ratedAria: "Оценка {rating} из 5 звёзд",
     quickViewCloseAria: "Закрыть быстрый просмотр",
   },

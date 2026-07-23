@@ -123,6 +123,8 @@ export const hy: Dictionary = {
     soldOutAria: "{name}-ը վաճառված է",
     imagesAria: "{name}-ի նկարներ",
     showImageAria: "Ցուցադրել նկար {n}-ը {count}-ից",
+    prevImageAria: "Նախորդ նկարը",
+    nextImageAria: "Հաջորդ նկարը",
     ratedAria: "Գնահատված է {rating} 5 աստղից",
     quickViewCloseAria: "Փակել արագ դիտումը",
   },
