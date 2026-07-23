@@ -23,6 +23,8 @@ export function ImageUploader({ initial }: { initial: UploaderImage[] }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragIndex = useRef<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const dragCounter = useRef(0);
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -58,7 +60,9 @@ export function ImageUploader({ initial }: { initial: UploaderImage[] }) {
     setDragOverIndex(index);
   }
 
-  function handleDrop(index: number) {
+  function handleDrop(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    e.stopPropagation();
     const from = dragIndex.current;
     dragIndex.current = null;
     setDragOverIndex(null);
@@ -69,6 +73,33 @@ export function ImageUploader({ initial }: { initial: UploaderImage[] }) {
       next.splice(index, 0, moved);
       return next;
     });
+  }
+
+  // Dropzone handlers for dragging photo files in from outside the browser
+  // (Explorer/Finder), separate from the tile drag above (which reorders
+  // existing photos and carries no Files, so it's ignored here).
+  function handleZoneDragEnter(e: React.DragEvent) {
+    e.preventDefault();
+    if (!e.dataTransfer.types.includes("Files")) return;
+    dragCounter.current += 1;
+    setIsDraggingFile(true);
+  }
+
+  function handleZoneDragOver(e: React.DragEvent) {
+    e.preventDefault();
+  }
+
+  function handleZoneDragLeave(e: React.DragEvent) {
+    e.preventDefault();
+    dragCounter.current = Math.max(0, dragCounter.current - 1);
+    if (dragCounter.current === 0) setIsDraggingFile(false);
+  }
+
+  function handleZoneDrop(e: React.DragEvent) {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDraggingFile(false);
+    if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
   }
 
   return (
@@ -83,7 +114,7 @@ export function ImageUploader({ initial }: { initial: UploaderImage[] }) {
               draggable
               onDragStart={() => handleDragStart(i)}
               onDragOver={(e) => handleDragOver(e, i)}
-              onDrop={() => handleDrop(i)}
+              onDrop={(e) => handleDrop(e, i)}
               onDragEnd={() => setDragOverIndex(null)}
               className={`group relative cursor-move rounded-xl border bg-white p-2 transition-colors ${
                 dragOverIndex === i ? "border-terracotta" : "border-tan"
@@ -117,15 +148,25 @@ export function ImageUploader({ initial }: { initial: UploaderImage[] }) {
         </div>
       )}
 
-      <div>
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading > 0}
-          className="rounded-full border border-wood/40 bg-wood/10 px-4 py-1.5 text-xs font-semibold text-wood-dark hover:bg-wood/15 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {uploading > 0 ? `Uploading ${uploading}…` : "+ Add photos"}
-        </button>
+      <div
+        onDragEnter={handleZoneDragEnter}
+        onDragOver={handleZoneDragOver}
+        onDragLeave={handleZoneDragLeave}
+        onDrop={handleZoneDrop}
+        onClick={() => fileInputRef.current?.click()}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
+        }}
+        className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors ${
+          isDraggingFile ? "border-terracotta bg-terracotta/5" : "border-tan hover:border-wood/50"
+        }`}
+      >
+        <span className="text-sm font-semibold text-wood-dark">
+          {uploading > 0 ? `Uploading ${uploading}…` : isDraggingFile ? "Drop to upload" : "+ Add photos"}
+        </span>
+        <span className="text-xs text-espresso/60">Drag and drop photos here, or click to browse</span>
         <input
           ref={fileInputRef}
           type="file"
