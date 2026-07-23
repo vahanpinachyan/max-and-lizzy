@@ -104,7 +104,11 @@ export function ImageGallery({ images, productName }: { images: ProductImage[]; 
         )}
       </div>
       {hasMultiple && (
-        <div className="mt-4 flex gap-3" role="tablist" aria-label={interpolate(t.product.imagesAria, { name: productName })}>
+        <div
+          className="scrollbar-thin mt-4 flex gap-3 overflow-x-auto pb-2"
+          role="tablist"
+          aria-label={interpolate(t.product.imagesAria, { name: productName })}
+        >
           {images.map((img, i) => (
             <button
               key={img.src}

@@ -3,6 +3,7 @@
 import { useActionState, useRef, useState, useTransition } from "react";
 import { categories } from "@/data/categories";
 import { autoTranslateProduct } from "@/app/admin/(protected)/products/actions";
+import { ImageUploader, type UploaderImage } from "@/components/admin/ImageUploader";
 
 export interface ProductFormInitial {
   slug: string;
@@ -24,8 +25,7 @@ export interface ProductFormInitial {
   brand: string;
   materials: string;
   safetyInfo: string;
-  imageSrcs: string;
-  imageAlts: string;
+  images: UploaderImage[];
   inStock: boolean;
   stockQuantity: number | "";
   featured: boolean;
@@ -67,8 +67,7 @@ export const emptyProduct: ProductFormInitial = {
   materials: "",
   safetyInfo:
     "Tested to ASTM F963 & EN71 safety standards\nNon-toxic, water-based paints and finishes\nNo small parts hazard for stated age range",
-  imageSrcs: "",
-  imageAlts: "",
+  images: [],
   inStock: true,
   stockQuantity: "",
   featured: false,
@@ -300,18 +299,7 @@ export function ProductForm({
 
       <section className="space-y-4">
         <h2 className="font-semibold text-espresso">Images</h2>
-        <p className="text-xs text-espresso/60">
-          One image URL per line in the first box, matching alt text (one line per image) in the second. Upload photos
-          somewhere first (e.g. your host&apos;s file storage) and paste the URLs here — there&apos;s no upload button yet.
-        </p>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Image URLs (one per line)">
-            <textarea name="imageSrcs" defaultValue={initial.imageSrcs} rows={3} className={inputClass} placeholder="/images/products/example-1.jpg" />
-          </Field>
-          <Field label="Alt text (one per line, matching order)">
-            <textarea name="imageAlts" defaultValue={initial.imageAlts} rows={3} className={inputClass} placeholder="Wooden toy on a white background" />
-          </Field>
-        </div>
+        <ImageUploader initial={initial.images} />
       </section>
 
       <section className="space-y-4">

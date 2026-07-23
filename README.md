@@ -197,6 +197,33 @@ images for products and categories, and 16:9 for blog covers, to match the
 existing layout. `scripts/generate-placeholder-images.mjs` is only used to
 regenerate the placeholder set — you don't need to touch it.
 
+This applies to category/blog images, which are still edited directly in
+`data/`. **Product** photos have a proper upload UI in the admin panel
+instead — see "Product photo uploads" below.
+
+### Product photo uploads
+
+The product form's Images section (`/admin/products/new` or the edit page)
+lets staff drag and drop or pick photo files directly — no manual file
+placement or URL-pasting needed. Uploaded files are stored in [Vercel
+Blob](https://vercel.com/docs/storage/vercel-blob) and referenced by their
+public URL. Drag any photo's tile to reorder the gallery — the first one is
+the product's main image everywhere on the site.
+
+**Setup (one-time, required before the uploader works):**
+1. In your Vercel project dashboard, go to **Storage → Create Database →
+   Blob**, and connect it to this project. Vercel adds a
+   `BLOB_READ_WRITE_TOKEN` environment variable automatically.
+2. For local development, copy that token into your local `.env` as
+   `BLOB_READ_WRITE_TOKEN=...` (Vercel dashboard → your Blob store →
+   `.env.local` tab has a ready-to-copy value), or run `vercel env pull`.
+
+Without the token set, the "+ Add photos" button shows a setup error instead
+of silently failing. The old paste-a-URL workflow still works for the CSV
+bulk importer, since a spreadsheet cell can't hold an uploaded file — export
+photos to Blob/S3/Cloudinary first and put the URL in the CSV's image
+columns for that path.
+
 ## Admin panel & database
 
 Products, stock, and promo codes live in a database instead of code, so the
@@ -248,8 +275,9 @@ editing the database directly.
   and cashiers.
 - **Products** (`/admin/products`, manager-only) — add, edit, delete, and
   toggle stock for every product. Editing covers price, compare-at price,
-  stock quantity, category, age range, materials, safety notes, images (by
-  URL — there's no upload button yet, see below), and
+  stock quantity, category, age range, materials, safety notes, images
+  (drag-and-drop upload with reordering — see "Product photo uploads"
+  below), and
   English/Armenian/Russian text for name and both descriptions. Flags
   (Featured/Bestseller/New) can be added or removed inline from the product
   list — hover a flag pill for a remove (✕) button, or use the "+" button to
@@ -304,11 +332,6 @@ this is logged to the server console instead of actually sending, so you
 can develop/test the flow without a Resend account.
 
 **What's intentionally not built yet:**
-- **Image upload.** The image fields take URLs, not file uploads — you still
-  need to host photos somewhere (Vercel Blob, Cloudinary, S3, or even a
-  folder in `public/images/` if you're committing them to the repo) and
-  paste the URL in. Adding a proper upload button is a natural next step;
-  it needs a storage provider decision first.
 - **Automatic stock decrement / POS integration.** Stock is managed manually
   from `/admin/products` (or in bulk) — nothing automatically decrements the
   quantity when a web order comes in, and there's no integration with an
@@ -501,6 +524,7 @@ See `.env.example` for the full list with comments. Summary:
 | `STRIPE_WEBHOOK_SECRET` | Yes, for order confirmation emails | Verifies Stripe webhook signatures |
 | `RESEND_API_KEY` | No | Enables order confirmation, order-status update, and contact form emails. Without it, they're logged to the server console only. |
 | `GOOGLE_TRANSLATE_API_KEY` | No | Enables the "Auto-translate" button on the product form. Without it, the button shows a setup message instead of translating. |
+| `BLOB_READ_WRITE_TOKEN` | No | Enables the "+ Add photos" uploader on the product form. Without it, upload attempts show a setup message. See "Product photo uploads" below. |
 | `NEXT_PUBLIC_GA_ID` | No | Enables Google Analytics 4. Without it, no analytics script loads. |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Your real domain, used in canonical URLs, sitemap, and JSON-LD |
 
@@ -589,8 +613,6 @@ See `.env.example` for the full list with comments. Summary:
 - Reviews and the newsletter/contact forms have no admin UI or moderation
   queue; they're meant to be edited directly in `data/` or checked via
   server logs (or your Resend inbox, once connected).
-- No image upload in the admin panel yet — image fields take URLs (see
-  "Admin panel & database").
 - No automatic stock decrement or POS integration — stock is managed
   manually (individually or in bulk) from `/admin/products`. Low-stock
   alerts flag items proactively, but nothing auto-updates counts from a

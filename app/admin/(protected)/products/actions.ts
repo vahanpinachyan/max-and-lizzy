@@ -36,10 +36,30 @@ function bool(input: string | null | undefined): boolean {
   return input === "true";
 }
 
-function buildProductData(record: Record_) {
+// The product form submits a single JSON "images" field (built by the
+// drag-to-reorder ImageUploader); the CSV importer instead provides
+// legacy imageSrcs/imageAlts line-lists, since a spreadsheet cell can't
+// hold structured JSON. Support both.
+function parseImages(record: Record_): { src: string; alt: string }[] {
+  if (record.images) {
+    try {
+      const parsed = JSON.parse(String(record.images));
+      if (Array.isArray(parsed)) {
+        return parsed
+          .filter((img): img is { src: string; alt?: string } => !!img && typeof img.src === "string" && img.src.trim())
+          .map((img) => ({ src: img.src.trim(), alt: (img.alt ?? "").trim() }));
+      }
+    } catch {
+      // fall through to legacy format
+    }
+  }
   const imageSrcs = linesToArray(record.imageSrcs);
   const imageAlts = linesToArray(record.imageAlts);
-  const images = imageSrcs.map((src, i) => ({ src, alt: imageAlts[i] ?? "" }));
+  return imageSrcs.map((src, i) => ({ src, alt: imageAlts[i] ?? "" }));
+}
+
+function buildProductData(record: Record_) {
+  const images = parseImages(record);
 
   return {
     slug: String(record.slug ?? "").trim(),
