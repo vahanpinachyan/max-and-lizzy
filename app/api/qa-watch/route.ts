@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import sharp from "sharp";
+import { createHash } from "crypto";
 import { site } from "@/data/site";
 import { blogPosts } from "@/data/blog-posts";
 import { prisma } from "@/lib/db";
@@ -20,7 +20,6 @@ const MAX_CRAWL_PAGES = 150;
 const EXCLUDED_PREFIXES = ["/admin", "/api"];
 const STATIC_EXT = /\.(png|jpe?g|webp|gif|svg|ico|pdf|xml|txt|css|js|json|woff2?|ttf)$/i;
 const LOW_STOCK_THRESHOLD = 3;
-const DUPLICATE_PHOTO_HAMMING_THRESHOLD = 5; // out of 64 bits — tight on purpose, favors precision
 const HISTORY_RUNS_TO_KEEP = 14;
 
 interface Problem {
@@ -193,35 +192,23 @@ async function checkExternalLink(url: string): Promise<{ ok: boolean; reason?: s
   return { ok: true };
 }
 
-async function computeImageHash(url: string): Promise<bigint | null> {
+// Exact byte-hash rather than a perceptual/similarity hash: an 8x8
+// average-hash was tried first and produced false positives between
+// visually distinct products (e.g. a banjo and a recorder — both thin brown
+// objects centered on a white background hash close together despite being
+// nothing alike). The real incidents in this catalog's history were the
+// same photo file accidentally reused for two different products, not
+// merely similar-looking photos, so an exact digest is both simpler and
+// has zero false-positive risk for that actual failure mode.
+async function computeImageDigest(url: string): Promise<string | null> {
   const result = await get(url, "GET");
   if (!result.ok || result.status < 200 || result.status >= 300) return null;
   try {
     const buffer = Buffer.from(await result.res.arrayBuffer());
-    const { data } = await sharp(buffer).resize(8, 8, { fit: "fill" }).greyscale().raw().toBuffer({ resolveWithObject: true });
-    let sum = 0;
-    for (const b of data) sum += b;
-    const avg = sum / data.length;
-    const ZERO = BigInt(0);
-    const ONE = BigInt(1);
-    let hash = ZERO;
-    for (const b of data) hash = (hash << ONE) | (b >= avg ? ONE : ZERO);
-    return hash;
+    return createHash("sha256").update(buffer).digest("hex");
   } catch {
     return null;
   }
-}
-
-function hammingDistance(a: bigint, b: bigint): number {
-  const ZERO = BigInt(0);
-  const ONE = BigInt(1);
-  let x = a ^ b;
-  let count = 0;
-  while (x > ZERO) {
-    count += Number(x & ONE);
-    x >>= ONE;
-  }
-  return count;
 }
 
 async function runCrawl(baseUrl: string) {
@@ -321,30 +308,30 @@ async function runCrawl(baseUrl: string) {
 
 async function runDuplicatePhotoCheck(productPrimaryImages: Map<string, string>): Promise<Problem[]> {
   const entries = [...productPrimaryImages.entries()];
-  const hashes = await mapLimit(entries, CONCURRENCY, async ([pageUrl, imgUrl]) => {
-    const hash = await computeImageHash(imgUrl);
-    return { pageUrl, imgUrl, hash };
+  const digests = await mapLimit(entries, CONCURRENCY, async ([pageUrl, imgUrl]) => {
+    const digest = await computeImageDigest(imgUrl);
+    return { pageUrl, imgUrl, digest };
   });
-  const valid = hashes.filter((h): h is { pageUrl: string; imgUrl: string; hash: bigint } => h.hash !== null);
+
+  const byDigest = new Map<string, { pageUrl: string; imgUrl: string }[]>();
+  for (const d of digests) {
+    if (!d.digest) continue;
+    if (!byDigest.has(d.digest)) byDigest.set(d.digest, []);
+    byDigest.get(d.digest)!.push({ pageUrl: d.pageUrl, imgUrl: d.imgUrl });
+  }
 
   const problems: Problem[] = [];
-  const flaggedPairs = new Set<string>();
-  for (let i = 0; i < valid.length; i++) {
-    for (let j = i + 1; j < valid.length; j++) {
-      const distance = hammingDistance(valid[i].hash, valid[j].hash);
-      if (distance <= DUPLICATE_PHOTO_HAMMING_THRESHOLD) {
-        const pairKey = [valid[i].pageUrl, valid[j].pageUrl].sort().join("|");
-        if (flaggedPairs.has(pairKey)) continue;
-        flaggedPairs.add(pairKey);
-        problems.push({
-          key: `dup-photo:${pairKey}`,
-          category: "duplicate-photos",
-          title: "Two products appear to use the same or near-identical main photo",
-          detail: `${valid[i].pageUrl} and ${valid[j].pageUrl} — customers may think these are the same product, or one is a placeholder.`,
-          url: valid[i].pageUrl,
-        });
-      }
-    }
+  for (const group of byDigest.values()) {
+    if (group.length <= 1) continue;
+    const pageUrls = group.map((g) => g.pageUrl);
+    const key = `dup-photo:${[...pageUrls].sort().join("|")}`;
+    problems.push({
+      key,
+      category: "duplicate-photos",
+      title: `${group.length} products use the exact same main photo file`,
+      detail: `${pageUrls.join(", ")} — customers may think these are the same product, or one is a placeholder/wrong photo.`,
+      url: pageUrls[0],
+    });
   }
   return problems;
 }
