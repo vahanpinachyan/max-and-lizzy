@@ -512,6 +512,60 @@ credentials, that's the point to come back and wire it in for real.
 
 Sources: [Armenia's Payment Rails — ArCa, Idram & Instant Transfers](https://www.transfi.com/blog/armenias-payment-rails-how-they-work---arca-idram-instant-transfers), [ArCa for e-merchants](https://old.arca.am/en/emerchants), [Idram online payment system](https://www.idram.am/?l=en), [Telcell Business](https://telcell.am/en/business), [Guide to Payment Processing Solutions in Armenia](https://armenian-lawyer.com/business-immigration/payment-processing-armenia/).
 
+### Idram payment integration (test phase)
+
+The above plan is now partly built, following Idram's own merchant
+interface doc. **This is a test-phase integration, not wired into the real
+customer checkout yet** — Idram's onboarding process requires giving them
+three working URLs before they'll issue even test credentials, so those
+exist now, but the actual "pay with Idram" button on the cart page doesn't.
+
+- **`lib/idram.ts`** — checksum verification (MD5, per Idram's spec) and
+  self-verifying "signed" bill numbers (HMAC'd with `IDRAM_SECRET_KEY`).
+  Bill numbers are signed rather than looked up in a database because no
+  real order exists yet at this stage — Idram's callback needs *something*
+  to validate against. **When this gets wired into the real checkout**,
+  replace the signed-bill-no approach with a real pending-order record
+  (mirroring how `lib/orders.ts` handles Stripe sessions) so the callback
+  can recover the actual cart contents, not just an amount.
+- **`app/api/idram/callback/route.ts`** — the RESULT_URL. Handles both of
+  Idram's callback types: the pre-charge authenticity check
+  (`EDP_PRECHECK=YES`) and the post-charge payment confirmation (verifies
+  `EDP_CHECKSUM`). Must reply with the literal text `OK` for the payment to
+  proceed — anything else and Idram fails the transaction.
+- **`app/(site)/checkout/idram/success/page.tsx`** and **`.../fail/page.tsx`**
+  — SUCCESS_URL / FAIL_URL. Just UX confirmation pages; the real source of
+  truth for whether a payment happened is the RESULT_URL callback above, not
+  these pages (same pattern as Stripe's webhook being authoritative over the
+  `/checkout/success` redirect).
+- **`/admin/idram-test`** (manager-only) — a small internal tool: enter an
+  amount and description, it generates a signed bill number and submits a
+  real payment request to Idram, so you can verify the whole loop
+  (precheck → payment → confirmation → SUCCESS_URL) actually works with
+  Idram's test IdramID before asking them for production access. It also
+  displays the exact three URLs to give Idram.
+
+**To get test credentials:** give Idram these three URLs (shown on the
+`/admin/idram-test` page once `NEXT_PUBLIC_SITE_URL` is set correctly) —
+```
+SUCCESS_URL: https://yourdomain.com/checkout/idram/success
+FAIL_URL:    https://yourdomain.com/checkout/idram/fail
+RESULT_URL:  https://yourdomain.com/api/idram/callback
+```
+— and they'll issue a test IdramID (`IDRAM_REC_ACCOUNT`) and
+`IDRAM_SECRET_KEY`. Set both in your environment, then use
+`/admin/idram-test` to send a real test payment and confirm it completes.
+
+**Idram's own pre-production checklist** (separate from the technical
+integration above — this gates the *production* VPOS, not the test one)
+requires the site to already have, in Armenian at minimum: a privacy
+policy, a policy covering personal data processing, a
+cancellation/return policy (must state so explicitly even if a product
+category isn't returnable), terms & conditions covering sale/delivery/
+service conditions, visible prices, contact details, and the payment
+providers' logos — and the site must be a finished, non-test deployment.
+See "Known limitations" below for the current gaps against that list.
+
 ## Environment variables
 
 See `.env.example` for the full list with comments. Summary:
@@ -522,11 +576,36 @@ See `.env.example` for the full list with comments. Summary:
 | `ADMIN_BOOTSTRAP_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` | Yes, once | Creates the first admin account when `npm run db:seed` runs and no admin exists yet |
 | `STRIPE_SECRET_KEY` | Yes, for checkout | Server-side Stripe API calls |
 | `STRIPE_WEBHOOK_SECRET` | Yes, for order confirmation emails | Verifies Stripe webhook signatures |
+| `IDRAM_REC_ACCOUNT` / `IDRAM_SECRET_KEY` | No | Enables `/admin/idram-test`, a test-phase tool for verifying the Idram integration (see "Idram payment integration"). Not required for the site to run. |
 | `RESEND_API_KEY` | No | Enables order confirmation, order-status update, and contact form emails. Without it, they're logged to the server console only. |
 | `GOOGLE_TRANSLATE_API_KEY` | No | Enables the "Auto-translate" button on the product form. Without it, the button shows a setup message instead of translating. |
 | `BLOB_READ_WRITE_TOKEN` | No | Enables the "+ Add photos" uploader on the product form. Without it, upload attempts show a setup message. See "Product photo uploads" below. |
 | `NEXT_PUBLIC_GA_ID` | No | Enables Google Analytics 4. Without it, no analytics script loads. |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Your real domain, used in canonical URLs, sitemap, and JSON-LD |
+| `CRON_SECRET` / `QA_REPORT_EMAIL` | No | Enables the daily QA watcher email (see "QA watcher" below). Without them, the check still runs on schedule but only logs its report. |
+
+## QA watcher
+
+`vercel.json` schedules a Vercel Cron job that hits `/api/qa-watch` once a
+day (`0 5 * * *` — 5am UTC, i.e. 9am Yerevan time year-round, no DST to
+account for). The route crawls the live site read-only (sitemap first,
+falling back to a homepage crawl if that's missing), checks every page's
+HTTP status, verifies every image actually loads, flags any product page
+showing "Out of stock", and emails the report via Resend to
+`QA_REPORT_EMAIL`. It never writes, deploys, or fixes anything — it only
+reports.
+
+Setup:
+1. Generate a random secret: `openssl rand -hex 32`.
+2. In Vercel's project settings, add `CRON_SECRET` (the value from step 1)
+   and `QA_REPORT_EMAIL` (where the report should land) as environment
+   variables. `RESEND_API_KEY` must already be set too (see above).
+3. Redeploy. Vercel reads `vercel.json` automatically and starts firing the
+   cron on the schedule above — no dashboard cron configuration needed.
+
+For local/manual runs instead of waiting for the schedule, use
+`scripts/qa-watcher.mjs` (`npm run qa:watch`) — a standalone CLI version of
+the same checks, printed to your terminal instead of emailed.
 
 ## Deploying to Vercel
 
