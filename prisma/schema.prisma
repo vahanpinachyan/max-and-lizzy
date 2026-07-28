@@ -153,6 +153,19 @@ model OrderItem {
   @@index([orderId])
 }
 
+// One row per QA watcher run (see app/api/qa-watch/route.ts), kept only to
+// diff today's problems against the previous run so the email highlights
+// what's new instead of repeating the same known issue every morning.
+model QaWatchRun {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  pageCount Int
+  // JSON-encoded array of { key, summary } — see route.ts. TEXT rather than
+  // a native Json column, matching this schema's existing SQLite/Postgres
+  // portability convention (e.g. Product.images).
+  problems  String
+}
+
 model Review {
   id          String   @id @default(cuid())
   productSlug String
