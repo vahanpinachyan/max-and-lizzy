@@ -4,6 +4,12 @@ import { getAllProductSlugs } from "@/data/products";
 import { categories } from "@/data/categories";
 import { blogPosts } from "@/data/blog-posts";
 
+// Without this, sitemap.ts is a Route Handler that's cached indefinitely at
+// build time (no request-time API is used here), so admin changes to the
+// product catalog (new/removed/renamed products) wouldn't show up until the
+// next deploy. Regenerate at most hourly instead.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productSlugs = await getAllProductSlugs();
   const staticPages: MetadataRoute.Sitemap = [
