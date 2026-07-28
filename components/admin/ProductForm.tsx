@@ -162,7 +162,13 @@ export function ProductForm({
         <h2 className="font-semibold text-espresso">Basics</h2>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Slug (URL, unique)">
-            <input name="slug" defaultValue={initial.slug} required disabled={mode === "edit"} className={`${inputClass} disabled:bg-beige disabled:text-espresso/60`} />
+            <input
+              name="slug"
+              defaultValue={initial.slug}
+              required
+              readOnly={mode === "edit"}
+              className={`${inputClass} ${mode === "edit" ? "bg-beige text-espresso/60" : ""}`}
+            />
           </Field>
           <Field label="SKU">
             <input name="sku" defaultValue={initial.sku} required className={inputClass} />

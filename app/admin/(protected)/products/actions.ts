@@ -138,8 +138,12 @@ export async function createProduct(_prevState: { error: string | null }, formDa
 export async function updateProduct(id: string, _prevState: { error: string | null }, formData: FormData) {
   await requireManagerAction();
   const data = buildProductData(formDataToRecord(formData));
-  if (!data.name || !data.sku) {
-    return { error: "Name and SKU are required." };
+  if (!data.slug || !data.name || !data.sku) {
+    return { error: "Slug, name, and SKU are required." };
+  }
+  const existing = await prisma.product.findUnique({ where: { slug: data.slug } });
+  if (existing && existing.id !== id) {
+    return { error: `A product with slug "${data.slug}" already exists.` };
   }
   await prisma.product.update({ where: { id }, data });
   revalidatePath("/admin/products");

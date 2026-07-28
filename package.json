@@ -10,12 +10,14 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "qa:watch": "node scripts/qa-watcher.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.35",
     "@prisma/client": "^6.19.3",
     "@stripe/stripe-js": "^9.9.0",
     "@vercel/blob": "^2.6.1",
