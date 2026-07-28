@@ -308,6 +308,9 @@ export const en = {
     followUs: "Follow us",
     instagram: "Instagram",
     facebook: "Facebook",
+    messageUs: "Message us",
+    whatsapp: "WhatsApp",
+    viber: "Viber",
   },
   blogPage: {
     subtitle:

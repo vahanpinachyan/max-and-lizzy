@@ -310,6 +310,9 @@ export const ru: Dictionary = {
     followUs: "Мы в соцсетях",
     instagram: "Instagram",
     facebook: "Facebook",
+    messageUs: "Написать нам",
+    whatsapp: "WhatsApp",
+    viber: "Viber",
   },
   blogPage: {
     subtitle:

@@ -46,6 +46,17 @@ export default async function ContactPage() {
             <p className="mt-1 text-sm text-espresso/70">{t.contactPage.hoursValue}</p>
           </div>
           <div>
+            <h2 className="font-semibold text-espresso">{t.contactPage.messageUs}</h2>
+            <div className="mt-2 flex gap-3 text-sm">
+              <a href={site.social.whatsapp} target="_blank" rel="noopener noreferrer" className="text-terracotta-dark hover:underline">
+                {t.contactPage.whatsapp}
+              </a>
+              <a href={site.social.viber} className="text-terracotta-dark hover:underline">
+                {t.contactPage.viber}
+              </a>
+            </div>
+          </div>
+          <div>
             <h2 className="font-semibold text-espresso">{t.contactPage.followUs}</h2>
             <div className="mt-2 flex gap-3 text-sm">
               <a href={site.social.instagram} target="_blank" rel="noopener noreferrer" className="text-terracotta-dark hover:underline">

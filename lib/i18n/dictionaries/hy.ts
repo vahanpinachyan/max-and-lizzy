@@ -310,6 +310,9 @@ export const hy: Dictionary = {
     followUs: "Հետևեք մեզ",
     instagram: "Instagram",
     facebook: "Facebook",
+    messageUs: "Գրեք մեզ",
+    whatsapp: "WhatsApp",
+    viber: "Viber",
   },
   blogPage: {
     subtitle:

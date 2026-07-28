@@ -48,6 +48,10 @@ export const site = {
   social: {
     instagram: "https://www.instagram.com/max_and_lizzy_toys/?hl=en",
     facebook: "https://www.facebook.com/Maxandlizzy/",
+    // Same number as `phone` above — WhatsApp/Viber are just alternate
+    // channels to the one line, not separate accounts.
+    whatsapp: "https://wa.me/37433095050",
+    viber: "viber://chat?number=%2B37433095050",
   },
   currency: "AMD",
   locale: "en-US",
