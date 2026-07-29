@@ -279,6 +279,16 @@ export const ru: Dictionary = {
     returnToCart: "Вернуться в корзину",
     continueShopping: "Продолжить покупки",
   },
+  idramSuccess: {
+    title: "Оплата прошла успешно",
+    body: "Спасибо — ваш платёж через Idram прошёл успешно.",
+    backToHome: "На главную",
+  },
+  idramFail: {
+    title: "Платёж не прошёл",
+    body: "Ваш платёж через Idram не был завершён. Списания не произошло — пожалуйста, попробуйте снова.",
+    backToCart: "Вернуться в корзину",
+  },
   contactForm: {
     name: "Имя",
     email: "Эл. почта",

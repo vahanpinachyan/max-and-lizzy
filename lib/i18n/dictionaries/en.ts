@@ -277,6 +277,16 @@ export const en = {
     returnToCart: "Return to Cart",
     continueShopping: "Continue shopping",
   },
+  idramSuccess: {
+    title: "Payment successful",
+    body: "Thank you — your Idram payment went through.",
+    backToHome: "Back to home",
+  },
+  idramFail: {
+    title: "Payment didn't go through",
+    body: "Your Idram payment wasn't completed. No charge was made — please try again.",
+    backToCart: "Back to cart",
+  },
   contactForm: {
     name: "Name",
     email: "Email",

@@ -279,6 +279,16 @@ export const hy: Dictionary = {
     returnToCart: "Վերադառնալ զամբյուղ",
     continueShopping: "Շարունակել գնումները",
   },
+  idramSuccess: {
+    title: "Վճարումը հաջողվեց",
+    body: "Շնորհակալություն․ Ձեր Idram վճարումն ընդունվեց։",
+    backToHome: "Վերադառնալ գլխավոր էջ",
+  },
+  idramFail: {
+    title: "Վճարումը չկատարվեց",
+    body: "Ձեր Idram վճարումը չկատարվեց։ Գումար չի գանձվել․ խնդրում ենք փորձել կրկին։",
+    backToCart: "Վերադառնալ զամբյուղ",
+  },
   contactForm: {
     name: "Անուն",
     email: "Էլ. փոստ",
