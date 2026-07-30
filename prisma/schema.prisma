@@ -118,7 +118,12 @@ model Customer {
 
 model Order {
   id               String   @id @default(cuid())
-  stripeSessionId  String   @unique
+  // Exactly one of these two is set, matching which processor the customer
+  // paid through — see paymentProvider below.
+  stripeSessionId  String?  @unique
+  idramBillNo      String?  @unique
+  // "stripe" | "idram"
+  paymentProvider  String   @default("stripe")
   customer         Customer @relation(fields: [customerId], references: [id])
   customerId       String
   // "pending" | "ready_for_pickup" | "shipped" | "completed" | "cancelled"
@@ -138,6 +143,29 @@ model Order {
   updatedAt        DateTime @updatedAt
 
   @@index([customerId])
+  @@index([status])
+}
+
+// Idram has no server-side "session" object like Stripe does to hold cart
+// contents while the customer pays on Idram's site - we have to persist
+// that ourselves before redirecting, then look it up again when Idram's
+// RESULT_URL callback confirms payment (see app/api/idram/callback).
+model PendingIdramOrder {
+  id                  String   @id @default(cuid())
+  amountAmd           Int
+  itemsJson           String
+  fulfillmentMethod   String?
+  deliveryAddressJson String?
+  giftWrap            Boolean  @default(false)
+  giftMessage         String?
+  promoCode           String?
+  customerEmail       String
+  customerName        String?
+  customerPhone       String?
+  // "pending" | "confirmed" | "failed"
+  status              String   @default("pending")
+  createdAt           DateTime @default(now())
+
   @@index([status])
 }
 

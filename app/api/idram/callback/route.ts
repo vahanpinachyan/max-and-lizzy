@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { computeConfirmationChecksum, idramRecAccount, verifySignedBillNo } from "@/lib/idram";
+import { prisma } from "@/lib/db";
+import { computeConfirmationChecksum, idramRecAccount } from "@/lib/idram";
+import { createOrderFromIdramPayment } from "@/lib/orders";
+import { sendOrderConfirmationEmail, sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
 
 // RESULT_URL — Idram posts here twice per payment: once to confirm the
 // order is real before charging the customer (EDP_PRECHECK=YES), and once
@@ -23,9 +26,9 @@ export async function POST(request: Request) {
     const amount = get("EDP_AMOUNT");
 
     if (get("EDP_PRECHECK") === "YES") {
-      const amountNum = Number(amount);
-      const valid =
-        recAccount === idramRecAccount() && Number.isFinite(amountNum) && verifySignedBillNo(billNo, amountNum);
+      const pending = await prisma.pendingIdramOrder.findUnique({ where: { id: billNo } });
+      const amountMatches = pending && Math.round(Number(amount)) === pending.amountAmd;
+      const valid = recAccount === idramRecAccount() && pending?.status === "pending" && amountMatches;
       if (!valid) {
         console.warn(`[idram] Precheck rejected — bill=${billNo} amount=${amount} recAccount=${recAccount}`);
         return new NextResponse("FAIL", { status: 400 });
@@ -44,13 +47,23 @@ export async function POST(request: Request) {
       return new NextResponse("FAIL", { status: 400 });
     }
 
-    // TEST-phase integration: nothing is persisted yet since no real cart
-    // reaches this path — see /admin/idram-test and lib/idram.ts. Once wired
-    // into the real checkout, create the Order/Customer here the way
-    // lib/orders.ts createOrderFromSession does for Stripe.
+    const pending = await prisma.pendingIdramOrder.findUnique({ where: { id: billNo } });
+    if (!pending) {
+      console.error(`[idram] Confirmation for unknown bill=${billNo}`);
+      return new NextResponse("FAIL", { status: 400 });
+    }
+
+    const order = await createOrderFromIdramPayment(pending);
+    if (pending.status === "pending") {
+      await prisma.pendingIdramOrder.update({ where: { id: billNo }, data: { status: "confirmed" } });
+    }
+
     console.log(
       `[idram] Payment confirmed — bill=${billNo} amount=${amount} payer=${payerAccount} transId=${transId} date=${transDate}`
     );
+
+    await sendOrderConfirmationEmail(pending.customerEmail, order.id);
+    await sendNewOrderNotificationEmail(order, pending.customerEmail);
 
     return new NextResponse("OK", { headers: { "Content-Type": "text/plain" } });
   } catch (err) {

@@ -51,6 +51,8 @@ export default function CartPage() {
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [address, setAddress] = useState<DeliveryAddress>(EMPTY_ADDRESS);
+  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "idram">("stripe");
+  const [email, setEmail] = useState("");
 
   const fulfillmentOptions = localizeFulfillmentOptions(locale);
   const regions = localizeArmeniaRegions(locale);
@@ -81,27 +83,63 @@ export default function CartPage() {
     if (result.success) setPromoInput("");
   }
 
+  function submitIdramForm(actionUrl: string, fields: Record<string, string>) {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = actionUrl;
+    for (const [name, value] of Object.entries(fields)) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    }
+    document.body.appendChild(form);
+    form.submit();
+  }
+
   async function handleCheckout() {
     const addressError = validateAddress();
     if (addressError) {
       setError(addressError);
       return;
     }
+    if (paymentMethod === "idram" && (!email.trim() || !email.includes("@"))) {
+      setError(t.cart.emailRequiredError);
+      return;
+    }
     setLoading(true);
     setError(null);
     if (cartId) trackStartedCheckout(items, grandTotalAmd, cartId);
+
+    const sharedBody = {
+      items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),
+      promoCode,
+      fulfillmentMethod,
+      giftWrap,
+      giftMessage: giftWrap ? giftMessage : undefined,
+      deliveryAddress: fulfillmentMethod !== "pickup" ? address : undefined,
+    };
+
     try {
+      if (paymentMethod === "idram") {
+        const res = await fetch("/api/checkout/idram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...sharedBody, email }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.actionUrl) {
+          throw new Error(data.error || t.cart.checkoutErrorGeneric);
+        }
+        submitIdramForm(data.actionUrl, data.fields);
+        return;
+      }
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),
-          promoCode,
-          fulfillmentMethod,
-          giftWrap,
-          giftMessage: giftWrap ? giftMessage : undefined,
-          deliveryAddress: fulfillmentMethod !== "pickup" ? address : undefined,
-        }),
+        body: JSON.stringify(sharedBody),
       });
       const data = await res.json();
       if (!res.ok || !data.url) {
@@ -363,6 +401,53 @@ export default function CartPage() {
                 </div>
               )}
             </div>
+
+            <fieldset className="mt-4 border-t border-tan/50 pt-4">
+              <legend className="text-sm font-semibold text-espresso">{t.cart.paymentMethodLabel}</legend>
+              <div className="mt-2 space-y-2">
+                {(
+                  [
+                    { id: "stripe" as const, label: t.cart.paymentMethodStripe, note: t.cart.paymentMethodStripeNote },
+                    { id: "idram" as const, label: t.cart.paymentMethodIdram, note: t.cart.paymentMethodIdramNote },
+                  ]
+                ).map((option) => (
+                  <label
+                    key={option.id}
+                    className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
+                      paymentMethod === option.id ? "border-terracotta bg-terracotta/5" : "border-tan/60 hover:border-tan"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment-method"
+                      value={option.id}
+                      checked={paymentMethod === option.id}
+                      onChange={() => setPaymentMethod(option.id)}
+                      className="mt-0.5 h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
+                    />
+                    <span className="flex-1">
+                      <span className="block font-semibold text-espresso">{option.label}</span>
+                      <span className="mt-0.5 block text-espresso/70">{option.note}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              {paymentMethod === "idram" && (
+                <div className="mt-3">
+                  <label htmlFor="checkout-email" className="sr-only">
+                    {t.cart.emailLabel}
+                  </label>
+                  <input
+                    id="checkout-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t.cart.emailPlaceholder}
+                    className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
+                  />
+                </div>
+              )}
+            </fieldset>
 
             <div className="mt-4 space-y-1.5 border-t border-tan/50 pt-4">
               <div className="flex justify-between text-espresso/80">

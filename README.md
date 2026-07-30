@@ -512,59 +512,65 @@ credentials, that's the point to come back and wire it in for real.
 
 Sources: [Armenia's Payment Rails — ArCa, Idram & Instant Transfers](https://www.transfi.com/blog/armenias-payment-rails-how-they-work---arca-idram-instant-transfers), [ArCa for e-merchants](https://old.arca.am/en/emerchants), [Idram online payment system](https://www.idram.am/?l=en), [Telcell Business](https://telcell.am/en/business), [Guide to Payment Processing Solutions in Armenia](https://armenian-lawyer.com/business-immigration/payment-processing-armenia/).
 
-### Idram payment integration (test phase)
+### Idram payment integration
 
-The above plan is now partly built, following Idram's own merchant
-interface doc. **This is a test-phase integration, not wired into the real
-customer checkout yet** — Idram's onboarding process requires giving them
-three working URLs before they'll issue even test credentials, so those
-exist now, but the actual "pay with Idram" button on the cart page doesn't.
+Idram is a real, live payment option on the cart page alongside Stripe,
+following Idram's own merchant interface doc. Customers pick "Card" or
+"Idram" under Payment method; choosing Idram also asks for an email address,
+since (unlike Stripe's hosted checkout) Idram never gives the merchant the
+customer's email.
 
-- **`lib/idram.ts`** — checksum verification (MD5, per Idram's spec) and
-  self-verifying "signed" bill numbers (HMAC'd with `IDRAM_SECRET_KEY`).
-  Bill numbers are signed rather than looked up in a database because no
-  real order exists yet at this stage — Idram's callback needs *something*
-  to validate against. **When this gets wired into the real checkout**,
-  replace the signed-bill-no approach with a real pending-order record
-  (mirroring how `lib/orders.ts` handles Stripe sessions) so the callback
-  can recover the actual cart contents, not just an amount.
+- **`lib/checkout-validation.ts`** — the cart validation (product prices,
+  stock, fulfillment fee, promo code, delivery address) shared by both
+  payment providers, so that security-critical logic — never trust a price,
+  fee, or discount sent by the client — only lives in one place.
+- **`app/api/checkout/idram/route.ts`** — creates a `PendingIdramOrder` row
+  (Idram has no server-side session object like Stripe's to hold cart
+  contents while the customer pays on Idram's site, so this is our
+  equivalent) and returns the payment form fields for the browser to submit
+  to Idram.
 - **`app/api/idram/callback/route.ts`** — the RESULT_URL. Handles both of
   Idram's callback types: the pre-charge authenticity check
-  (`EDP_PRECHECK=YES`) and the post-charge payment confirmation (verifies
-  `EDP_CHECKSUM`). Must reply with the literal text `OK` for the payment to
-  proceed — anything else and Idram fails the transaction.
+  (`EDP_PRECHECK=YES`, validated against the `PendingIdramOrder` row) and
+  the post-charge payment confirmation (verifies `EDP_CHECKSUM`, then calls
+  `createOrderFromIdramPayment` in `lib/orders.ts` to persist the real
+  `Order`/`Customer` and send the confirmation emails). Must reply with the
+  literal text `OK` for the payment to proceed — anything else and Idram
+  fails the transaction.
 - **`app/(site)/checkout/idram/success/page.tsx`** and **`.../fail/page.tsx`**
   — SUCCESS_URL / FAIL_URL. Just UX confirmation pages; the real source of
   truth for whether a payment happened is the RESULT_URL callback above, not
   these pages (same pattern as Stripe's webhook being authoritative over the
   `/checkout/success` redirect).
-- **`/admin/idram-test`** (manager-only) — a small internal tool: enter an
-  amount and description, it generates a signed bill number and submits a
-  real payment request to Idram, so you can verify the whole loop
-  (precheck → payment → confirmation → SUCCESS_URL) actually works with
-  Idram's test IdramID before asking them for production access. It also
-  displays the exact three URLs to give Idram.
+- **`lib/checkout-emails.ts`** — the order-confirmation and staff
+  new-order-notification emails, shared by the Stripe webhook and the Idram
+  callback so the templates only live in one place. (Distinct from
+  `lib/order-emails.ts`, which sends the admin's manual order-status-change
+  emails from `/admin/orders`.)
 
-**To get test credentials:** give Idram these three URLs (shown on the
-`/admin/idram-test` page once `NEXT_PUBLIC_SITE_URL` is set correctly) —
+**The three URLs to give Idram** (already live once this is deployed):
 ```
 SUCCESS_URL: https://yourdomain.com/checkout/idram/success
 FAIL_URL:    https://yourdomain.com/checkout/idram/fail
 RESULT_URL:  https://yourdomain.com/api/idram/callback
 ```
-— and they'll issue a test IdramID (`IDRAM_REC_ACCOUNT`) and
-`IDRAM_SECRET_KEY`. Set both in your environment, then use
-`/admin/idram-test` to send a real test payment and confirm it completes.
+Idram issues a test IdramID (`IDRAM_REC_ACCOUNT`) and `IDRAM_SECRET_KEY`
+after receiving those. Set both in your environment (locally and in
+Vercel's project settings), redeploy, and the "Idram" payment option starts
+working — verified end-to-end during development by completing a real test
+payment through Idram's actual system and confirming the resulting `Order`
+record.
 
 **Idram's own pre-production checklist** (separate from the technical
-integration above — this gates the *production* VPOS, not the test one)
-requires the site to already have, in Armenian at minimum: a privacy
-policy, a policy covering personal data processing, a
+integration above — this gates *production* access, not the test
+credentials) requires the site to already have, in Armenian at minimum: a
+privacy policy, a policy covering personal data processing, a
 cancellation/return policy (must state so explicitly even if a product
 category isn't returnable), terms & conditions covering sale/delivery/
 service conditions, visible prices, contact details, and the payment
 providers' logos — and the site must be a finished, non-test deployment.
-See "Known limitations" below for the current gaps against that list.
+This has all been addressed — see the Privacy/Returns/Terms/Shipping
+policy pages, all trilingual (en/hy/ru).
 
 ## Environment variables
 
@@ -576,7 +582,7 @@ See `.env.example` for the full list with comments. Summary:
 | `ADMIN_BOOTSTRAP_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` | Yes, once | Creates the first admin account when `npm run db:seed` runs and no admin exists yet |
 | `STRIPE_SECRET_KEY` | Yes, for checkout | Server-side Stripe API calls |
 | `STRIPE_WEBHOOK_SECRET` | Yes, for order confirmation emails | Verifies Stripe webhook signatures |
-| `IDRAM_REC_ACCOUNT` / `IDRAM_SECRET_KEY` | No | Enables `/admin/idram-test`, a test-phase tool for verifying the Idram integration (see "Idram payment integration"). Not required for the site to run. |
+| `IDRAM_REC_ACCOUNT` / `IDRAM_SECRET_KEY` | No | Enables the "Idram" payment option on the cart page (see "Idram payment integration"). Without them, that option shows a setup error and only card payment works. |
 | `RESEND_API_KEY` | No | Enables order confirmation, order-status update, and contact form emails. Without it, they're logged to the server console only. |
 | `GOOGLE_TRANSLATE_API_KEY` | No | Enables the "Auto-translate" button on the product form. Without it, the button shows a setup message instead of translating. |
 | `BLOB_READ_WRITE_TOKEN` | No | Enables the "+ Add photos" uploader on the product form. Without it, upload attempts show a setup message. See "Product photo uploads" below. |
