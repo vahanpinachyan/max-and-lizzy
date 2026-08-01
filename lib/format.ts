@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n/locales";
+import { ARMENIA_REGIONS } from "@/data/armenia-regions";
 
 // Currency symbol/placement and digit grouping are both hardcoded rather
 // than left to Intl's currency-style resolution — Node's and the browser's
@@ -111,4 +112,27 @@ const safetyInfoLabels: Record<Locale, Record<string, string>> = {
 
 export function safetyInfoLabel(info: string, locale: Locale = "en"): string {
   return safetyInfoLabels[locale][info] ?? info;
+}
+
+// Order.shippingAddress is stored as a raw JSON string (see lib/orders.ts) —
+// this turns it back into the one-line human-readable form shown in the
+// admin order page and the new-order staff email.
+export function formatShippingAddress(shippingAddressJson: string | null | undefined): string | null {
+  if (!shippingAddressJson) return null;
+  let address: { region?: string; city?: string; street?: string; apartment?: string; entrance?: string; floor?: string };
+  try {
+    address = JSON.parse(shippingAddressJson);
+  } catch {
+    return null;
+  }
+  const regionLabel = address.region ? ARMENIA_REGIONS.find((r) => r.id === address.region)?.label : undefined;
+  const parts = [
+    regionLabel,
+    address.city,
+    address.street,
+    address.apartment && `Apt. ${address.apartment}`,
+    address.entrance && `Entrance ${address.entrance}`,
+    address.floor && `Floor ${address.floor}`,
+  ].filter(Boolean);
+  return parts.length > 0 ? parts.join(", ") : null;
 }

@@ -1,6 +1,6 @@
 import "server-only";
 import { site } from "@/data/site";
-import { formatAmd } from "@/lib/format";
+import { formatAmd, formatShippingAddress } from "@/lib/format";
 import { getFulfillmentOption } from "@/data/fulfillment";
 import type { Order, OrderItem } from "@prisma/client";
 
@@ -66,8 +66,9 @@ export async function sendNewOrderNotificationEmail(
     .filter(Boolean)
     .join("<br/>");
 
+  const address = formatShippingAddress(order.shippingAddress);
   const fulfillmentLine = fulfillment
-    ? `${fulfillment.label}${order.shippingAddress ? ` — deliver to: ${order.shippingAddress}` : ""}`
+    ? `${fulfillment.label}${address ? ` — deliver to: ${address}` : ""}`
     : "Not specified";
 
   const extras = [
