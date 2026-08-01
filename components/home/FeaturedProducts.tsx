@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Product } from "@/types";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ProductCard } from "@/components/shop/ProductCard";
+import { FlatProductGrid } from "@/components/home/FlatProductGrid";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export async function FeaturedProducts({
@@ -24,11 +24,7 @@ export async function FeaturedProducts({
             {t.nav.shopAllProducts}
           </Link>
         </div>
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.slug} product={product} />
-          ))}
-        </div>
+        <FlatProductGrid products={products} />
       </Container>
     </section>
   );

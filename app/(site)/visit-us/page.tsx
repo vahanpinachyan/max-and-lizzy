@@ -16,8 +16,12 @@ export const metadata: Metadata = buildMetadata({
 export default async function VisitUsPage() {
   const { dict: t } = await getServerDictionary();
 
+  // storefront-exterior.jpg is a wide banner-shaped shot (not square like the
+  // other three), so it gets its own full-width row below instead of being
+  // squeezed into the square grid — cropping it to a square would zoom in
+  // hard and cut off most of the storefront.
+  const STOREFRONT_PHOTO = { src: "/images/store/storefront-exterior.jpg", alt: t.visitUsPage.exteriorAlt };
   const STORE_PHOTOS = [
-    { src: "/images/store/storefront-exterior.jpg", alt: t.visitUsPage.exteriorAlt },
     { src: "/images/store/shop-interior.jpg", alt: t.visitUsPage.interiorAlt },
     { src: "/images/store/toy-shelf-display.jpg", alt: t.visitUsPage.shelfAlt },
     { src: "/images/store/checkout-counter.jpg", alt: t.visitUsPage.counterAlt },
@@ -97,10 +101,20 @@ export default async function VisitUsPage() {
         <h2 id="photos-heading" className="text-2xl font-bold text-espresso">
           {t.visitUsPage.insideShopHeading}
         </h2>
-        <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="relative mt-6 aspect-[21/9] overflow-hidden rounded-2xl">
+          <Image
+            src={STOREFRONT_PHOTO.src}
+            alt={STOREFRONT_PHOTO.alt}
+            fill
+            className="object-cover"
+            sizes="100vw"
+            quality={90}
+          />
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-3">
           {STORE_PHOTOS.map((photo) => (
             <div key={photo.src} className="relative aspect-square overflow-hidden rounded-2xl">
-              <Image src={photo.src} alt={photo.alt} fill className="object-cover" sizes="(min-width: 1024px) 25vw, 50vw" />
+              <Image src={photo.src} alt={photo.alt} fill className="object-cover" sizes="(min-width: 1024px) 33vw, 50vw" quality={90} />
             </div>
           ))}
         </div>

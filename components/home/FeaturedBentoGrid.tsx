@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Product } from "@/types";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ProductCard } from "@/components/shop/ProductCard";
+import { BentoProductGrid } from "@/components/home/BentoProductGrid";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export async function FeaturedBentoGrid({
@@ -28,14 +28,7 @@ export async function FeaturedBentoGrid({
             {t.nav.shopAllProducts}
           </Link>
         </div>
-        <div className="mt-10 grid gap-4 lg:grid-cols-2">
-          <ProductCard product={big1} size="large" />
-          <div className="grid grid-cols-2 gap-4">
-            {small.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        </div>
+        <BentoProductGrid big1={big1} small={small} />
       </Container>
     </section>
   );
