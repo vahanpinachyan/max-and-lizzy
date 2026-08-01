@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 import { site } from "@/data/site";
 import { blogPosts } from "@/data/blog-posts";
 import { prisma } from "@/lib/db";
+import { isLowStock } from "@/lib/inventory";
 
 // Daily site-health check, triggered by Vercel Cron (see vercel.json).
 // Strictly read-only against the storefront: every request here is a GET or
@@ -19,7 +20,6 @@ const CONCURRENCY = 10;
 const MAX_CRAWL_PAGES = 150;
 const EXCLUDED_PREFIXES = ["/admin", "/api"];
 const STATIC_EXT = /\.(png|jpe?g|webp|gif|svg|ico|pdf|xml|txt|css|js|json|woff2?|ttf)$/i;
-const LOW_STOCK_THRESHOLD = 3;
 const HISTORY_RUNS_TO_KEEP = 14;
 
 interface Problem {
@@ -392,7 +392,7 @@ async function runDataIntegrityChecks(): Promise<Problem[]> {
       });
     }
 
-    if (p.inStock && p.stockQuantity !== null && p.stockQuantity > 0 && p.stockQuantity <= LOW_STOCK_THRESHOLD) {
+    if (p.stockQuantity !== null && p.stockQuantity > 0 && isLowStock(p)) {
       problems.push({
         key: `data:${p.id}:low-stock`,
         category: "data-integrity",

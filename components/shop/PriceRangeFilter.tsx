@@ -39,6 +39,11 @@ export function PriceRangeFilter({
   }, [localMin, localMax]);
 
   useEffect(() => {
+    // Syncs local editable state when the parent's committed min/max
+    // changes externally (e.g. a filter reset elsewhere on the page) —
+    // this is a deliberate props->state sync, not the "derive during
+    // render instead" case the underlying lint rule generally warns about.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalMin(min);
     setLocalMax(max);
   }, [min, max]);
@@ -69,13 +74,6 @@ export function PriceRangeFilter({
       window.removeEventListener("pointerup", handleUp);
     };
   }, [valueFromClientX]);
-
-  function startDrag(handle: "min" | "max") {
-    return (e: React.PointerEvent) => {
-      e.preventDefault();
-      draggingRef.current = handle;
-    };
-  }
 
   function handleKeyDown(handle: "min" | "max") {
     return (e: React.KeyboardEvent) => {
@@ -114,7 +112,10 @@ export function PriceRangeFilter({
           aria-valuemin={MIN}
           aria-valuemax={MAX}
           aria-valuenow={localMin}
-          onPointerDown={startDrag("min")}
+          onPointerDown={(e) => {
+            e.preventDefault();
+            draggingRef.current = "min";
+          }}
           onKeyDown={handleKeyDown("min")}
           className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-full border-2 border-terracotta bg-white shadow-sm transition-transform hover:scale-110 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
           style={{ left: `${minPct}%` }}
@@ -126,7 +127,10 @@ export function PriceRangeFilter({
           aria-valuemin={MIN}
           aria-valuemax={MAX}
           aria-valuenow={localMax}
-          onPointerDown={startDrag("max")}
+          onPointerDown={(e) => {
+            e.preventDefault();
+            draggingRef.current = "max";
+          }}
           onKeyDown={handleKeyDown("max")}
           className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-full border-2 border-terracotta bg-white shadow-sm transition-transform hover:scale-110 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
           style={{ left: `${maxPct}%` }}
