@@ -53,6 +53,8 @@ export default function CartPage() {
   const [address, setAddress] = useState<DeliveryAddress>(EMPTY_ADDRESS);
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | "idram">("stripe");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [notes, setNotes] = useState("");
 
   const fulfillmentOptions = localizeFulfillmentOptions(locale);
   const regions = localizeArmeniaRegions(locale);
@@ -104,9 +106,15 @@ export default function CartPage() {
       setError(addressError);
       return;
     }
-    if (paymentMethod === "idram" && (!email.trim() || !email.includes("@"))) {
-      setError(t.cart.emailRequiredError);
-      return;
+    if (paymentMethod === "idram") {
+      if (!email.trim() || !email.includes("@")) {
+        setError(t.cart.emailRequiredError);
+        return;
+      }
+      if (!phone.trim()) {
+        setError(t.cart.phoneRequiredError);
+        return;
+      }
     }
     setLoading(true);
     setError(null);
@@ -118,6 +126,7 @@ export default function CartPage() {
       fulfillmentMethod,
       giftWrap,
       giftMessage: giftWrap ? giftMessage : undefined,
+      notes: notes.trim() || undefined,
       deliveryAddress: fulfillmentMethod !== "pickup" ? address : undefined,
     };
 
@@ -126,7 +135,7 @@ export default function CartPage() {
         const res = await fetch("/api/checkout/idram", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...sharedBody, email }),
+          body: JSON.stringify({ ...sharedBody, email, phone }),
         });
         const data = await res.json();
         if (!res.ok || !data.actionUrl) {
@@ -220,7 +229,7 @@ export default function CartPage() {
               {promoCode ? (
                 <div className="flex items-center justify-between rounded-xl bg-sage/10 px-3 py-2 text-sm">
                   <span className="font-semibold text-sage-dark">
-                    {promoCode} {t.cart.promoApplied} — {promoDescription}
+                    {promoCode} {t.cart.promoApplied}: {promoDescription}
                   </span>
                   <button
                     onClick={() => {
@@ -433,7 +442,7 @@ export default function CartPage() {
                 ))}
               </div>
               {paymentMethod === "idram" && (
-                <div className="mt-3">
+                <div className="mt-3 space-y-2">
                   <label htmlFor="checkout-email" className="sr-only">
                     {t.cart.emailLabel}
                   </label>
@@ -445,9 +454,35 @@ export default function CartPage() {
                     placeholder={t.cart.emailPlaceholder}
                     className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
                   />
+                  <label htmlFor="checkout-phone" className="sr-only">
+                    {t.cart.phoneLabel}
+                  </label>
+                  <input
+                    id="checkout-phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder={t.cart.phonePlaceholder}
+                    className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
+                  />
                 </div>
               )}
             </fieldset>
+
+            <div className="mt-4 border-t border-tan/50 pt-4">
+              <label htmlFor="checkout-notes" className="text-sm font-semibold text-espresso">
+                {t.cart.notesLabel}
+              </label>
+              <textarea
+                id="checkout-notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder={t.cart.notesPlaceholder}
+                rows={2}
+                maxLength={1000}
+                className="mt-2 w-full rounded-xl border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
+              />
+            </div>
 
             <div className="mt-4 space-y-1.5 border-t border-tan/50 pt-4">
               <div className="flex justify-between text-espresso/80">

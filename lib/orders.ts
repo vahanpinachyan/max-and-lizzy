@@ -3,17 +3,21 @@ import type Stripe from "stripe";
 import { prisma } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
 import { site } from "@/data/site";
+import { absoluteUrl } from "@/lib/seo";
 import { upsertContact, sendPlacedOrderEvent } from "@/lib/omnisend";
 
 export { ORDER_STATUSES, type OrderStatus } from "@/lib/order-status";
 
-function extractProductMetadata(
+// sku/imageUrl are snapshotted onto OrderItem the same as name/price, so
+// staff can identify and pull the right item even if the product is later
+// edited or deleted (see prisma/schema.prisma OrderItem).
+function extractProductInfo(
   product: Stripe.Product | Stripe.DeletedProduct | string | null | undefined
-): Record<string, string> | undefined {
+): { metadata?: Record<string, string>; imageUrl?: string } {
   if (product && typeof product === "object" && !product.deleted) {
-    return product.metadata;
+    return { metadata: product.metadata, imageUrl: product.images?.[0] };
   }
-  return undefined;
+  return {};
 }
 
 /**
@@ -55,6 +59,7 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
   const fulfillmentMethod = session.metadata?.fulfillment_method ?? null;
   const giftWrap = session.metadata?.gift_wrap === "true";
   const giftMessage = session.metadata?.gift_message || null;
+  const notes = session.metadata?.notes || null;
 
   // The checkout route suffixes the line item name with "(CODE applied)"
   // when a promo code was used — recovered here best-effort for display.
@@ -62,13 +67,15 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
   // checkout time; this isn't re-deriving anything security-sensitive.
   let promoCode: string | null = null;
   const items = lineItems.data.map((li) => {
-    const meta = extractProductMetadata(li.price?.product);
+    const { metadata: meta, imageUrl } = extractProductInfo(li.price?.product);
     const rawName = li.description ?? "Item";
     const match = rawName.match(/^(.*) \(([A-Z0-9]+) applied\)$/);
     if (match && !promoCode) promoCode = match[2];
     return {
       productSlug: meta?.slug ?? null,
       productName: match ? match[1] : rawName,
+      sku: meta?.sku || null,
+      imageUrl: imageUrl ?? null,
       priceAmd: li.price ? Math.round((li.price.unit_amount ?? 0) / 100) : 0,
       quantity: li.quantity ?? 1,
     };
@@ -89,6 +96,7 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
       customerPhone: session.customer_details?.phone ?? null,
       giftWrap,
       giftMessage,
+      notes,
       items: { create: items },
     },
     include: { items: true },
@@ -126,6 +134,7 @@ interface PendingIdramOrderRow {
   deliveryAddressJson: string | null;
   giftWrap: boolean;
   giftMessage: string | null;
+  notes: string | null;
   promoCode: string | null;
   customerEmail: string;
   customerName: string | null;
@@ -152,6 +161,8 @@ export async function createOrderFromIdramPayment(pending: PendingIdramOrderRow)
 
   const items = JSON.parse(pending.itemsJson) as {
     slug: string;
+    sku?: string;
+    imageSrc?: string;
     name: string;
     unitPriceAmd: number;
     quantity: number;
@@ -184,10 +195,13 @@ export async function createOrderFromIdramPayment(pending: PendingIdramOrderRow)
       customerPhone: pending.customerPhone,
       giftWrap: pending.giftWrap,
       giftMessage: pending.giftMessage,
+      notes: pending.notes,
       items: {
         create: items.map((item) => ({
           productSlug: item.slug,
           productName: item.name,
+          sku: item.sku || null,
+          imageUrl: item.imageSrc ? absoluteUrl(item.imageSrc) : null,
           priceAmd: item.unitPriceAmd,
           quantity: item.quantity,
         })),

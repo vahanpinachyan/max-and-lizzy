@@ -12,7 +12,7 @@ export const FULFILLMENT_OPTIONS: FulfillmentOption[] = [
   {
     id: "pickup",
     feeAmd: 0,
-    label: "Pickup — 50 Mashtots Avenue",
+    label: "Pickup at 50 Mashtots Avenue",
     eta: "Free, ready same-day",
   },
   {

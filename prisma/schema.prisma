@@ -137,6 +137,7 @@ model Order {
   customerPhone    String?
   giftWrap         Boolean  @default(false)
   giftMessage      String?
+  notes            String?
   items            OrderItem[]
   reviews          Review[]
   createdAt        DateTime @default(now())
@@ -158,6 +159,7 @@ model PendingIdramOrder {
   deliveryAddressJson String?
   giftWrap            Boolean  @default(false)
   giftMessage         String?
+  notes               String?
   promoCode           String?
   customerEmail       String
   customerName        String?
@@ -170,11 +172,16 @@ model PendingIdramOrder {
 }
 
 model OrderItem {
-  id          String @id @default(cuid())
-  order       Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id          String  @id @default(cuid())
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId     String
   productSlug String?
   productName String
+  // Snapshotted at order time, same reasoning as productName/priceAmd —
+  // staff need these to pull the right item off the shelf even if the
+  // product is later edited or deleted.
+  sku         String?
+  imageUrl    String?
   priceAmd    Int
   quantity    Int
 

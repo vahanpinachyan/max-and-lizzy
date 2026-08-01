@@ -14,7 +14,13 @@ const nextConfig: NextConfig = {
     // app/api/admin/upload) are stored in Vercel Blob and referenced by
     // their public URL — next/image needs the host allow-listed to render
     // (and optimize) them on the storefront.
-    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      // OrderItem.imageUrl (see prisma/schema.prisma) is snapshotted via
+      // absoluteUrl() at order time, so it's always a fully-qualified URL
+      // even though it points back at our own product photos.
+      { protocol: "https", hostname: "maxandlizzy.com" },
+    ],
   },
 };
 

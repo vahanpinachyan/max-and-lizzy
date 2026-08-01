@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     email?: string;
     name?: string;
     phone?: string;
+    notes?: string;
   };
   try {
     body = await request.json();
@@ -36,7 +37,7 @@ export async function POST(request: Request) {
   if (validated.error !== null) {
     return NextResponse.json({ error: validated.error }, { status: 400 });
   }
-  const { lineItems, fulfillment, deliveryAddress, giftWrap, giftMessage, promoCode, totalAmd } = validated.data;
+  const { lineItems, fulfillment, deliveryAddress, giftWrap, giftMessage, notes, promoCode, totalAmd } = validated.data;
 
   const pending = await prisma.pendingIdramOrder.create({
     data: {
@@ -44,6 +45,8 @@ export async function POST(request: Request) {
       itemsJson: JSON.stringify(
         lineItems.map((item) => ({
           slug: item.slug,
+          sku: item.sku,
+          imageSrc: item.imageSrc,
           name: item.name,
           unitPriceAmd: item.unitPriceAmd,
           quantity: item.quantity,
@@ -53,6 +56,7 @@ export async function POST(request: Request) {
       deliveryAddressJson: deliveryAddress ? JSON.stringify(deliveryAddress) : null,
       giftWrap,
       giftMessage: giftMessage || null,
+      notes,
       promoCode,
       customerEmail: email,
       customerName: String(body.name ?? "").trim() || null,

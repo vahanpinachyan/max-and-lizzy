@@ -24,7 +24,7 @@ export const en = {
     eyebrow: "Locally owned in Yerevan",
     title: "Max & Lizzy are waiting for you",
     subtitle:
-      "Say hello to Max and Lizzy — the two little friends behind our shelves. Educational, wooden, and eco-friendly toys for babies and preschoolers, chosen with the same care parents give their own kids.",
+      "Say hello to Max and Lizzy, the two little friends behind our shelves. Educational, wooden, and eco-friendly toys for babies and preschoolers, chosen with the same care parents give their own kids.",
     shopAll: "Shop All Toys",
     visitStore: "Visit Our Store",
     trustBadge: "Safety-tested & certified",
@@ -40,7 +40,7 @@ export const en = {
     categoryTitle: "Find the right toy, fast",
     brandTrustEyebrow: "Imported from Europe",
     brandTrustTitle: "Crafted in European workshops",
-    brandTrustSubtitle: "Every toy we carry comes from established toy makers in Germany and France — solid wood, tested to EN71 safety standards.",
+    brandTrustSubtitle: "Every toy we carry comes from established toy makers in Germany and France. Solid wood, tested to EN71 safety standards.",
     testimonialsEyebrow: "Customer love",
     testimonialsTitle: "What parents are saying",
     instagramEyebrow: "@max_and_lizzy_toys",
@@ -195,6 +195,8 @@ export const en = {
     entranceLabel: "Entrance",
     floorLabel: "Floor",
     addressRequiredError: "Please fill in your delivery address.",
+    notesLabel: "Additional notes (optional)",
+    notesPlaceholder: "e.g. delivery instructions, preferred contact time…",
     paymentMethodLabel: "Payment method",
     paymentMethodStripe: "Card",
     paymentMethodStripeNote: "Visa, Mastercard, and other cards",
@@ -203,6 +205,9 @@ export const en = {
     emailLabel: "Email",
     emailPlaceholder: "your@email.com",
     emailRequiredError: "Please enter a valid email address.",
+    phoneLabel: "Phone",
+    phonePlaceholder: "+374 XX XXX XXX",
+    phoneRequiredError: "Please enter a phone number, in case we need to reach you.",
     checkout: "Proceed to Checkout",
     checkoutRedirecting: "Redirecting to checkout…",
     secureCheckoutNote: "Secure checkout via Telcell, Idram, or ArCa. Read our",
@@ -217,7 +222,7 @@ export const en = {
     checkoutErrorGeneric: "Something went wrong starting checkout.",
     checkoutErrorRetry: "Something went wrong. Please try again.",
     promoInvalid: "That code isn't valid or has expired.",
-    promoAppliedMessage: "Applied — {description}.",
+    promoAppliedMessage: "Applied: {description}.",
   },
   wishlist: {
     title: "Your Wishlist",
@@ -231,7 +236,7 @@ export const en = {
   },
   welcomeModal: {
     title: "Get 5% off your first order",
-    subtitle: "Join our list for gift guides and play tips — and take 5% off today's order.",
+    subtitle: "Join our list for gift guides and play tips, and take 5% off today's order.",
     placeholder: "your@email.com",
     subscribe: "Subscribe",
     sending: "Sending…",
@@ -269,7 +274,7 @@ export const en = {
   checkoutSuccess: {
     title: "Thank you for your order!",
     bodyWithSession: "Your order has been received. A confirmation has been sent to your email.",
-    bodyNoSession: "Your order has been received. If you have any questions, please contact us — we're happy to help.",
+    bodyNoSession: "Your order has been received. If you have any questions, please contact us. We're happy to help.",
     orderReference: "Order reference",
     totalPaid: "Total paid",
     sentTo: "Sent to",
@@ -287,12 +292,12 @@ export const en = {
   },
   idramSuccess: {
     title: "Payment successful",
-    body: "Thank you — your Idram payment went through.",
+    body: "Thank you. Your Idram payment went through.",
     backToHome: "Back to home",
   },
   idramFail: {
     title: "Payment didn't go through",
-    body: "Your Idram payment wasn't completed. No charge was made — please try again.",
+    body: "Your Idram payment wasn't completed. No charge was made. Please try again.",
     backToCart: "Back to cart",
   },
   contactForm: {
@@ -332,7 +337,7 @@ export const en = {
   },
   blogPage: {
     subtitle:
-      "Gift guides, age-appropriate toy advice, and educational play tips — written by our team to help you choose well, not just often.",
+      "Gift guides, age-appropriate toy advice, and educational play tips, written by our team to help you choose well, not just often.",
     moreGuides: "More guides",
     readMore: "Read more →",
   },
@@ -340,7 +345,7 @@ export const en = {
     eyebrow: "Our Story",
     title: "Toys chosen the way we'd choose them for our own kids",
     intro:
-      "We started Max & Lizzy because we wanted a toy store we could trust for our own kids — real wood over plastic, toys built to survive years of play, and picked because they actually help children learn, not just because they're loud or trendy.",
+      "We started Max & Lizzy because we wanted a toy store we could trust for our own kids: real wood over plastic, toys built to survive years of play, and picked because they actually help children learn, not just because they're loud or trendy.",
     whyTitle: "Why wooden, educational, and eco-friendly?",
     whyParagraph1:
       "Every product on our shelves is chosen against three questions. Is it made from honest, sustainable materials? Does it hold up to real, everyday play? And does it actually build a skill, such as fine motor control, early language, or spatial reasoning, rather than just occupying a few minutes of attention?",

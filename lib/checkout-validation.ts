@@ -33,6 +33,7 @@ export interface ValidatedCheckout {
   deliveryAddress: Required<DeliveryAddressInput> | null;
   giftWrap: boolean;
   giftMessage: string;
+  notes: string | null;
   promoCode: string | null;
   itemsSubtotalAmd: number;
   totalAmd: number;
@@ -48,6 +49,7 @@ export async function validateCheckoutRequest(body: {
   fulfillmentMethod?: string;
   giftWrap?: boolean;
   giftMessage?: string;
+  notes?: string;
   deliveryAddress?: DeliveryAddressInput;
 }): Promise<{ error: string } | { error: null; data: ValidatedCheckout }> {
   const requestedItems = Array.isArray(body.items) ? body.items : [];
@@ -61,6 +63,7 @@ export async function validateCheckoutRequest(body: {
   }
   const giftWrap = body.giftWrap === true;
   const giftMessage = giftWrap ? (body.giftMessage ?? "").slice(0, 500) : "";
+  const notes = String(body.notes ?? "").trim().slice(0, 1000) || null;
 
   const rawAddress = body.deliveryAddress ?? {};
   if (fulfillment.id === "delivery_yerevan" && !String(rawAddress.street ?? "").trim()) {
@@ -115,6 +118,7 @@ export async function validateCheckoutRequest(body: {
       deliveryAddress,
       giftWrap,
       giftMessage,
+      notes,
       promoCode: promo?.code ?? null,
       itemsSubtotalAmd,
       totalAmd,

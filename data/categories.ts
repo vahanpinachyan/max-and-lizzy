@@ -4,7 +4,7 @@ export const categories: CategoryInfo[] = [
   {
     slug: "educational",
     name: "Educational",
-    shortDescription: "Toys that build skills through play — counting, sorting, language, and early STEM.",
+    shortDescription: "Toys that build skills through play: counting, sorting, language, and early STEM.",
     image: "/images/categories/educational.jpg",
     subcategories: [
       { slug: "early-learning", name: "Early Learning" },

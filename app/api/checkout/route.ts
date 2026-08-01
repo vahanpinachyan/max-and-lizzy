@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     fulfillmentMethod?: string;
     giftWrap?: boolean;
     giftMessage?: string;
+    notes?: string;
     deliveryAddress?: DeliveryAddressInput;
   };
   try {
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
   if (validated.error !== null) {
     return NextResponse.json({ error: validated.error }, { status: 400 });
   }
-  const { lineItems, fulfillment, deliveryAddress, giftWrap, giftMessage, promoCode } = validated.data;
+  const { lineItems, fulfillment, deliveryAddress, giftWrap, giftMessage, notes, promoCode } = validated.data;
 
   const stripeLineItems = lineItems.map((item) => ({
     quantity: item.quantity,
@@ -72,6 +73,7 @@ export async function POST(request: Request) {
         fulfillment_method: fulfillment.id,
         gift_wrap: giftWrap ? "true" : "false",
         gift_message: giftMessage,
+        notes: notes ?? "",
         delivery_address: deliveryAddress ? JSON.stringify(deliveryAddress) : "",
       },
     });

@@ -207,7 +207,7 @@ interface FulfillmentTranslation {
 const fulfillmentTranslations: Record<"hy" | "ru", Record<string, FulfillmentTranslation>> = {
   hy: {
     pickup: {
-      label: "Վերցնել — Մաշտոցի պող. 50",
+      label: "Ինքնահանում՝ Մաշտոցի պող. 50",
       eta: "Անվճար, պատրաստ նույն օրը",
     },
     delivery_yerevan: {
@@ -222,7 +222,7 @@ const fulfillmentTranslations: Record<"hy" | "ru", Record<string, FulfillmentTra
   },
   ru: {
     pickup: {
-      label: "Самовывоз — просп. Маштоца, 50",
+      label: "Самовывоз: просп. Маштоца, 50",
       eta: "Бесплатно, готово в тот же день",
     },
     delivery_yerevan: {

@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n/locales";
 import { ARMENIA_REGIONS } from "@/data/armenia-regions";
+import { localizeArmeniaRegions } from "@/lib/i18n/localize-data";
 
 // Currency symbol/placement and digit grouping are both hardcoded rather
 // than left to Intl's currency-style resolution — Node's and the browser's
@@ -117,7 +118,16 @@ export function safetyInfoLabel(info: string, locale: Locale = "en"): string {
 // Order.shippingAddress is stored as a raw JSON string (see lib/orders.ts) —
 // this turns it back into the one-line human-readable form shown in the
 // admin order page and the new-order staff email.
-export function formatShippingAddress(shippingAddressJson: string | null | undefined): string | null {
+const shippingAddressLabels: Record<Locale, { apartment: string; entrance: string; floor: string }> = {
+  en: { apartment: "Apt.", entrance: "Entrance", floor: "Floor" },
+  hy: { apartment: "Բն.", entrance: "Մուտք", floor: "Հարկ" },
+  ru: { apartment: "Кв.", entrance: "Подъезд", floor: "Этаж" },
+};
+
+export function formatShippingAddress(
+  shippingAddressJson: string | null | undefined,
+  locale: Locale = "en"
+): string | null {
   if (!shippingAddressJson) return null;
   let address: { region?: string; city?: string; street?: string; apartment?: string; entrance?: string; floor?: string };
   try {
@@ -125,14 +135,16 @@ export function formatShippingAddress(shippingAddressJson: string | null | undef
   } catch {
     return null;
   }
-  const regionLabel = address.region ? ARMENIA_REGIONS.find((r) => r.id === address.region)?.label : undefined;
+  const regions = locale === "en" ? ARMENIA_REGIONS : localizeArmeniaRegions(locale);
+  const regionLabel = address.region ? regions.find((r) => r.id === address.region)?.label : undefined;
+  const labels = shippingAddressLabels[locale];
   const parts = [
     regionLabel,
     address.city,
     address.street,
-    address.apartment && `Apt. ${address.apartment}`,
-    address.entrance && `Entrance ${address.entrance}`,
-    address.floor && `Floor ${address.floor}`,
+    address.apartment && `${labels.apartment} ${address.apartment}`,
+    address.entrance && `${labels.entrance} ${address.entrance}`,
+    address.floor && `${labels.floor} ${address.floor}`,
   ].filter(Boolean);
   return parts.length > 0 ? parts.join(", ") : null;
 }
