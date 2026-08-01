@@ -1,6 +1,7 @@
 import "server-only";
 import { site } from "@/data/site";
 import { formatAmd } from "@/lib/format";
+import { getFulfillmentOption } from "@/data/fulfillment";
 import type { Order, OrderItem } from "@prisma/client";
 
 // Shared by both payment providers (Stripe's webhook and Idram's callback)
@@ -40,8 +41,43 @@ export async function sendNewOrderNotificationEmail(
   if (!apiKey) return;
 
   const customerName = order.customerName || "A customer";
-  const itemsList = order.items
-    .map((item) => `<li>${item.quantity} × ${item.productName} — ${formatAmd(item.priceAmd)}</li>`)
+  const paymentLabel = order.paymentProvider === "idram" ? "Idram" : "card (Stripe)";
+  const fulfillment = getFulfillmentOption(order.fulfillmentMethod);
+  const orderRef = order.id.slice(-10);
+  const placedAt = order.createdAt.toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Yerevan",
+  });
+
+  const itemRows = order.items
+    .map(
+      (item) => `<tr>
+        <td style="padding:4px 12px 4px 0">${item.quantity} × ${item.productName}</td>
+        <td style="padding:4px 0;text-align:right;white-space:nowrap">${formatAmd(item.priceAmd * item.quantity)}</td>
+      </tr>`
+    )
+    .join("");
+
+  const contactLines = [
+    customerEmail ? `Email: <a href="mailto:${customerEmail}">${customerEmail}</a>` : null,
+    order.customerPhone ? `Phone: <a href="tel:${order.customerPhone}">${order.customerPhone}</a>` : null,
+  ]
+    .filter(Boolean)
+    .join("<br/>");
+
+  const fulfillmentLine = fulfillment
+    ? `${fulfillment.label}${order.shippingAddress ? ` — deliver to: ${order.shippingAddress}` : ""}`
+    : "Not specified";
+
+  const extras = [
+    order.giftWrap
+      ? `🎁 Gift wrapped${order.giftMessage ? ` — message: "${order.giftMessage}"` : ""}`
+      : null,
+    order.promoCode ? `Promo code used: ${order.promoCode}` : null,
+  ]
+    .filter(Boolean)
+    .map((line) => `<p>${line}</p>`)
     .join("");
 
   try {
@@ -51,11 +87,14 @@ export async function sendNewOrderNotificationEmail(
       from: `${site.name} Website <info@${new URL(site.url).hostname}>`,
       to: site.email,
       replyTo: customerEmail ?? undefined,
-      subject: `New order from ${customerName} — ${formatAmd(order.totalAmd)}`,
-      html: `<p><strong>${customerName}</strong> just placed an order (paid via ${order.paymentProvider}).</p>
-             <ul>${itemsList}</ul>
-             <p><strong>Total:</strong> ${formatAmd(order.totalAmd)}</p>
-             <p><strong>Fulfillment:</strong> ${order.fulfillmentMethod ?? "not specified"}</p>
+      subject: `New order from ${customerName} — ${formatAmd(order.totalAmd)} (${orderRef})`,
+      html: `<p><strong>${customerName}</strong> just placed an order — paid via ${paymentLabel}.</p>
+             ${contactLines ? `<p>${contactLines}</p>` : ""}
+             <p><strong>Fulfillment:</strong> ${fulfillmentLine}</p>
+             <table style="border-collapse:collapse;width:100%;max-width:400px">${itemRows}</table>
+             <p style="margin-top:8px"><strong>Total: ${formatAmd(order.totalAmd)}</strong></p>
+             ${extras}
+             <p style="color:#666">Order reference: ${orderRef} · Placed ${placedAt}</p>
              <p><a href="${site.url}/admin/orders/${order.id}">View this order in the admin panel →</a></p>`,
     });
   } catch (error) {
