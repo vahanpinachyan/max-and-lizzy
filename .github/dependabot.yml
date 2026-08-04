@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Flags known-vulnerable npm dependencies (and keeps them reasonably
+  # current in general) by opening a PR automatically — nothing merges
+  # without CI passing and a human reviewing it.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

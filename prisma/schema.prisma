@@ -19,6 +19,10 @@ model AdminUser {
   role         String         @default("manager")
   createdAt    DateTime       @default(now())
   sessions     AdminSession[]
+  // Brute-force lockout (see lib/admin/auth.ts loginAction) — resets to 0 on
+  // any successful login. lockedUntil is null unless currently locked.
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
 }
 
 model AdminSession {
