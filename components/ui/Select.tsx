@@ -13,12 +13,14 @@ export function Select({
   onChange,
   options,
   placeholder,
+  invalid,
 }: {
   id?: string;
   value: string;
   onChange: (value: string) => void;
   options: SelectOption[];
   placeholder: string;
+  invalid?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,7 +51,9 @@ export function Select({
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex w-full items-center justify-between rounded-full border border-tan bg-white px-4 py-2 text-left text-sm transition-colors hover:border-tan/80 focus:outline-none focus-visible:border-terracotta"
+        className={`flex w-full items-center justify-between rounded-full border bg-white px-4 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:border-terracotta ${
+          invalid ? "border-terracotta-dark" : "border-tan hover:border-tan/80"
+        }`}
       >
         <span className={selected ? "text-espresso" : "text-espresso/40"}>
           {selected ? selected.label : placeholder}

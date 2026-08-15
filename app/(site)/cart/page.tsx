@@ -51,10 +51,11 @@ export default function CartPage() {
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [address, setAddress] = useState<DeliveryAddress>(EMPTY_ADDRESS);
-  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "idram" | "arca">("stripe");
+  const [paymentMethod, setPaymentMethod] = useState<"idram" | "arca">("arca");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   const fulfillmentOptions = localizeFulfillmentOptions(locale);
   const regions = localizeArmeniaRegions(locale);
@@ -62,6 +63,19 @@ export default function CartPage() {
   const deliveryFeeAmd = selectedFulfillment?.feeAmd ?? 0;
   const giftWrapFeeAmd = giftWrap ? GIFT_WRAP_FEE_AMD : 0;
   const grandTotalAmd = totalAmd + deliveryFeeAmd + giftWrapFeeAmd;
+
+  // Red-border validation state — only kicks in after a checkout attempt
+  // fails, and clears itself live as each field gets fixed (derived from
+  // current values, not frozen at submit time).
+  const emailInvalid = attemptedSubmit && (!email.trim() || !email.includes("@"));
+  const phoneInvalid = attemptedSubmit && !phone.trim();
+  const regionInvalid = attemptedSubmit && fulfillmentMethod === "delivery_outside" && !address.region;
+  const cityInvalid = attemptedSubmit && fulfillmentMethod === "delivery_outside" && !address.city.trim();
+  const streetInvalid = attemptedSubmit && fulfillmentMethod !== "pickup" && !address.street.trim();
+
+  function fieldBorderClass(invalid: boolean) {
+    return invalid ? "border-terracotta-dark" : "border-tan";
+  }
 
   function updateAddress(field: keyof DeliveryAddress, value: string) {
     setAddress((a) => ({ ...a, [field]: value }));
@@ -101,20 +115,20 @@ export default function CartPage() {
   }
 
   async function handleCheckout() {
+    setAttemptedSubmit(true);
+
     const addressError = validateAddress();
     if (addressError) {
       setError(addressError);
       return;
     }
-    if (paymentMethod === "idram" || paymentMethod === "arca") {
-      if (!email.trim() || !email.includes("@")) {
-        setError(t.cart.emailRequiredError);
-        return;
-      }
-      if (!phone.trim()) {
-        setError(t.cart.phoneRequiredError);
-        return;
-      }
+    if (!email.trim() || !email.includes("@")) {
+      setError(t.cart.emailRequiredError);
+      return;
+    }
+    if (!phone.trim()) {
+      setError(t.cart.phoneRequiredError);
+      return;
     }
     setLoading(true);
     setError(null);
@@ -145,30 +159,16 @@ export default function CartPage() {
         return;
       }
 
-      if (paymentMethod === "arca") {
-        const res = await fetch("/api/checkout/arca", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...sharedBody, email, phone, locale }),
-        });
-        const data = await res.json();
-        if (!res.ok || !data.redirectUrl) {
-          throw new Error(data.error || t.cart.checkoutErrorGeneric);
-        }
-        window.location.href = data.redirectUrl;
-        return;
-      }
-
-      const res = await fetch("/api/checkout", {
+      const res = await fetch("/api/checkout/arca", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sharedBody),
+        body: JSON.stringify({ ...sharedBody, email, phone, locale }),
       });
       const data = await res.json();
-      if (!res.ok || !data.url) {
+      if (!res.ok || !data.redirectUrl) {
         throw new Error(data.error || t.cart.checkoutErrorGeneric);
       }
-      window.location.href = data.url;
+      window.location.href = data.redirectUrl;
     } catch (err) {
       setError(err instanceof Error ? err.message : t.cart.checkoutErrorRetry);
       setLoading(false);
@@ -318,6 +318,92 @@ export default function CartPage() {
               </div>
             </fieldset>
 
+            <fieldset className="mt-4 border-t border-tan/50 pt-4">
+              <legend className="text-sm font-semibold text-espresso">{t.cart.paymentMethodLabel}</legend>
+              <div className="mt-2 space-y-2">
+                {(
+                  [
+                    { id: "arca" as const, label: t.cart.paymentMethodArca, note: t.cart.paymentMethodArcaNote },
+                    { id: "idram" as const, label: t.cart.paymentMethodIdram, note: t.cart.paymentMethodIdramNote },
+                  ]
+                ).map((option) => (
+                  <label
+                    key={option.id}
+                    className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
+                      paymentMethod === option.id ? "border-terracotta bg-terracotta/5" : "border-tan/60 hover:border-tan"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment-method"
+                      value={option.id}
+                      checked={paymentMethod === option.id}
+                      onChange={() => setPaymentMethod(option.id)}
+                      className="mt-0.5 h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
+                    />
+                    <span className="flex-1">
+                      <span className="block font-semibold text-espresso">{option.label}</span>
+                      <span className="mt-0.5 block text-espresso/70">{option.note}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <div className="mt-3 space-y-2">
+                <label htmlFor="checkout-email" className="sr-only">
+                  {t.cart.emailLabel}
+                </label>
+                <input
+                  id="checkout-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t.cart.emailPlaceholder}
+                  className={`w-full rounded-full border bg-white px-4 py-2 text-sm focus:outline-none ${fieldBorderClass(emailInvalid)}`}
+                />
+                <label htmlFor="checkout-phone" className="sr-only">
+                  {t.cart.phoneLabel}
+                </label>
+                <input
+                  id="checkout-phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder={t.cart.phonePlaceholder}
+                  className={`w-full rounded-full border bg-white px-4 py-2 text-sm focus:outline-none ${fieldBorderClass(phoneInvalid)}`}
+                />
+              </div>
+            </fieldset>
+
+            <div className="mt-4 border-t border-tan/50 pt-4">
+              <label className="flex cursor-pointer items-center gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={giftWrap}
+                  onChange={(e) => setGiftWrap(e.target.checked)}
+                  className="form-checkbox"
+                />
+                <span className="font-semibold text-espresso">
+                  {interpolate(t.cart.giftWrapCheckboxLabel, { fee: formatAmd(GIFT_WRAP_FEE_AMD, locale) })}
+                </span>
+              </label>
+              {giftWrap && (
+                <div className="mt-3">
+                  <label htmlFor="gift-message" className="sr-only">
+                    {t.cart.giftMessageLabel}
+                  </label>
+                  <textarea
+                    id="gift-message"
+                    value={giftMessage}
+                    onChange={(e) => setGiftMessage(e.target.value)}
+                    placeholder={t.cart.giftMessagePlaceholder}
+                    rows={3}
+                    maxLength={500}
+                    className="w-full rounded-xl border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
+                  />
+                </div>
+              )}
+            </div>
+
             {fulfillmentMethod === "pickup" ? (
               <p className="mt-4 rounded-xl bg-sage/10 px-3 py-2 text-sm text-sage-dark">
                 {t.cart.pickupReadyNote}
@@ -335,6 +421,7 @@ export default function CartPage() {
                         onChange={(v) => updateAddress("region", v)}
                         placeholder={t.cart.regionPlaceholder}
                         options={regions.map((r) => ({ value: r.id, label: r.label }))}
+                        invalid={regionInvalid}
                       />
                       <label htmlFor="address-city" className="sr-only">{t.cart.cityLabel}</label>
                       <input
@@ -343,7 +430,7 @@ export default function CartPage() {
                         value={address.city}
                         onChange={(e) => updateAddress("city", e.target.value)}
                         placeholder={t.cart.cityPlaceholder}
-                        className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
+                        className={`w-full rounded-full border bg-white px-4 py-2 text-sm focus:outline-none ${fieldBorderClass(cityInvalid)}`}
                       />
                     </>
                   )}
@@ -354,7 +441,7 @@ export default function CartPage() {
                     value={address.street}
                     onChange={(e) => updateAddress("street", e.target.value)}
                     placeholder={t.cart.streetPlaceholder}
-                    className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
+                    className={`w-full rounded-full border bg-white px-4 py-2 text-sm focus:outline-none ${fieldBorderClass(streetInvalid)}`}
                   />
                   <div className="grid grid-cols-3 gap-2">
                     <div>
@@ -394,95 +481,6 @@ export default function CartPage() {
                 </div>
               </fieldset>
             )}
-
-            <div className="mt-4 border-t border-tan/50 pt-4">
-              <label className="flex cursor-pointer items-center gap-3 text-sm">
-                <input
-                  type="checkbox"
-                  checked={giftWrap}
-                  onChange={(e) => setGiftWrap(e.target.checked)}
-                  className="form-checkbox"
-                />
-                <span className="font-semibold text-espresso">
-                  {interpolate(t.cart.giftWrapCheckboxLabel, { fee: formatAmd(GIFT_WRAP_FEE_AMD, locale) })}
-                </span>
-              </label>
-              {giftWrap && (
-                <div className="mt-3">
-                  <label htmlFor="gift-message" className="sr-only">
-                    {t.cart.giftMessageLabel}
-                  </label>
-                  <textarea
-                    id="gift-message"
-                    value={giftMessage}
-                    onChange={(e) => setGiftMessage(e.target.value)}
-                    placeholder={t.cart.giftMessagePlaceholder}
-                    rows={3}
-                    maxLength={500}
-                    className="w-full rounded-xl border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
-                  />
-                </div>
-              )}
-            </div>
-
-            <fieldset className="mt-4 border-t border-tan/50 pt-4">
-              <legend className="text-sm font-semibold text-espresso">{t.cart.paymentMethodLabel}</legend>
-              <div className="mt-2 space-y-2">
-                {(
-                  [
-                    { id: "stripe" as const, label: t.cart.paymentMethodStripe, note: t.cart.paymentMethodStripeNote },
-                    { id: "arca" as const, label: t.cart.paymentMethodArca, note: t.cart.paymentMethodArcaNote },
-                    { id: "idram" as const, label: t.cart.paymentMethodIdram, note: t.cart.paymentMethodIdramNote },
-                  ]
-                ).map((option) => (
-                  <label
-                    key={option.id}
-                    className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
-                      paymentMethod === option.id ? "border-terracotta bg-terracotta/5" : "border-tan/60 hover:border-tan"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value={option.id}
-                      checked={paymentMethod === option.id}
-                      onChange={() => setPaymentMethod(option.id)}
-                      className="mt-0.5 h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
-                    />
-                    <span className="flex-1">
-                      <span className="block font-semibold text-espresso">{option.label}</span>
-                      <span className="mt-0.5 block text-espresso/70">{option.note}</span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-              {(paymentMethod === "idram" || paymentMethod === "arca") && (
-                <div className="mt-3 space-y-2">
-                  <label htmlFor="checkout-email" className="sr-only">
-                    {t.cart.emailLabel}
-                  </label>
-                  <input
-                    id="checkout-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t.cart.emailPlaceholder}
-                    className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
-                  />
-                  <label htmlFor="checkout-phone" className="sr-only">
-                    {t.cart.phoneLabel}
-                  </label>
-                  <input
-                    id="checkout-phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={t.cart.phonePlaceholder}
-                    className="w-full rounded-full border border-tan bg-white px-4 py-2 text-sm focus:outline-none"
-                  />
-                </div>
-              )}
-            </fieldset>
 
             <div className="mt-4 border-t border-tan/50 pt-4">
               <label htmlFor="checkout-notes" className="text-sm font-semibold text-espresso">
