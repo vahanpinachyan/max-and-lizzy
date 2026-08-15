@@ -186,7 +186,7 @@ export default function CartPage() {
   }
 
   return (
-    <Container className="relative overflow-hidden py-12">
+    <Container className="relative py-12">
       <SectionDecorations variant="flowers" />
       <h1 className="relative text-4xl font-bold text-espresso">{t.cart.title}</h1>
 
