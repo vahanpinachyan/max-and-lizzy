@@ -10,6 +10,13 @@ const GOOGLE_MAPS_QUERY = "Max & Lizzy Toys, 50 Mesrop Mashtots Avenue, Yerevan 
 
 export const site = {
   name: "Max & Lizzy",
+  // Display name on customer-facing transactional emails (order confirmed,
+  // ready for pickup, etc.) — deliberately "Toys"-suffixed to match the
+  // sender name Omnisend's marketing emails already use, so customers see
+  // one consistent brand name across every email, not two. Staff-facing
+  // emails (new-order notification, contact form, QA watch) keep using
+  // `name` directly since they're internal, not customer-visible.
+  emailFromName: "Max & Lizzy Toys",
   tagline: "Educational, wooden & eco-friendly toys",
   description:
     "Max & Lizzy is a Yerevan toy store specializing in educational, wooden, and eco-friendly toys for babies and preschoolers. Visit us on Mashtots Avenue or shop online.",

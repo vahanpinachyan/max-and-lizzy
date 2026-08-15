@@ -52,6 +52,8 @@ export default function CartPage() {
   const [giftMessage, setGiftMessage] = useState("");
   const [address, setAddress] = useState<DeliveryAddress>(EMPTY_ADDRESS);
   const [paymentMethod, setPaymentMethod] = useState<"idram" | "arca">("arca");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
@@ -67,6 +69,8 @@ export default function CartPage() {
   // Red-border validation state — only kicks in after a checkout attempt
   // fails, and clears itself live as each field gets fixed (derived from
   // current values, not frozen at submit time).
+  const firstNameInvalid = attemptedSubmit && !firstName.trim();
+  const lastNameInvalid = attemptedSubmit && !lastName.trim();
   const emailInvalid = attemptedSubmit && (!email.trim() || !email.includes("@"));
   const phoneInvalid = attemptedSubmit && !phone.trim();
   const regionInvalid = attemptedSubmit && fulfillmentMethod === "delivery_outside" && !address.region;
@@ -122,6 +126,10 @@ export default function CartPage() {
       setError(addressError);
       return;
     }
+    if (!firstName.trim() || !lastName.trim()) {
+      setError(t.cart.nameRequiredError);
+      return;
+    }
     if (!email.trim() || !email.includes("@")) {
       setError(t.cart.emailRequiredError);
       return;
@@ -134,6 +142,7 @@ export default function CartPage() {
     setError(null);
     if (cartId) trackStartedCheckout(items, grandTotalAmd, cartId);
 
+    const name = `${firstName.trim()} ${lastName.trim()}`.trim();
     const sharedBody = {
       items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),
       promoCode,
@@ -142,6 +151,7 @@ export default function CartPage() {
       giftMessage: giftWrap ? giftMessage : undefined,
       notes: notes.trim() || undefined,
       deliveryAddress: fulfillmentMethod !== "pickup" ? address : undefined,
+      name,
     };
 
     try {
@@ -349,6 +359,34 @@ export default function CartPage() {
                 ))}
               </div>
               <div className="mt-3 space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label htmlFor="checkout-first-name" className="sr-only">
+                      {t.cart.firstNameLabel}
+                    </label>
+                    <input
+                      id="checkout-first-name"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder={t.cart.firstNamePlaceholder}
+                      className={`w-full rounded-full border bg-white px-4 py-2 text-sm focus:outline-none ${fieldBorderClass(firstNameInvalid)}`}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="checkout-last-name" className="sr-only">
+                      {t.cart.lastNameLabel}
+                    </label>
+                    <input
+                      id="checkout-last-name"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder={t.cart.lastNamePlaceholder}
+                      className={`w-full rounded-full border bg-white px-4 py-2 text-sm focus:outline-none ${fieldBorderClass(lastNameInvalid)}`}
+                    />
+                  </div>
+                </div>
                 <label htmlFor="checkout-email" className="sr-only">
                   {t.cart.emailLabel}
                 </label>

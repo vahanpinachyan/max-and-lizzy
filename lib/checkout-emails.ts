@@ -18,7 +18,7 @@ export async function sendOrderConfirmationEmail(toEmail: string | null | undefi
     const { Resend } = await import("resend");
     const resend = new Resend(apiKey);
     await resend.emails.send({
-      from: `${site.name} <info@${new URL(site.url).hostname}>`,
+      from: `${site.emailFromName} <info@${new URL(site.url).hostname}>`,
       to: toEmail,
       replyTo: site.email,
       subject: `Your ${site.name} order is confirmed`,
