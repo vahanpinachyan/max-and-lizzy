@@ -202,6 +202,8 @@ export const hy: Dictionary = {
     paymentMethodLabel: "Վճարման եղանակ",
     paymentMethodStripe: "Բանկային քարտ",
     paymentMethodStripeNote: "Visa, Mastercard և այլ քարտեր",
+    paymentMethodArca: "Քարտով (ArCa)",
+    paymentMethodArcaNote: "Visa, Mastercard և այլ քարտեր՝ ԱԿԲԱ Բանկի միջոցով",
     paymentMethodIdram: "Idram",
     paymentMethodIdramNote: "Վճարեք Ձեր Idram դրամապանակով",
     emailLabel: "Էլ. փոստ",
@@ -300,6 +302,16 @@ export const hy: Dictionary = {
   idramFail: {
     title: "Վճարումը չկատարվեց",
     body: "Ձեր Idram վճարումը չկատարվեց։ Գումար չի գանձվել․ խնդրում ենք փորձել կրկին։",
+    backToCart: "Վերադառնալ զամբյուղ",
+  },
+  arcaResult: {
+    paidTitle: "Վճարումը հաջողվեց",
+    paidBody: "Շնորհակալություն․ Ձեր քարտային վճարումն ընդունվեց։",
+    backToHome: "Վերադառնալ գլխավոր էջ",
+    declinedTitle: "Վճարումը չկատարվեց",
+    declinedBody: "Ձեր քարտային վճարումը չկատարվեց։ Գումար չի գանձվել․ խնդրում ենք փորձել կրկին։",
+    unresolvedTitle: "Չհաջողվեց հաստատել Ձեր վճարումը",
+    unresolvedBody: "Եթե վճարումն ավարտել եք, ստուգեք Ձեր էլ. փոստը հաստատման նամակի համար։ Հակառակ դեպքում խնդրում ենք փորձել կրկին։",
     backToCart: "Վերադառնալ զամբյուղ",
   },
   contactForm: {

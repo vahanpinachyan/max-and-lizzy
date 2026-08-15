@@ -494,21 +494,20 @@ wallet payments are extremely common in Armenia and having only cards will
 turn away real customers. Add Telcell later if you see demand for it
 specifically. This mirrors how several Armenian stores actually do it (one
 source describes bank decline rates dropping from ~30% to under 5% after
-adding multiple local providers instead of relying on one).
+adding multiple local providers instead of relying on one). **ArCa and
+Idram are both done** — see their sections below; Telcell is still
+unimplemented.
 
 **What integration actually looks like:** all three work like Stripe does
 today — the merchant account/bank gives you API credentials, your server
 creates a payment session and redirects the customer to a hosted payment
-page, then the processor calls your server back (a webhook, same idea as
-`app/api/webhook/route.ts`) to confirm payment before you mark the order
-paid. `lib/stripe.ts` and `app/api/checkout/route.ts` were written to keep
+page, then (ideally) the processor calls your server back to confirm
+payment before you mark the order paid, the same idea as
+`app/api/webhook/route.ts` for Stripe or `app/api/idram/callback` for
+Idram. `lib/stripe.ts` and `app/api/checkout/route.ts` were written to keep
 all Stripe-specific logic in those two files precisely so a second processor
-can be added as a sibling (e.g. `lib/arca.ts` + a checkout branch) without
-touching the cart, product, or order code. **This isn't something to build
-blind, though** — real integration needs the bank/provider's technical
-integration manual and test/sandbox credentials, which only come after
-signing up as a merchant. Once you've picked a provider and have sandbox
-credentials, that's the point to come back and wire it in for real.
+can be added as a sibling (`lib/idram.ts` / `lib/arca.ts` + a checkout
+branch) without touching the cart, product, or order code.
 
 Sources: [Armenia's Payment Rails — ArCa, Idram & Instant Transfers](https://www.transfi.com/blog/armenias-payment-rails-how-they-work---arca-idram-instant-transfers), [ArCa for e-merchants](https://old.arca.am/en/emerchants), [Idram online payment system](https://www.idram.am/?l=en), [Telcell Business](https://telcell.am/en/business), [Guide to Payment Processing Solutions in Armenia](https://armenian-lawyer.com/business-immigration/payment-processing-armenia/).
 
@@ -572,6 +571,71 @@ providers' logos — and the site must be a finished, non-test deployment.
 This has all been addressed — see the Privacy/Returns/Terms/Shipping
 policy pages, all trilingual (en/hy/ru).
 
+### ARCA (ACBA vPOS) payment integration
+
+ArCa is a real, live payment option on the cart page ("Card (ArCa)"),
+processed through ACBA Bank's EPG (SmartVista E-Commerce Payment Gateway —
+the same REST platform, `register.do` / `getOrderStatusExtended.do`, that
+several Armenian banks run under their own branding), following the bank's
+"EPG Merchant Integration Guide". Like Idram, it also asks for an email and
+phone number, since the hosted card-entry page never gives the merchant the
+customer's email.
+
+Structurally it mirrors the Idram integration above, with one real
+difference: **EPG's merchant guide documents no server-to-server push
+callback** the way Idram's RESULT_URL or Stripe's webhook does (there is a
+"Sending callback notification is allowed" permission listed among the
+bank's optional merchant options, which would need to be requested from
+ACBA separately if you want one). So instead of verifying an inbound
+webhook, the integration *pulls* the authoritative status itself:
+
+- **`lib/arca.ts`** — `registerArcaOrder()` calls `register.do` to create a
+  one-phase order and get back a hosted payment page URL (`formUrl`).
+  `getArcaOrderStatus()` calls `getOrderStatusExtended.do`, authenticated
+  with our own merchant credentials, to find out what actually happened —
+  this is why no checksum verification is needed here the way Idram's
+  `EDP_CHECKSUM` is: there's no signature to spoof because we're the one
+  asking, not the one being told.
+- **`app/api/checkout/arca/route.ts`** — creates a `PendingArcaOrder` row
+  (EPG has no session object either, same reasoning as `PendingIdramOrder`),
+  calls `register.do`, and returns `formUrl` for the browser to navigate to
+  directly (no hidden-form POST needed, unlike Idram).
+- **`app/(site)/checkout/arca/return/page.tsx`** — the `returnUrl` EPG sends
+  the customer's browser back to. Because there's no push callback, *this
+  page is the source of truth*: it looks up the `PendingArcaOrder` by the
+  `ref` query param, calls `getOrderStatusExtended.do`, and — only on
+  `orderStatus === 2` ("deposited") with a matching amount — calls
+  `createOrderFromArcaPayment` in `lib/orders.ts` to persist the real
+  `Order`/`Customer` and send the confirmation emails. Idempotent, so
+  refreshing this page is safe.
+
+**One practical consequence of the pull-only design:** if a customer closes
+the tab mid-payment or their browser never makes it back to `returnUrl`, a
+completed charge could exist on ACBA's side with no matching `Order` here.
+Ask ACBA whether the callback-notification option above can be enabled for
+a belt-and-suspenders push confirmation if this turns out to matter in
+practice; until then, ACBA's own back office (`epg_gui`) is the fallback
+for reconciling any such case manually.
+
+**The one URL to give ACBA** (already live once this is deployed):
+```
+returnUrl: https://yourdomain.com/checkout/arca/return
+```
+(In practice this is passed per-request in `register.do`, not configured
+once like Idram's three URLs — nothing needs to be given to ACBA up front
+beyond what's already in the merchant agreement.)
+
+**Credentials:** ACBA issues `ARCA_USERNAME` (an API login like
+`<merchantId>_api`) and `ARCA_PASSWORD` after signing a merchant agreement.
+⚠️ **The password ACBA issues initially must be changed on first login** at
+`https://epg.arca.am/epg_gui/#login` — API calls fail with "Merchant must
+change the password" until that's done. Log in there directly (never share
+that password with anyone, including here in code) and update
+`ARCA_PASSWORD` afterwards; the new API password must be letters/digits
+only, no symbols. Set both in your environment (locally and in Vercel's
+project settings) and redeploy, and the "Card (ArCa)" option starts
+working.
+
 ## Environment variables
 
 See `.env.example` for the full list with comments. Summary:
@@ -583,6 +647,7 @@ See `.env.example` for the full list with comments. Summary:
 | `STRIPE_SECRET_KEY` | Yes, for checkout | Server-side Stripe API calls |
 | `STRIPE_WEBHOOK_SECRET` | Yes, for order confirmation emails | Verifies Stripe webhook signatures |
 | `IDRAM_REC_ACCOUNT` / `IDRAM_SECRET_KEY` | No | Enables the "Idram" payment option on the cart page (see "Idram payment integration"). Without them, that option shows a setup error and only card payment works. |
+| `ARCA_USERNAME` / `ARCA_PASSWORD` | No | Enables the "Card (ArCa)" payment option on the cart page (see "ARCA (ACBA vPOS) payment integration"). Without them, that option shows a setup error. |
 | `RESEND_API_KEY` | No | Enables order confirmation, order-status update, and contact form emails. Without it, they're logged to the server console only. |
 | `GOOGLE_TRANSLATE_API_KEY` | No | Enables the "Auto-translate" button on the product form. Without it, the button shows a setup message instead of translating. |
 | `BLOB_READ_WRITE_TOKEN` | No | Enables the "+ Add photos" uploader on the product form. Without it, upload attempts show a setup message. See "Product photo uploads" below. |

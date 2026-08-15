@@ -200,6 +200,8 @@ export const en = {
     paymentMethodLabel: "Payment method",
     paymentMethodStripe: "Card",
     paymentMethodStripeNote: "Visa, Mastercard, and other cards",
+    paymentMethodArca: "Card (ArCa)",
+    paymentMethodArcaNote: "Visa, Mastercard, and other cards via ACBA Bank",
     paymentMethodIdram: "Idram",
     paymentMethodIdramNote: "Pay with your Idram wallet",
     emailLabel: "Email",
@@ -298,6 +300,16 @@ export const en = {
   idramFail: {
     title: "Payment didn't go through",
     body: "Your Idram payment wasn't completed. No charge was made. Please try again.",
+    backToCart: "Back to cart",
+  },
+  arcaResult: {
+    paidTitle: "Payment successful",
+    paidBody: "Thank you. Your card payment went through.",
+    backToHome: "Back to home",
+    declinedTitle: "Payment didn't go through",
+    declinedBody: "Your card payment wasn't completed. No charge was made. Please try again.",
+    unresolvedTitle: "We couldn't confirm your payment",
+    unresolvedBody: "If you completed payment, check your email for a confirmation. Otherwise, please try again.",
     backToCart: "Back to cart",
   },
   contactForm: {

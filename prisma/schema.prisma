@@ -122,11 +122,12 @@ model Customer {
 
 model Order {
   id               String   @id @default(cuid())
-  // Exactly one of these two is set, matching which processor the customer
+  // Exactly one of these is set, matching which processor the customer
   // paid through — see paymentProvider below.
   stripeSessionId  String?  @unique
   idramBillNo      String?  @unique
-  // "stripe" | "idram"
+  arcaOrderId      String?  @unique
+  // "stripe" | "idram" | "arca"
   paymentProvider  String   @default("stripe")
   customer         Customer @relation(fields: [customerId], references: [id])
   customerId       String
@@ -157,6 +158,35 @@ model Order {
 // RESULT_URL callback confirms payment (see app/api/idram/callback).
 model PendingIdramOrder {
   id                  String   @id @default(cuid())
+  amountAmd           Int
+  itemsJson           String
+  fulfillmentMethod   String?
+  deliveryAddressJson String?
+  giftWrap            Boolean  @default(false)
+  giftMessage         String?
+  notes               String?
+  promoCode           String?
+  customerEmail       String
+  customerName        String?
+  customerPhone       String?
+  // "pending" | "confirmed" | "failed"
+  status              String   @default("pending")
+  createdAt           DateTime @default(now())
+
+  @@index([status])
+}
+
+// ACBA/ArCa's EPG gateway has no server-side session object either (same
+// situation as PendingIdramOrder above), so cart/customer details are
+// persisted here before the customer is redirected to the hosted payment
+// page. Unlike Idram, EPG doesn't push a server-to-server confirmation —
+// the customer's browser returning to returnUrl (see
+// app/(site)/checkout/arca/return) is what triggers us to pull the
+// authoritative status via getOrderStatusExtended.do, keyed by epgOrderId.
+model PendingArcaOrder {
+  id                  String   @id @default(cuid())
+  // orderId returned by register.do — null until that call succeeds.
+  epgOrderId          String?  @unique
   amountAmd           Int
   itemsJson           String
   fulfillmentMethod   String?

@@ -51,7 +51,7 @@ export default function CartPage() {
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [address, setAddress] = useState<DeliveryAddress>(EMPTY_ADDRESS);
-  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "idram">("stripe");
+  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "idram" | "arca">("stripe");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
@@ -106,7 +106,7 @@ export default function CartPage() {
       setError(addressError);
       return;
     }
-    if (paymentMethod === "idram") {
+    if (paymentMethod === "idram" || paymentMethod === "arca") {
       if (!email.trim() || !email.includes("@")) {
         setError(t.cart.emailRequiredError);
         return;
@@ -142,6 +142,20 @@ export default function CartPage() {
           throw new Error(data.error || t.cart.checkoutErrorGeneric);
         }
         submitIdramForm(data.actionUrl, data.fields);
+        return;
+      }
+
+      if (paymentMethod === "arca") {
+        const res = await fetch("/api/checkout/arca", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...sharedBody, email, phone, locale }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.redirectUrl) {
+          throw new Error(data.error || t.cart.checkoutErrorGeneric);
+        }
+        window.location.href = data.redirectUrl;
         return;
       }
 
@@ -417,6 +431,7 @@ export default function CartPage() {
                 {(
                   [
                     { id: "stripe" as const, label: t.cart.paymentMethodStripe, note: t.cart.paymentMethodStripeNote },
+                    { id: "arca" as const, label: t.cart.paymentMethodArca, note: t.cart.paymentMethodArcaNote },
                     { id: "idram" as const, label: t.cart.paymentMethodIdram, note: t.cart.paymentMethodIdramNote },
                   ]
                 ).map((option) => (
@@ -441,7 +456,7 @@ export default function CartPage() {
                   </label>
                 ))}
               </div>
-              {paymentMethod === "idram" && (
+              {(paymentMethod === "idram" || paymentMethod === "arca") && (
                 <div className="mt-3 space-y-2">
                   <label htmlFor="checkout-email" className="sr-only">
                     {t.cart.emailLabel}

@@ -202,6 +202,8 @@ export const ru: Dictionary = {
     paymentMethodLabel: "Способ оплаты",
     paymentMethodStripe: "Банковская карта",
     paymentMethodStripeNote: "Visa, Mastercard и другие карты",
+    paymentMethodArca: "Карта (ArCa)",
+    paymentMethodArcaNote: "Visa, Mastercard и другие карты через ACBA Bank",
     paymentMethodIdram: "Idram",
     paymentMethodIdramNote: "Оплата через кошелёк Idram",
     emailLabel: "Эл. почта",
@@ -300,6 +302,16 @@ export const ru: Dictionary = {
   idramFail: {
     title: "Платёж не прошёл",
     body: "Ваш платёж через Idram не был завершён. Списания не произошло. Пожалуйста, попробуйте снова.",
+    backToCart: "Вернуться в корзину",
+  },
+  arcaResult: {
+    paidTitle: "Оплата прошла успешно",
+    paidBody: "Спасибо. Ваш платёж картой прошёл успешно.",
+    backToHome: "На главную",
+    declinedTitle: "Платёж не прошёл",
+    declinedBody: "Ваш платёж картой не был завершён. Списания не произошло. Пожалуйста, попробуйте снова.",
+    unresolvedTitle: "Не удалось подтвердить платёж",
+    unresolvedBody: "Если вы завершили оплату, проверьте почту — туда должно прийти подтверждение. В противном случае, пожалуйста, попробуйте снова.",
     backToCart: "Вернуться в корзину",
   },
   contactForm: {
