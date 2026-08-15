@@ -190,7 +190,7 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
-          <ul className="divide-y divide-tan/40 border-y border-tan/40">
+          <ul className="divide-y divide-tan/40 border-y border-tan/40 lg:sticky lg:top-24 lg:self-start">
             {items.map((item) => (
               <li key={item.slug} className="flex gap-4 py-6">
                 <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-beige">
