@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // How often to check for a newer order than the one the page was rendered
@@ -11,21 +11,14 @@ const POLL_INTERVAL_MS = 20000;
 /**
  * Bottom-center toast that appears when an order has been placed since this
  * page was last rendered. `latestOrderCreatedAt` comes from the server
- * layout, so on mount/refresh the watcher's baseline always matches what's
- * actually on screen — it only needs to detect orders newer than that.
+ * layout, so `hasNewOrder` is derived by comparing it against whatever the
+ * poll last saw — once router.refresh() re-renders the layout with the new
+ * order included, the comparison naturally goes false on its own, no reset
+ * effect required.
  */
 export function NewOrderWatcher({ latestOrderCreatedAt }: { latestOrderCreatedAt: string | null }) {
   const router = useRouter();
-  const [hasNewOrder, setHasNewOrder] = useState(false);
-  const knownLatestRef = useRef(latestOrderCreatedAt);
-
-  // Re-syncs the baseline (and clears the toast) whenever the server gives
-  // us fresh data — i.e. after router.refresh() re-renders the layout with
-  // the order that triggered the toast now included.
-  useEffect(() => {
-    knownLatestRef.current = latestOrderCreatedAt;
-    setHasNewOrder(false);
-  }, [latestOrderCreatedAt]);
+  const [polledLatest, setPolledLatest] = useState<string | null>(null);
 
   useEffect(() => {
     const id = setInterval(async () => {
@@ -33,15 +26,16 @@ export function NewOrderWatcher({ latestOrderCreatedAt }: { latestOrderCreatedAt
         const res = await fetch("/api/admin/orders/latest", { cache: "no-store" });
         if (!res.ok) return;
         const { latestCreatedAt } = (await res.json()) as { latestCreatedAt: string | null };
-        if (latestCreatedAt && (!knownLatestRef.current || new Date(latestCreatedAt) > new Date(knownLatestRef.current))) {
-          setHasNewOrder(true);
-        }
+        if (latestCreatedAt) setPolledLatest(latestCreatedAt);
       } catch {
         // Ignore — just retried on the next interval.
       }
     }, POLL_INTERVAL_MS);
     return () => clearInterval(id);
   }, []);
+
+  const hasNewOrder =
+    polledLatest !== null && (!latestOrderCreatedAt || new Date(polledLatest) > new Date(latestOrderCreatedAt));
 
   if (!hasNewOrder) return null;
 
