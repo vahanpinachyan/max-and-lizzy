@@ -2,15 +2,16 @@
 
 import { useActionState } from "react";
 import { loginAction } from "@/app/admin/actions";
+import type { AdminDictionary } from "@/lib/admin/i18n";
 
-export function LoginForm() {
+export function LoginForm({ dict }: { dict: AdminDictionary["login"] }) {
   const [state, formAction, pending] = useActionState(loginAction, { error: null });
 
   return (
     <form action={formAction} className="space-y-4">
       <div>
         <label htmlFor="email" className="block text-sm font-semibold text-espresso">
-          Email
+          {dict.email}
         </label>
         <input
           id="email"
@@ -23,7 +24,7 @@ export function LoginForm() {
       </div>
       <div>
         <label htmlFor="password" className="block text-sm font-semibold text-espresso">
-          Password
+          {dict.password}
         </label>
         <input
           id="password"
@@ -44,7 +45,7 @@ export function LoginForm() {
         disabled={pending}
         className="w-full rounded-full bg-wood px-6 py-3 font-semibold text-white transition-colors hover:bg-wood-dark disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {pending ? "Signing in…" : "Sign In"}
+        {pending ? dict.signingIn : dict.signIn}
       </button>
     </form>
   );

@@ -8,11 +8,11 @@ export const ORDER_STATUS_META: Record<OrderStatus, { label: string; className: 
   cancelled: { label: "Cancelled", className: "bg-espresso/10 text-espresso/50" },
 };
 
-export function OrderStatusBadge({ status }: { status: string }) {
+export function OrderStatusBadge({ status, label }: { status: string; label?: string }) {
   const meta = ORDER_STATUS_META[status as OrderStatus] ?? { label: status, className: "bg-beige text-espresso" };
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${meta.className}`}>
-      {meta.label}
+      {label ?? meta.label}
     </span>
   );
 }

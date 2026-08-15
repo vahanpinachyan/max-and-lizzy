@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { formatAmd, formatDate } from "@/lib/format";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { ORDER_STATUSES } from "@/lib/orders";
+import { getAdminLocale, getAdminDictionary } from "@/lib/admin/i18n";
 
 export default async function AdminOrdersPage({
   searchParams,
@@ -18,16 +19,19 @@ export default async function AdminOrdersPage({
     orderBy: { createdAt: "desc" },
   });
 
+  const locale = await getAdminLocale();
+  const t = getAdminDictionary(locale);
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-espresso">Orders ({orders.length})</h1>
+      <h1 className="text-2xl font-bold text-espresso">{t.ordersList.title(orders.length)}</h1>
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Link
           href="/admin/orders"
           className={`rounded-full px-3 py-1.5 text-sm font-semibold ${!status ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
         >
-          All
+          {t.ordersList.filterAll}
         </Link>
         {ORDER_STATUSES.map((s) => (
           <Link
@@ -35,7 +39,7 @@ export default async function AdminOrdersPage({
             href={`/admin/orders?status=${s}`}
             className={`rounded-full px-3 py-1.5 text-sm font-semibold ${status === s ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
           >
-            {s.replace(/_/g, " ")}
+            {t.orderStatus[s]}
           </Link>
         ))}
       </div>
@@ -44,20 +48,20 @@ export default async function AdminOrdersPage({
         <table className="w-full text-left text-sm">
           <thead className="border-b border-tan/50 bg-beige/50 text-xs font-bold uppercase text-espresso/70">
             <tr>
-              <th className="px-4 py-3">Order</th>
-              <th className="px-4 py-3">Customer</th>
-              <th className="px-4 py-3">Items</th>
-              <th className="px-4 py-3">Total</th>
-              <th className="px-4 py-3">Fulfillment</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Placed</th>
+              <th className="px-4 py-3">{t.ordersList.colOrder}</th>
+              <th className="px-4 py-3">{t.ordersList.colCustomer}</th>
+              <th className="px-4 py-3">{t.ordersList.colItems}</th>
+              <th className="px-4 py-3">{t.ordersList.colTotal}</th>
+              <th className="px-4 py-3">{t.ordersList.colFulfillment}</th>
+              <th className="px-4 py-3">{t.ordersList.colStatus}</th>
+              <th className="px-4 py-3">{t.ordersList.colPlaced}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-tan/30">
             {orders.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-6 text-center text-espresso/60">
-                  No orders yet.
+                  {t.ordersList.noOrders}
                 </td>
               </tr>
             )}
@@ -75,7 +79,7 @@ export default async function AdminOrdersPage({
                 <td className="px-4 py-3 text-espresso/70">{order.items.reduce((n, i) => n + i.quantity, 0)}</td>
                 <td className="px-4 py-3 font-semibold text-espresso">{formatAmd(order.totalAmd)}</td>
                 <td className="px-4 py-3 text-espresso/70">{order.fulfillmentMethod ?? "—"}</td>
-                <td className="px-4 py-3"><OrderStatusBadge status={order.status} /></td>
+                <td className="px-4 py-3"><OrderStatusBadge status={order.status} label={t.orderStatus[order.status as keyof typeof t.orderStatus]} /></td>
                 <td className="px-4 py-3 text-espresso/70">{formatDate(order.createdAt.toISOString())}</td>
               </tr>
             ))}

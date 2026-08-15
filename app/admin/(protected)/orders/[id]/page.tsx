@@ -3,9 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { formatAmd, formatDate, formatShippingAddress } from "@/lib/format";
-import { getFulfillmentOption } from "@/data/fulfillment";
+import { localizeFulfillmentOptions } from "@/lib/i18n/localize-data";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
 import { SendOrderEmailButton } from "@/components/admin/SendOrderEmailButton";
+import { getAdminLocale, getAdminDictionary } from "@/lib/admin/i18n";
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,47 +16,51 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   });
   if (!order) notFound();
 
-  const address = formatShippingAddress(order.shippingAddress);
-  const fulfillment = getFulfillmentOption(order.fulfillmentMethod);
+  const locale = await getAdminLocale();
+  const t = getAdminDictionary(locale);
+  const statusSelectDict = { ...t.orderDetail, statusLabels: t.orderStatus };
+
+  const address = formatShippingAddress(order.shippingAddress, locale);
+  const fulfillment = localizeFulfillmentOptions(locale).find((o) => o.id === order.fulfillmentMethod);
 
   return (
     <div className="max-w-3xl">
       <Link href="/admin/orders" className="text-sm font-semibold text-terracotta-dark hover:underline">
-        ← All orders
+        {t.orderDetail.allOrders}
       </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-espresso">Order {order.id.slice(-10)}</h1>
-          <p className="text-sm text-espresso/60">Placed {formatDate(order.createdAt.toISOString())}</p>
+          <h1 className="text-2xl font-bold text-espresso">{t.orderDetail.orderLabel} {order.id.slice(-10)}</h1>
+          <p className="text-sm text-espresso/60">{t.orderDetail.placed} {formatDate(order.createdAt.toISOString())}</p>
         </div>
-        <OrderStatusSelect orderId={order.id} status={order.status} />
+        <OrderStatusSelect orderId={order.id} status={order.status} dict={statusSelectDict} />
       </div>
 
       <div className="mt-4">
-        <SendOrderEmailButton orderId={order.id} />
+        <SendOrderEmailButton orderId={order.id} dict={t.orderDetail} />
       </div>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <div className="rounded-2xl border border-tan/50 bg-white p-5">
-          <h2 className="font-semibold text-espresso">Customer</h2>
+          <h2 className="font-semibold text-espresso">{t.orderDetail.customer}</h2>
           <p className="mt-2 text-sm text-espresso">{order.customerName || order.customer.name || "-"}</p>
           <p className="text-sm text-espresso/70">{order.customer.email}</p>
           {order.customerPhone && <p className="text-sm text-espresso/70">{order.customerPhone}</p>}
           <Link href={`/admin/customers/${order.customer.id}`} className="mt-2 inline-block text-sm font-semibold text-terracotta-dark hover:underline">
-            View customer history →
+            {t.orderDetail.viewCustomerHistory}
           </Link>
         </div>
 
         <div className="rounded-2xl border border-tan/50 bg-white p-5">
-          <h2 className="font-semibold text-espresso">Fulfillment</h2>
-          <p className="mt-2 text-sm text-espresso">{fulfillment?.label ?? "Not specified"}</p>
-          {address && <p className="mt-1 text-sm text-espresso/70">Deliver to: {address}</p>}
+          <h2 className="font-semibold text-espresso">{t.orderDetail.fulfillment}</h2>
+          <p className="mt-2 text-sm text-espresso">{fulfillment?.label ?? t.orderDetail.notSpecified}</p>
+          {address && <p className="mt-1 text-sm text-espresso/70">{t.orderDetail.deliverTo}: {address}</p>}
           {order.promoCode && (
-            <p className="mt-2 text-sm text-sage-dark">Promo code used: {order.promoCode}</p>
+            <p className="mt-2 text-sm text-sage-dark">{t.orderDetail.promoCodeUsed}: {order.promoCode}</p>
           )}
           {order.giftWrap && (
             <div className="mt-3 rounded-xl bg-terracotta/10 px-3 py-2">
-              <p className="text-sm font-semibold text-terracotta-dark">Gift wrapping requested</p>
+              <p className="text-sm font-semibold text-terracotta-dark">{t.orderDetail.giftWrapRequested}</p>
               {order.giftMessage && (
                 <p className="mt-1 text-sm text-espresso/80">&ldquo;{order.giftMessage}&rdquo;</p>
               )}
@@ -65,7 +70,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
         {order.notes && (
           <div className="rounded-2xl border border-tan/50 bg-white p-5 sm:col-span-2">
-            <h2 className="font-semibold text-espresso">Customer note</h2>
+            <h2 className="font-semibold text-espresso">{t.orderDetail.customerNote}</h2>
             <p className="mt-2 text-sm text-espresso/80">&ldquo;{order.notes}&rdquo;</p>
           </div>
         )}
@@ -75,10 +80,10 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <table className="w-full text-left text-sm">
           <thead className="border-b border-tan/50 bg-beige/50 text-xs font-bold uppercase text-espresso/70">
             <tr>
-              <th className="px-4 py-3">Item</th>
-              <th className="px-4 py-3">SKU</th>
-              <th className="px-4 py-3">Qty</th>
-              <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3">{t.orderDetail.item}</th>
+              <th className="px-4 py-3">{t.orderDetail.sku}</th>
+              <th className="px-4 py-3">{t.orderDetail.qty}</th>
+              <th className="px-4 py-3">{t.orderDetail.price}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-tan/30">
@@ -108,7 +113,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           </tbody>
           <tfoot className="border-t border-tan/50">
             <tr>
-              <td colSpan={2} className="px-4 py-3 text-right font-semibold text-espresso">Total</td>
+              <td colSpan={2} className="px-4 py-3 text-right font-semibold text-espresso">{t.orderDetail.total}</td>
               <td className="px-4 py-3 font-bold text-espresso">{formatAmd(order.totalAmd)}</td>
             </tr>
           </tfoot>
