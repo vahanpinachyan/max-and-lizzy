@@ -72,7 +72,10 @@ export async function POST(request: Request) {
     orderNumber: pending.id,
     amountAmd: totalAmd,
     returnUrl: absoluteUrl(`/checkout/arca/return?ref=${pending.id}`),
-    description: "Max & Lizzy order",
+    // No "&" here — ACBA's hosted payment page renders this value without
+    // decoding its own HTML-escaping, so a literal "&" shows up on the
+    // payment page as the text "&amp;" instead of "&".
+    description: "Max and Lizzy order",
     language,
   });
 
