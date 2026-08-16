@@ -600,14 +600,17 @@ export default function CartPage() {
               </div>
             </div>
 
-            <p className="mt-2 text-xs text-espresso/70">
-              {t.cart.shippingNote}
-            </p>
             <Button size="lg" className="mt-6 w-full" onClick={handleCheckout} disabled={loading}>
               {loading ? t.cart.checkoutRedirecting : t.cart.checkout}
             </Button>
             {error && <p className="mt-3 text-sm text-terracotta-dark" role="alert">{error}</p>}
             <p className="mt-4 text-xs text-espresso/70">
+              {t.cart.checkoutConsentPrefix}{" "}
+              <Link href="/policies/terms" className="underline">{t.cart.termsAndConditions}</Link> {t.cart.and}{" "}
+              <Link href="/policies/privacy" className="underline">{t.cart.privacyPolicy}</Link>
+              {t.cart.checkoutConsentSuffix ? ` ${t.cart.checkoutConsentSuffix}` : ""}.
+            </p>
+            <p className="mt-2 text-xs text-espresso/70">
               {t.cart.secureCheckoutNote}{" "}
               <Link href="/policies/returns" className="underline">{t.cart.returnPolicy}</Link> {t.cart.and}{" "}
               <Link href="/policies/shipping" className="underline">{t.cart.shippingPolicy}</Link>.
