@@ -200,7 +200,8 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
-          <ul className="divide-y divide-tan/40 border-y border-tan/40 lg:sticky lg:top-24 lg:self-start">
+          <div className="relative">
+          <ul className="divide-y divide-tan/40 border-y border-tan/40 lg:sticky lg:top-24">
             {items.map((item) => (
               <li key={item.slug} className="flex gap-4 py-6">
                 <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-beige">
@@ -245,6 +246,16 @@ export default function CartPage() {
               </li>
             ))}
           </ul>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-0 hidden justify-center pb-4 lg:flex">
+            <Image
+              src="/images/hero-lizzy-v1.png"
+              alt=""
+              width={874}
+              height={1665}
+              className="h-auto w-40 select-none opacity-15 xl:w-48"
+            />
+          </div>
+          </div>
 
           <div className="h-fit rounded-2xl border border-tan/50 bg-white p-6">
             <h2 className="text-lg font-bold text-espresso">{t.cart.orderSummary}</h2>
