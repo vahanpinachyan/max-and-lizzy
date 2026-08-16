@@ -2,9 +2,9 @@
 // background texture throughout the site. Always aria-hidden and
 // pointer-events-none — decorative only, never focal content.
 
-export function Cloud({ className }: { className: string }) {
+export function Cloud({ className, fill = "var(--color-cream)" }: { className: string; fill?: string }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 120 60" className={className} fill="var(--color-cream)">
+    <svg aria-hidden="true" viewBox="0 0 120 60" className={className} fill={fill}>
       <ellipse cx="30" cy="38" rx="28" ry="18" />
       <ellipse cx="60" cy="26" rx="32" ry="24" />
       <ellipse cx="92" cy="38" rx="26" ry="16" />

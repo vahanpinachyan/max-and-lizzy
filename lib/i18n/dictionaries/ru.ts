@@ -169,7 +169,6 @@ export const ru: Dictionary = {
     quantity: "Количество",
     each: "за шт.",
     remove: "Удалить",
-    removeAriaLabel: "Удалить {name} из корзины",
     promoPlaceholder: "Промокод",
     promoApply: "Применить",
     promoApplied: "применён",

@@ -167,7 +167,6 @@ export const en = {
     quantity: "Quantity",
     each: "each",
     remove: "Remove",
-    removeAriaLabel: "Remove {name} from cart",
     promoPlaceholder: "Promo code",
     promoApply: "Apply",
     promoApplied: "applied",

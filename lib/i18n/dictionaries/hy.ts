@@ -169,7 +169,6 @@ export const hy: Dictionary = {
     quantity: "Քանակ",
     each: "հատը",
     remove: "Հեռացնել",
-    removeAriaLabel: "Հեռացնել {name}-ը զամբյուղից",
     promoPlaceholder: "Պրոմո կոդ",
     promoApply: "Կիրառել",
     promoApplied: "կիրառված է",

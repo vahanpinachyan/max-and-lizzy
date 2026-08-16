@@ -10,7 +10,7 @@ import { Container } from "@/components/ui/Container";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Mascot } from "@/components/ui/Mascot";
 import { Select } from "@/components/ui/Select";
-import { SectionDecorations } from "@/components/ui/Decorations";
+import { SectionDecorations, Cloud, Flower } from "@/components/ui/Decorations";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
 import { GIFT_WRAP_FEE_AMD, type FulfillmentMethod } from "@/data/fulfillment";
@@ -201,7 +201,13 @@ export default function CartPage() {
       ) : (
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
           <div>
-          <ul className="divide-y divide-tan/40 border-y border-tan/40 lg:sticky lg:top-24">
+          {/* The whole group (list + mascots) is one sticky unit, so the
+              gap between them holds steady while scrolling instead of the
+              two fighting over independent sticky offsets. Still adapts to
+              a cart of 1 or 10 — a long list just leaves the block less
+              "room" to travel before it un-sticks, same as before. */}
+          <div className="lg:sticky lg:top-24">
+          <ul className="divide-y divide-tan/40 border-y border-tan/40">
             {items.map((item) => (
               <li key={item.slug} className="flex gap-4 py-6">
                 <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-beige">
@@ -212,21 +218,10 @@ export default function CartPage() {
                     <Link href={`/product/${item.slug}`} className="font-semibold text-espresso hover:text-terracotta-dark">
                       {item.name}
                     </Link>
-                    <div className="flex flex-col items-center gap-1.5">
-                      <p className="font-semibold text-espresso">{formatAmd(item.priceAmd * item.quantity, locale)}</p>
-                      <button
-                        onClick={() => removeItem(item.slug)}
-                        aria-label={interpolate(t.cart.removeAriaLabel, { name: item.name })}
-                        className="text-espresso/50 hover:text-terracotta-dark"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                          <path d="M4 7h16M9 7V4h6v3m-8 0 1 13h10l1-13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                    </div>
+                    <p className="font-semibold text-espresso">{formatAmd(item.priceAmd * item.quantity, locale)}</p>
                   </div>
                   <p className="text-sm text-espresso/70">{formatAmd(item.priceAmd, locale)} {t.cart.each}</p>
-                  <div className="mt-2 flex items-center gap-4">
+                  <div className="mt-2 flex items-center justify-between gap-4">
                     <div className="flex items-center rounded-full border border-tan">
                       <button
                         className="h-9 w-9 text-espresso"
@@ -246,28 +241,44 @@ export default function CartPage() {
                         +
                       </button>
                     </div>
+                    <button
+                      onClick={() => removeItem(item.slug)}
+                      className="text-sm text-espresso/70 underline hover:text-terracotta-dark"
+                    >
+                      {t.cart.remove}
+                    </button>
                   </div>
                 </div>
               </li>
             ))}
           </ul>
-          {/* Below the products, not pinned to a fixed spot — grows with the
-              list naturally instead of ever overlapping it, cart of 1 or 10. */}
-          <div aria-hidden="true" className="pointer-events-none mt-6 hidden items-end justify-center gap-3 lg:flex">
+          <div aria-hidden="true" className="pointer-events-none relative mt-10 hidden items-end justify-center gap-4 lg:flex">
+            <Flower className="absolute left-[2%] top-2 h-auto w-5 -rotate-12 opacity-25" />
+            <Cloud fill="var(--color-tan)" className="absolute left-[14%] -top-4 h-auto w-14 opacity-40" />
+            <Flower className="absolute left-[24%] top-0 h-auto w-4 rotate-12 opacity-20" />
+            <Cloud fill="var(--color-tan)" className="absolute right-[10%] -top-6 h-auto w-16 opacity-40" />
+            <Flower className="absolute right-[22%] top-4 h-auto w-6 rotate-45 opacity-20" />
+            <Flower className="absolute right-[2%] top-6 h-auto w-5 -rotate-6 opacity-25" />
+            <Cloud fill="var(--color-tan)" className="absolute left-[0%] bottom-6 h-auto w-10 opacity-30" />
+            <Flower className="absolute left-[8%] bottom-0 h-auto w-7 rotate-6 opacity-20" />
+            <Flower className="absolute left-1/2 bottom-2 h-auto w-4 -translate-x-1/2 -rotate-12 opacity-15" />
+            <Cloud fill="var(--color-tan)" className="absolute right-[0%] bottom-8 h-auto w-12 opacity-30" />
+            <Flower className="absolute right-[8%] bottom-0 h-auto w-6 -rotate-12 opacity-25" />
             <Image
               src="/images/hero-max-v1.png"
               alt=""
               width={826}
               height={1665}
-              className="h-auto w-28 select-none opacity-15 xl:w-32"
+              className="relative h-auto w-40 select-none opacity-20 xl:w-48"
             />
             <Image
               src="/images/hero-lizzy-v1.png"
               alt=""
               width={874}
               height={1665}
-              className="h-auto w-28 select-none opacity-15 xl:w-32"
+              className="relative h-auto w-40 select-none opacity-20 xl:w-48"
             />
+          </div>
           </div>
           </div>
 
