@@ -167,6 +167,7 @@ export const en = {
     quantity: "Quantity",
     each: "each",
     remove: "Remove",
+    removeAriaLabel: "Remove {name} from cart",
     promoPlaceholder: "Promo code",
     promoApply: "Apply",
     promoApplied: "applied",
@@ -309,7 +310,7 @@ export const en = {
   },
   arcaResult: {
     paidTitle: "Payment successful",
-    paidBody: "Get ready for some serious playtime — your new toy is on its way!",
+    paidBody: "Max and Lizzy thank you for your purchase! We hope that you will enjoy your new toys!",
     orderItemsLabel: "Your order",
     confirmationEmailNote: "A confirmation email is on its way to {email}.",
     backToHome: "Return to home",

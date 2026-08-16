@@ -169,6 +169,7 @@ export const ru: Dictionary = {
     quantity: "Количество",
     each: "за шт.",
     remove: "Удалить",
+    removeAriaLabel: "Удалить {name} из корзины",
     promoPlaceholder: "Промокод",
     promoApply: "Применить",
     promoApplied: "применён",
@@ -311,7 +312,7 @@ export const ru: Dictionary = {
   },
   arcaResult: {
     paidTitle: "Оплата прошла успешно",
-    paidBody: "Готовьтесь к весёлым играм — ваша новая игрушка уже в пути!",
+    paidBody: "Макс и Лиззи благодарят вас за покупку! Надеемся, вам понравятся новые игрушки!",
     orderItemsLabel: "Ваш заказ",
     confirmationEmailNote: "Письмо с подтверждением будет отправлено на {email}.",
     backToHome: "На главную",

@@ -169,6 +169,7 @@ export const hy: Dictionary = {
     quantity: "Քանակ",
     each: "հատը",
     remove: "Հեռացնել",
+    removeAriaLabel: "Հեռացնել {name}-ը զամբյուղից",
     promoPlaceholder: "Պրոմո կոդ",
     promoApply: "Կիրառել",
     promoApplied: "կիրառված է",
@@ -311,7 +312,7 @@ export const hy: Dictionary = {
   },
   arcaResult: {
     paidTitle: "Վճարումը հաջողվեց",
-    paidBody: "Պատրաստվեք հետաքրքիր խաղերի՝ Ձեր նոր խաղալիքն արդեն ճանապարհին է։",
+    paidBody: "Մաքսը և Լիզին շնորհակալություն են հայտնում Ձեր գնման համար: Հուսով ենք՝ կվայելեք Ձեր նոր խաղալիքները:",
     orderItemsLabel: "Ձեր պատվերը",
     confirmationEmailNote: "Հաստատման նամակ կուղարկվի հետևյալ հասցեին՝ {email}։",
     backToHome: "Վերադառնալ գլխավոր էջ",

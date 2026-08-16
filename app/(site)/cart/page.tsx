@@ -200,7 +200,7 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
-          <div className="relative">
+          <div>
           <ul className="divide-y divide-tan/40 border-y border-tan/40 lg:sticky lg:top-24">
             {items.map((item) => (
               <li key={item.slug} className="flex gap-4 py-6">
@@ -212,7 +212,18 @@ export default function CartPage() {
                     <Link href={`/product/${item.slug}`} className="font-semibold text-espresso hover:text-terracotta-dark">
                       {item.name}
                     </Link>
-                    <p className="font-semibold text-espresso">{formatAmd(item.priceAmd * item.quantity, locale)}</p>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <p className="font-semibold text-espresso">{formatAmd(item.priceAmd * item.quantity, locale)}</p>
+                      <button
+                        onClick={() => removeItem(item.slug)}
+                        aria-label={interpolate(t.cart.removeAriaLabel, { name: item.name })}
+                        className="text-espresso/50 hover:text-terracotta-dark"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                          <path d="M4 7h16M9 7V4h6v3m-8 0 1 13h10l1-13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                   <p className="text-sm text-espresso/70">{formatAmd(item.priceAmd, locale)} {t.cart.each}</p>
                   <div className="mt-2 flex items-center gap-4">
@@ -235,24 +246,27 @@ export default function CartPage() {
                         +
                       </button>
                     </div>
-                    <button
-                      onClick={() => removeItem(item.slug)}
-                      className="text-sm text-espresso/70 underline hover:text-terracotta-dark"
-                    >
-                      {t.cart.remove}
-                    </button>
                   </div>
                 </div>
               </li>
             ))}
           </ul>
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-0 hidden justify-center pb-4 lg:flex">
+          {/* Below the products, not pinned to a fixed spot — grows with the
+              list naturally instead of ever overlapping it, cart of 1 or 10. */}
+          <div aria-hidden="true" className="pointer-events-none mt-6 hidden items-end justify-center gap-3 lg:flex">
+            <Image
+              src="/images/hero-max-v1.png"
+              alt=""
+              width={826}
+              height={1665}
+              className="h-auto w-28 select-none opacity-15 xl:w-32"
+            />
             <Image
               src="/images/hero-lizzy-v1.png"
               alt=""
               width={874}
               height={1665}
-              className="h-auto w-40 select-none opacity-15 xl:w-48"
+              className="h-auto w-28 select-none opacity-15 xl:w-32"
             />
           </div>
           </div>
