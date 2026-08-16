@@ -218,7 +218,7 @@ export const hy: Dictionary = {
     phoneRequiredError: "Խնդրում ենք մուտքագրել հեռախոսահամար՝ անհրաժեշտության դեպքում Ձեզ հետ կապվելու համար։",
     checkout: "Անցնել վճարմանը",
     checkoutRedirecting: "Ուղղորդում ենք դեպի վճարման էջ…",
-    secureCheckoutNote: "Անվտանգ վճարում Telcell-ով, Idram-ով կամ ArCa-ով։ Կարդացեք մեր",
+    secureCheckoutNote: "Անվտանգ վճարում Idram-ով կամ ArCa-ով։ Կարդացեք մեր",
     checkoutConsentPrefix: "Վճարումը հաստատելով՝ Դուք համաձայնվում եք մեր",
     termsAndConditions: "Օգտագործման կանոնների",
     privacyPolicy: "Գաղտնիության քաղաքականության",

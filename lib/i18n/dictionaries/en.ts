@@ -216,7 +216,7 @@ export const en = {
     phoneRequiredError: "Please enter a phone number, in case we need to reach you.",
     checkout: "Proceed to Checkout",
     checkoutRedirecting: "Redirecting to checkout…",
-    secureCheckoutNote: "Secure checkout via Telcell, Idram, or ArCa. Read our",
+    secureCheckoutNote: "Secure checkout via Idram or ArCa. Read our",
     returnPolicy: "return policy",
     shippingPolicy: "shipping policy",
     checkoutConsentPrefix: "By checking out, you agree to our",

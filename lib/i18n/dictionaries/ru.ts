@@ -218,7 +218,7 @@ export const ru: Dictionary = {
     phoneRequiredError: "Пожалуйста, укажите номер телефона на случай, если нам нужно будет связаться с вами.",
     checkout: "Оформить заказ",
     checkoutRedirecting: "Перенаправляем на оформление заказа…",
-    secureCheckoutNote: "Безопасная оплата через Telcell, Idram или ArCa. Ознакомьтесь с нашей",
+    secureCheckoutNote: "Безопасная оплата через Idram или ArCa. Ознакомьтесь с нашей",
     checkoutConsentPrefix: "Оформляя заказ, вы соглашаетесь с нашими",
     termsAndConditions: "Условиями использования",
     privacyPolicy: "Политикой конфиденциальности",

@@ -55,7 +55,7 @@ const content: Record<
       },
       {
         heading: "Refunds",
-        body: "Approved refunds are issued to your original payment method (Telcell, Idram, or ArCa) and typically appear within 5–10 business days, depending on your bank or wallet provider.",
+        body: "Approved refunds are issued to your original payment method (Idram or ArCa) and typically appear within 5–10 business days, depending on your bank or wallet provider.",
       },
     ],
   },
@@ -100,7 +100,7 @@ const content: Record<
       },
       {
         heading: "Փոխհատուցումներ",
-        body: "Հաստատված վերադարձները փոխանցվում են Ձեր սկզբնական վճարման միջոցին (Telcell, Idram կամ ArCa) և սովորաբար երևում են 5–10 աշխատանքային օրվա ընթացքում՝ կախված Ձեր բանկից կամ դրամապանակի մատակարարից։",
+        body: "Հաստատված վերադարձները փոխանցվում են Ձեր սկզբնական վճարման միջոցին (Idram կամ ArCa) և սովորաբար երևում են 5–10 աշխատանքային օրվա ընթացքում՝ կախված Ձեր բանկից կամ դրամապանակի մատակարարից։",
       },
     ],
   },
@@ -145,7 +145,7 @@ const content: Record<
       },
       {
         heading: "Возврат средств",
-        body: "Одобренные возвраты оформляются на исходный способ оплаты (Telcell, Idram или ArCa) и обычно поступают в течение 5–10 рабочих дней, в зависимости от вашего банка или платёжной системы.",
+        body: "Одобренные возвраты оформляются на исходный способ оплаты (Idram или ArCa) и обычно поступают в течение 5–10 рабочих дней, в зависимости от вашего банка или платёжной системы.",
       },
     ],
   },

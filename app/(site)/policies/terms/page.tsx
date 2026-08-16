@@ -37,7 +37,7 @@ const content: Record<
       },
       {
         heading: "Orders & payment",
-        body: "Placing an order is an offer to buy, which we accept once payment is confirmed. Online payments are processed securely through our payment providers, Telcell, Idram, and ArCa. We never see or store your full card number or wallet credentials. An order is only confirmed once you receive an order confirmation email.",
+        body: "Placing an order is an offer to buy, which we accept once payment is confirmed. Online payments are processed securely through our payment providers, Idram and ArCa. We never see or store your full card number or wallet credentials. An order is only confirmed once you receive an order confirmation email.",
       },
       {
         heading: "Delivery & pickup",
@@ -141,7 +141,7 @@ const content: Record<
       },
       {
         heading: "Պատվերներ և վճարում",
-        body: "Պատվեր կատարելը գնման առաջարկ է, որը մենք ընդունում ենք վճարումը հաստատվելուց հետո։ Առցանց վճարումները անվտանգ մշակվում են մեր վճարային գործընկերների՝ Telcell-ի, Idram-ի և ArCa-ի միջոցով։ Մենք երբեք չենք տեսնում կամ պահպանում Ձեր բանկային քարտի ամբողջական համարը կամ դրամապանակի տվյալները։ Պատվերը հաստատված է համարվում միայն պատվերի հաստատման նամակը ստանալուց հետո։",
+        body: "Պատվեր կատարելը գնման առաջարկ է, որը մենք ընդունում ենք վճարումը հաստատվելուց հետո։ Առցանց վճարումները անվտանգ մշակվում են մեր վճարային գործընկերների՝ Idram-ի և ArCa-ի միջոցով։ Մենք երբեք չենք տեսնում կամ պահպանում Ձեր բանկային քարտի ամբողջական համարը կամ դրամապանակի տվյալները։ Պատվերը հաստատված է համարվում միայն պատվերի հաստատման նամակը ստանալուց հետո։",
       },
       {
         heading: "Առաքում և վերցնում",
@@ -247,7 +247,7 @@ const content: Record<
       },
       {
         heading: "Заказы и оплата",
-        body: "Оформление заказа является предложением о покупке, которое мы принимаем после подтверждения оплаты. Онлайн-платежи безопасно обрабатываются через наших платёжных провайдеров — Telcell, Idram и ArCa. Мы никогда не видим и не храним полный номер вашей карты или данные электронного кошелька. Заказ считается подтверждённым только после получения письма с подтверждением заказа.",
+        body: "Оформление заказа является предложением о покупке, которое мы принимаем после подтверждения оплаты. Онлайн-платежи безопасно обрабатываются через наших платёжных провайдеров — Idram и ArCa. Мы никогда не видим и не храним полный номер вашей карты или данные электронного кошелька. Заказ считается подтверждённым только после получения письма с подтверждением заказа.",
       },
       {
         heading: "Доставка и самовывоз",

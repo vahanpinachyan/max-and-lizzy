@@ -21,7 +21,7 @@ const content: Record<
     sections: [
       {
         heading: "Information we collect",
-        body: "When you shop with us online, we collect the information necessary to process your order: your name, email address, phone number, delivery address (if applicable), and payment details. Payment information is collected and processed directly by our payment providers, Telcell, Idram, and ArCa. We never see or store your full card number or wallet credentials.",
+        body: "When you shop with us online, we collect the information necessary to process your order: your name, email address, phone number, delivery address (if applicable), and payment details. Payment information is collected and processed directly by our payment providers, Idram and ArCa. We never see or store your full card number or wallet credentials.",
       },
       {
         heading: "How we use your information",
@@ -37,7 +37,7 @@ const content: Record<
       },
       {
         heading: "Third-party services",
-        body: "We share order information with our payment providers (Telcell, Idram, and ArCa) for payment processing, and, where applicable, with our email service provider for order and newsletter emails. This information is shared solely to provide our services to you.",
+        body: "We share order information with our payment providers (Idram and ArCa) for payment processing, and, where applicable, with our email service provider for order and newsletter emails. This information is shared solely to provide our services to you.",
       },
       {
         heading: "Your rights",
@@ -72,7 +72,7 @@ const content: Record<
     sections: [
       {
         heading: "Ինչ տեղեկություններ ենք հավաքում",
-        body: "Երբ գնումներ եք կատարում մեզանից առցանց, մենք հավաքում ենք Ձեր պատվերը մշակելու համար անհրաժեշտ տեղեկությունները՝ Ձեր անունը, էլ. փոստի հասցեն, հեռախոսահամարը, առաքման հասցեն (անհրաժեշտության դեպքում) և վճարման տվյալները։ Վճարման տեղեկությունները հավաքվում և մշակվում են անմիջապես մեր վճարային գործընկերների՝ Telcell-ի, Idram-ի և ArCa-ի կողմից։ Մենք երբեք չենք տեսնում կամ պահպանում Ձեր բանկային քարտի ամբողջական համարը կամ դրամապանակի տվյալները։",
+        body: "Երբ գնումներ եք կատարում մեզանից առցանց, մենք հավաքում ենք Ձեր պատվերը մշակելու համար անհրաժեշտ տեղեկությունները՝ Ձեր անունը, էլ. փոստի հասցեն, հեռախոսահամարը, առաքման հասցեն (անհրաժեշտության դեպքում) և վճարման տվյալները։ Վճարման տեղեկությունները հավաքվում և մշակվում են անմիջապես մեր վճարային գործընկերների՝ Idram-ի և ArCa-ի կողմից։ Մենք երբեք չենք տեսնում կամ պահպանում Ձեր բանկային քարտի ամբողջական համարը կամ դրամապանակի տվյալները։",
       },
       {
         heading: "Ինչպես ենք օգտագործում Ձեր տեղեկությունները",
@@ -88,7 +88,7 @@ const content: Record<
       },
       {
         heading: "Երրորդ կողմի ծառայություններ",
-        body: "Մենք կիսվում ենք պատվերի տեղեկություններով մեր վճարային գործընկերների հետ (Telcell, Idram և ArCa)՝ վճարումը մշակելու համար, և, անհրաժեշտության դեպքում, մեր էլ. փոստի ծառայության մատակարարի հետ՝ պատվերի և նորությունների նամակների համար։ Այս տեղեկությունը կիսվում է բացառապես Ձեզ մեր ծառայությունները մատուցելու նպատակով։",
+        body: "Մենք կիսվում ենք պատվերի տեղեկություններով մեր վճարային գործընկերների հետ (Idram և ArCa)՝ վճարումը մշակելու համար, և, անհրաժեշտության դեպքում, մեր էլ. փոստի ծառայության մատակարարի հետ՝ պատվերի և նորությունների նամակների համար։ Այս տեղեկությունը կիսվում է բացառապես Ձեզ մեր ծառայությունները մատուցելու նպատակով։",
       },
       {
         heading: "Ձեր իրավունքները",
@@ -123,7 +123,7 @@ const content: Record<
     sections: [
       {
         heading: "Какую информацию мы собираем",
-        body: "Когда вы совершаете покупки на нашем сайте, мы собираем информацию, необходимую для обработки заказа: ваше имя, адрес электронной почты, номер телефона, адрес доставки (при необходимости) и платёжные данные. Платёжная информация собирается и обрабатывается напрямую нашими платёжными провайдерами — Telcell, Idram и ArCa. Мы никогда не видим и не храним полный номер вашей карты или данные электронного кошелька.",
+        body: "Когда вы совершаете покупки на нашем сайте, мы собираем информацию, необходимую для обработки заказа: ваше имя, адрес электронной почты, номер телефона, адрес доставки (при необходимости) и платёжные данные. Платёжная информация собирается и обрабатывается напрямую нашими платёжными провайдерами — Idram и ArCa. Мы никогда не видим и не храним полный номер вашей карты или данные электронного кошелька.",
       },
       {
         heading: "Как мы используем вашу информацию",
@@ -139,7 +139,7 @@ const content: Record<
       },
       {
         heading: "Услуги третьих сторон",
-        body: "Мы передаём информацию о заказе нашим платёжным провайдерам (Telcell, Idram и ArCa) для обработки платежа, а также, при необходимости, нашему поставщику услуг электронной почты для отправки писем о заказе и рассылок. Эта информация передаётся исключительно с целью предоставления вам наших услуг.",
+        body: "Мы передаём информацию о заказе нашим платёжным провайдерам (Idram и ArCa) для обработки платежа, а также, при необходимости, нашему поставщику услуг электронной почты для отправки писем о заказе и рассылок. Эта информация передаётся исключительно с целью предоставления вам наших услуг.",
       },
       {
         heading: "Ваши права",

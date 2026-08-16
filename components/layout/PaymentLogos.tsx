@@ -2,7 +2,6 @@ import Image from "next/image";
 
 const LOGOS = [
   { src: "/images/payments/idram-logo.svg", alt: "Idram", width: 70, height: 21 },
-  { src: "/images/payments/telcell-logo.svg", alt: "Telcell", width: 81, height: 15 },
   { src: "/images/payments/arca-logo.svg", alt: "ArCa", width: 71, height: 18 },
 ];
 
