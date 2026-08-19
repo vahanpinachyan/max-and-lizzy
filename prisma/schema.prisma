@@ -168,6 +168,11 @@ model PendingIdramOrder {
   customerEmail       String
   customerName        String?
   customerPhone       String?
+  // "en" | "hy" | "ru" — the storefront locale the customer was browsing
+  // in at checkout, captured here so the confirmation email (an Omnisend
+  // automation triggered off the "placed order" event) can be sent in the
+  // right language. See lib/omnisend.ts upsertContact.
+  locale              String?
   // "pending" | "confirmed" | "failed"
   status              String   @default("pending")
   createdAt           DateTime @default(now())
@@ -197,6 +202,8 @@ model PendingArcaOrder {
   customerEmail       String
   customerName        String?
   customerPhone       String?
+  // "en" | "hy" | "ru" — same purpose as PendingIdramOrder.locale above.
+  locale              String?
   // "pending" | "confirmed" | "failed"
   status              String   @default("pending")
   createdAt           DateTime @default(now())

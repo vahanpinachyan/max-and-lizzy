@@ -19,6 +19,7 @@ interface PendingIdramOrderRow {
   customerEmail: string;
   customerName: string | null;
   customerPhone: string | null;
+  locale: string | null;
 }
 
 /**
@@ -94,6 +95,7 @@ export async function createOrderFromIdramPayment(pending: PendingIdramOrderRow)
     email: pending.customerEmail,
     firstName: firstName || undefined,
     lastName: rest.join(" ") || undefined,
+    language: pending.locale ?? undefined,
   });
   await sendPlacedOrderEvent({
     email: pending.customerEmail,
@@ -124,6 +126,7 @@ interface PendingArcaOrderRow {
   customerEmail: string;
   customerName: string | null;
   customerPhone: string | null;
+  locale: string | null;
 }
 
 /**
@@ -196,6 +199,7 @@ export async function createOrderFromArcaPayment(pending: PendingArcaOrderRow) {
     email: pending.customerEmail,
     firstName: firstName || undefined,
     lastName: rest.join(" ") || undefined,
+    language: pending.locale ?? undefined,
   });
   await sendPlacedOrderEvent({
     email: pending.customerEmail,

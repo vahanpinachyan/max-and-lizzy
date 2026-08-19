@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { idramRecAccount, isIdramConfigured, IDRAM_PAYMENT_URL } from "@/lib/idram";
+import { isLocale, defaultLocale } from "@/lib/i18n/locales";
 import { validateCheckoutRequest, type CheckoutRequestItem, type DeliveryAddressInput } from "@/lib/checkout-validation";
 
 export async function POST(request: Request) {
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
     name?: string;
     phone?: string;
     notes?: string;
+    locale?: string;
   };
   try {
     body = await request.json();
@@ -38,6 +40,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: validated.error }, { status: 400 });
   }
   const { lineItems, fulfillment, deliveryAddress, giftWrap, giftMessage, notes, promoCode, totalAmd } = validated.data;
+  const locale = isLocale(body.locale) ? body.locale : defaultLocale;
 
   const pending = await prisma.pendingIdramOrder.create({
     data: {
@@ -61,6 +64,7 @@ export async function POST(request: Request) {
       customerEmail: email,
       customerName: String(body.name ?? "").trim() || null,
       customerPhone: String(body.phone ?? "").trim() || null,
+      locale,
     },
   });
 

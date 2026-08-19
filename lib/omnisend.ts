@@ -25,10 +25,16 @@ export async function upsertContact({
   email,
   firstName,
   lastName,
+  language,
 }: {
   email: string;
   firstName?: string;
   lastName?: string;
+  // "en" | "hy" | "ru" — the storefront locale the contact last ordered/
+  // signed up in. Sent as a custom property (Omnisend contacts have no
+  // native language field) so the "Order Confirmation" automation can
+  // Split on it and send the right translated email.
+  language?: string;
 }): Promise<void> {
   const headers = authHeaders();
   if (!headers) return;
@@ -52,6 +58,7 @@ export async function upsertContact({
         ],
         ...(firstName ? { firstName } : {}),
         ...(lastName ? { lastName } : {}),
+        ...(language ? { customProperties: { language } } : {}),
       }),
     });
     if (!res.ok) {

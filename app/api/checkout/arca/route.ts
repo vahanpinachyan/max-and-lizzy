@@ -41,6 +41,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: validated.error }, { status: 400 });
   }
   const { lineItems, fulfillment, deliveryAddress, giftWrap, giftMessage, notes, promoCode, totalAmd } = validated.data;
+  const language = isLocale(body.locale) ? body.locale : defaultLocale;
 
   const pending = await prisma.pendingArcaOrder.create({
     data: {
@@ -64,10 +65,10 @@ export async function POST(request: Request) {
       customerEmail: email,
       customerName: String(body.name ?? "").trim() || null,
       customerPhone: String(body.phone ?? "").trim() || null,
+      locale: language,
     },
   });
 
-  const language = isLocale(body.locale) ? body.locale : defaultLocale;
   const registered = await registerArcaOrder({
     orderNumber: pending.id,
     amountAmd: totalAmd,

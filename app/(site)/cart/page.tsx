@@ -152,6 +152,7 @@ export default function CartPage() {
       notes: notes.trim() || undefined,
       deliveryAddress: fulfillmentMethod !== "pickup" ? address : undefined,
       name,
+      locale,
     };
 
     try {
@@ -172,7 +173,7 @@ export default function CartPage() {
       const res = await fetch("/api/checkout/arca", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...sharedBody, email, phone, locale }),
+        body: JSON.stringify({ ...sharedBody, email, phone }),
       });
       const data = await res.json();
       if (!res.ok || !data.redirectUrl) {
