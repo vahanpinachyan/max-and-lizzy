@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { computeConfirmationChecksum, idramRecAccount } from "@/lib/idram";
 import { createOrderFromIdramPayment } from "@/lib/orders";
-import { sendOrderConfirmationEmail, sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
+import { sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
 
 // RESULT_URL — Idram posts here twice per payment: once to confirm the
 // order is real before charging the customer (EDP_PRECHECK=YES), and once
@@ -62,7 +62,6 @@ export async function POST(request: Request) {
       `[idram] Payment confirmed — bill=${billNo} amount=${amount} payer=${payerAccount} transId=${transId} date=${transDate}`
     );
 
-    await sendOrderConfirmationEmail(pending.customerEmail, order.id);
     await sendNewOrderNotificationEmail(order, pending.customerEmail);
 
     return new NextResponse("OK", { headers: { "Content-Type": "text/plain" } });

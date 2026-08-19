@@ -5,32 +5,6 @@ import { GIFT_WRAP_FEE_AMD } from "@/data/fulfillment";
 import { localizeFulfillmentOptions } from "@/lib/i18n/localize-data";
 import type { Order, OrderItem } from "@prisma/client";
 
-// Shared by both payment providers (Stripe's webhook and Idram's callback)
-// so these two templates only live in one place. Distinct from
-// lib/order-emails.ts, which sends the admin's manual order-status-change
-// emails, not the checkout-completion emails below.
-
-export async function sendOrderConfirmationEmail(toEmail: string | null | undefined, orderRef: string) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey || !toEmail) return;
-
-  try {
-    const { Resend } = await import("resend");
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from: `${site.emailFromName} <info@${new URL(site.url).hostname}>`,
-      to: toEmail,
-      replyTo: site.email,
-      subject: `Your ${site.name} order is confirmed`,
-      html: `<p>Thank you for your order! We'll have it ready for pickup or delivery soon.</p>
-             <p>Order reference: ${orderRef.slice(-12)}</p>
-             <p>Questions? Reply to this email or visit us at ${site.address.street}.</p>`,
-    });
-  } catch (error) {
-    console.error("[checkout-emails] Failed to send confirmation email:", error);
-  }
-}
-
 // Lets staff know a new order needs fulfilling without having to keep
 // /admin/orders open. Sent to the store's own inbox (site.email), not the
 // customer, so it's written entirely in Armenian for the staff who read it.

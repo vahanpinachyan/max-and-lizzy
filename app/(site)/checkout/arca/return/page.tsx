@@ -7,7 +7,7 @@ import { interpolate } from "@/lib/i18n/interpolate";
 import { prisma } from "@/lib/db";
 import { getArcaOrderStatus, ARCA_ORDER_STATUS } from "@/lib/arca";
 import { createOrderFromArcaPayment } from "@/lib/orders";
-import { sendOrderConfirmationEmail, sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
+import { sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
 import { ClearCartOnMount } from "@/components/cart/ClearCartOnMount";
 import type { OrderItem } from "@prisma/client";
 
@@ -62,7 +62,6 @@ async function resolvePayment(ref: string | undefined): Promise<ResolvedPayment>
 
   const order = await createOrderFromArcaPayment(pending);
   await prisma.pendingArcaOrder.update({ where: { id: pending.id }, data: { status: "confirmed" } });
-  await sendOrderConfirmationEmail(pending.customerEmail, order.id);
   await sendNewOrderNotificationEmail(order, pending.customerEmail);
 
   return { state: "paid", items: order.items, customerEmail: pending.customerEmail };

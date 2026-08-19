@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { createOrderFromSession } from "@/lib/orders";
-import { sendOrderConfirmationEmail, sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
+import { sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
 
 // Stripe webhook endpoint. Configure this URL (https://yourdomain.com/api/webhook)
 // in the Stripe Dashboard and set STRIPE_WEBHOOK_SECRET — see .env.example
@@ -38,7 +38,6 @@ export async function POST(request: Request) {
     } catch (error) {
       console.error("[webhook] Failed to create order record:", error);
     }
-    await sendOrderConfirmationEmail(session.customer_details?.email, session.id);
     if (order) await sendNewOrderNotificationEmail(order, session.customer_details?.email);
   }
 

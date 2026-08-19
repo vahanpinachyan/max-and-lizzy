@@ -17,7 +17,7 @@ a functioning ecommerce store with Stripe checkout.
 - **Local TypeScript/JSON data files** for categories, reviews, testimonials,
   and blog posts, which change rarely enough not to need a database (see
   "Editing content" below)
-- **Resend** (optional) for order confirmation and contact form emails
+- **Resend** (optional) for staff new-order notifications, order-status updates, and contact form emails
 - Deploys to **Vercel**
 
 ## Getting started
@@ -541,11 +541,13 @@ customer's email.
   truth for whether a payment happened is the RESULT_URL callback above, not
   these pages (same pattern as Stripe's webhook being authoritative over the
   `/checkout/success` redirect).
-- **`lib/checkout-emails.ts`** — the order-confirmation and staff
-  new-order-notification emails, shared by the Stripe webhook and the Idram
-  callback so the templates only live in one place. (Distinct from
+- **`lib/checkout-emails.ts`** — the staff new-order-notification email,
+  shared by the Stripe webhook, the Idram callback, and the ArCa return page
+  so the template only lives in one place. (Distinct from
   `lib/order-emails.ts`, which sends the admin's manual order-status-change
-  emails from `/admin/orders`.)
+  emails from `/admin/orders`.) The customer-facing order confirmation itself
+  is an Omnisend automation, not sent from here — see "Omnisend" below;
+  `lib/omnisend.ts`'s `sendPlacedOrderEvent` is what triggers it.
 
 **The three URLs to give Idram** (already live once this is deployed):
 ```
@@ -645,10 +647,10 @@ See `.env.example` for the full list with comments. Summary:
 | `DATABASE_URL` | Yes | SQLite file path locally; a real Postgres connection string in production (see "Admin panel & database") |
 | `ADMIN_BOOTSTRAP_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` | Yes, once | Creates the first admin account when `npm run db:seed` runs and no admin exists yet |
 | `STRIPE_SECRET_KEY` | Yes, for checkout | Server-side Stripe API calls |
-| `STRIPE_WEBHOOK_SECRET` | Yes, for order confirmation emails | Verifies Stripe webhook signatures |
+| `STRIPE_WEBHOOK_SECRET` | Yes, for order creation | Verifies Stripe webhook signatures |
 | `IDRAM_REC_ACCOUNT` / `IDRAM_SECRET_KEY` | No | Enables the "Idram" payment option on the cart page (see "Idram payment integration"). Without them, that option shows a setup error and only card payment works. |
 | `ARCA_USERNAME` / `ARCA_PASSWORD` | No | Enables the "Card (ArCa)" payment option on the cart page (see "ARCA (ACBA vPOS) payment integration"). Without them, that option shows a setup error. |
-| `RESEND_API_KEY` | No | Enables order confirmation, order-status update, and contact form emails. Without it, they're logged to the server console only. |
+| `RESEND_API_KEY` | No | Enables staff new-order notifications, order-status update, and contact form emails. Without it, they're logged to the server console only. |
 | `GOOGLE_TRANSLATE_API_KEY` | No | Enables the "Auto-translate" button on the product form. Without it, the button shows a setup message instead of translating. |
 | `BLOB_READ_WRITE_TOKEN` | No | Enables the "+ Add photos" uploader on the product form. Without it, upload attempts show a setup message. See "Product photo uploads" below. |
 | `NEXT_PUBLIC_GA_ID` | No | Enables Google Analytics 4. Without it, no analytics script loads. |
