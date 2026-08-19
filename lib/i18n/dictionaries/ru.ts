@@ -42,7 +42,7 @@ export const ru: Dictionary = {
     categoryTitle: "Найдите нужную игрушку быстро",
     brandTrustEyebrow: "Импортировано из Европы",
     brandTrustTitle: "Сделано в европейских мастерских",
-    brandTrustSubtitle: "Все наши игрушки от проверенных производителей из Германии и Франции, из настоящего дерева и протестированы по стандарту безопасности EN71.",
+    brandTrustSubtitle: "Все наши игрушки от проверенных производителей из Германии и Бельгии, из настоящего дерева и протестированы по стандарту безопасности EN71.",
     testimonialsEyebrow: "Любовь покупателей",
     testimonialsTitle: "Что говорят родители",
     instagramEyebrow: "@max_and_lizzy_toys",
@@ -65,7 +65,7 @@ export const ru: Dictionary = {
   },
   brands: [
     { name: "GOKI", origin: "Германия" },
-    { name: "Nattou", origin: "Франция" },
+    { name: "Nattou", origin: "Бельгия" },
     { name: "Holztiger", origin: "Германия" },
   ],
   product: {

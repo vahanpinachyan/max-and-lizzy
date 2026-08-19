@@ -40,7 +40,7 @@ export const en = {
     categoryTitle: "Find the right toy, fast",
     brandTrustEyebrow: "Imported from Europe",
     brandTrustTitle: "Crafted in European workshops",
-    brandTrustSubtitle: "Every toy we carry comes from established toy makers in Germany and France. Solid wood, tested to EN71 safety standards.",
+    brandTrustSubtitle: "Every toy we carry comes from established toy makers in Germany and Belgium. Solid wood, tested to EN71 safety standards.",
     testimonialsEyebrow: "Customer love",
     testimonialsTitle: "What parents are saying",
     instagramEyebrow: "@max_and_lizzy_toys",
@@ -63,7 +63,7 @@ export const en = {
   },
   brands: [
     { name: "GOKI", origin: "Germany" },
-    { name: "Nattou", origin: "France" },
+    { name: "Nattou", origin: "Belgium" },
     { name: "Holztiger", origin: "Germany" },
   ],
   product: {

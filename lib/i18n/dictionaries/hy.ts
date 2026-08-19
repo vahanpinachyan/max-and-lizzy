@@ -42,7 +42,7 @@ export const hy: Dictionary = {
     categoryTitle: "Կատեգորիաներ",
     brandTrustEyebrow: "Ներմուծված Եվրոպայից",
     brandTrustTitle: "Պատրաստված եվրոպական արհեստանոցներում",
-    brandTrustSubtitle: "Մեր բոլոր խաղալիքները հաստատված արտադրողներից են՝ Գերմանիայից և Ֆրանսիայից, պատրաստված իրական փայտից և ստուգված EN71 անվտանգության ստանդարտով։",
+    brandTrustSubtitle: "Մեր բոլոր խաղալիքները հաստատված արտադրողներից են՝ Գերմանիայից և Բելգիայից, պատրաստված իրական փայտից և ստուգված EN71 անվտանգության ստանդարտով։",
     testimonialsEyebrow: "Հաճախորդների սեր",
     testimonialsTitle: "Ինչ են ասում ծնողները",
     instagramEyebrow: "@max_and_lizzy_toys",
@@ -65,7 +65,7 @@ export const hy: Dictionary = {
   },
   brands: [
     { name: "GOKI", origin: "Գերմանիա" },
-    { name: "Nattou", origin: "Ֆրանսիա" },
+    { name: "Nattou", origin: "Բելգիա" },
     { name: "Holztiger", origin: "Գերմանիա" },
   ],
   product: {
