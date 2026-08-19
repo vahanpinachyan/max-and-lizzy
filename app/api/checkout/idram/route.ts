@@ -26,8 +26,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  // Unlike Stripe's hosted checkout, Idram never gives us the customer's
-  // email — it has to be collected on our own page before redirecting.
+  // Idram never gives us the customer's email — it has to be collected on
+  // our own page before redirecting.
   const email = String(body.email ?? "").trim();
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });

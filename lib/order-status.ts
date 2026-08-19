@@ -1,4 +1,4 @@
-// Deliberately has zero server-only dependencies (no Stripe, no Prisma) so
+// Deliberately has zero server-only dependencies (no Prisma) so
 // both client components (status dropdown) and server code (lib/orders.ts,
 // Server Actions) can import it without dragging server-only code into the
 // browser bundle.

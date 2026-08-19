@@ -3,7 +3,7 @@
 A production-ready Next.js storefront for Max & Lizzy, a Yerevan toy store
 specializing in educational, wooden, and eco-friendly toys for babies and
 preschoolers (ages 0–3 and 3–6). Built as both a local-SEO marketing site and
-a functioning ecommerce store with Stripe checkout.
+a functioning ecommerce store with ArCa and Idram checkout.
 
 ## Tech stack
 
@@ -11,7 +11,7 @@ a functioning ecommerce store with Stripe checkout.
 - **Prisma + SQLite (dev) / Postgres (production)** for products, stock, and
   promo codes — managed from the built-in `/admin` panel, no code deploy
   needed per change (see "Admin panel & database" below)
-- **Stripe Checkout** for payments
+- **ArCa (ACBA vPOS)** and **Idram** for payments
 - **Trilingual** (English / Armenian / Russian) via a cookie-based locale
   switcher — see "Internationalization" below
 - **Local TypeScript/JSON data files** for categories, reviews, testimonials,
@@ -33,8 +33,9 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). The site runs and is
-fully browsable without any environment variables — Stripe checkout will
-show a friendly error until `STRIPE_SECRET_KEY` is set. Sign in to
+fully browsable without any environment variables — card/Idram checkout will
+show a friendly error until `ARCA_USERNAME`/`ARCA_PASSWORD` or
+`IDRAM_REC_ACCOUNT`/`IDRAM_SECRET_KEY` are set. Sign in to
 [http://localhost:3000/admin/login](http://localhost:3000/admin/login) with
 the `ADMIN_BOOTSTRAP_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` from your `.env.local`.
 
@@ -140,11 +141,11 @@ automatically (see `ProductCard`'s `discountPct` calculation).
 
 Created and managed entirely from `/admin/promo-codes` — a code works
 everywhere the moment you create it: the welcome popup (if you create/edit
-`WELCOME5` specifically), the cart page's "Promo code" field, and
-`/api/checkout` (which re-validates the code and recomputes the discount
-server-side — the client-side discount shown in the cart is never trusted
-for the actual charge). Codes can have an optional expiry date and can be
-disabled without deleting them.
+`WELCOME5` specifically), the cart page's "Promo code" field, and both
+`/api/checkout/idram` and `/api/checkout/arca` (which re-validate the code
+and recompute the discount server-side — the client-side discount shown in
+the cart is never trusted for the actual charge). Codes can have an
+optional expiry date and can be disabled without deleting them.
 
 ### First-visit welcome popup
 
@@ -265,8 +266,8 @@ editing the database directly.
   best-selling products by quantity and revenue, an order-volume-by-day-of-week
   chart, and an order-count-by-status breakdown. All computed live from the
   `Order`/`OrderItem`/`Customer` tables — no separate analytics service.
-- **Orders** (`/admin/orders`) — every order created by the Stripe webhook,
-  filterable by status (pending / ready for pickup / shipped / completed /
+- **Orders** (`/admin/orders`) — every order created by the Idram callback or
+  the ArCa return page, filterable by status (pending / ready for pickup / shipped / completed /
   cancelled). The detail page lets you change status and send the customer a
   status-update email with one click (see "Order status emails" below).
   Available to both managers and cashiers.
@@ -368,16 +369,20 @@ separate security work:
   and the dashboard, even by typing the URL directly) and the Server Action
   level (the underlying create/edit/delete functions refuse the request even
   if someone bypassed the UI), so it isn't just a hidden nav link.
-- **Prices are never trusted from the browser** — `/api/checkout` always
-  looks up the current price from the database by product slug; a tampered
-  client-side request can't check out at a different price. Promo codes are
-  re-validated server-side the same way.
+- **Prices are never trusted from the browser** — `/api/checkout/idram` and
+  `/api/checkout/arca` always look up the current price from the database
+  by product slug; a tampered client-side request can't check out at a
+  different price. Promo codes are re-validated server-side the same way.
 - **SQL injection isn't a concern** — all database access goes through
   Prisma's parameterized queries; there's no hand-built SQL string
   concatenation anywhere in the app.
-- **Stripe webhook signatures are verified** — `/api/webhook` rejects any
-  request that isn't signed with `STRIPE_WEBHOOK_SECRET`, so orders can only
-  be created by genuine events from Stripe, not a forged POST request.
+- **Idram's callback is checksum-verified** — `/api/idram/callback` recomputes
+  Idram's signature from the shared secret and rejects anything that doesn't
+  match, so orders can only be created by genuine callbacks, not a forged
+  POST request. **ArCa never pushes a callback at all** — the return page
+  instead pulls the authoritative result via `getOrderStatusExtended.do`,
+  authenticated with our own merchant credentials, so there's nothing for a
+  forged request to spoof.
 
 Worth doing as the store grows, not currently built:
 - **Rate limiting** on `/admin/login` and public API routes (contact form,
@@ -446,78 +451,35 @@ choice (built by the Next.js team, generous free tier):
 5. Update `NEXT_PUBLIC_SITE_URL` (in Vercel's environment variables) to your
    real domain — this feeds canonical URLs, the sitemap, and JSON-LD.
 
-## Stripe setup
-
-1. Create a Stripe account (or use an existing one) and get your **test**
-   API keys from the [Stripe Dashboard](https://dashboard.stripe.com/apikeys).
-2. Set `STRIPE_SECRET_KEY` in `.env.local`.
-3. To test the full flow, add a webhook endpoint (Stripe CLI is easiest for
-   local dev: `stripe listen --forward-to localhost:3000/api/webhook`) and
-   set `STRIPE_WEBHOOK_SECRET` to the signing secret it prints.
-4. Use [Stripe's test card numbers](https://docs.stripe.com/testing) (e.g.
-   `4242 4242 4242 4242`, any future expiry, any CVC) to complete a test
-   purchase.
-
 Checkout always resolves prices from `data/products.ts` on the server — the
 client only sends product slugs and quantities, so prices can't be tampered
 with in the browser.
 
-**⚠️ Important — Armenia payouts:** Stripe does not currently support
-payout accounts based in Armenia. The checkout integration is fully built
-and works with any Stripe account (in AMD), but **you'll need a Stripe
-account registered in a country Stripe supports** to actually receive
-payouts — for example via a foreign business entity, or by using a
-different payment processor for the live store. This is a business/legal
-decision, not a code change; flagging it now so it doesn't surprise you at
-launch. Swapping in a different processor later means changing
-`lib/stripe.ts` and `app/api/checkout/route.ts` — the rest of the site is
-unaffected.
-
 ## Armenian payment methods (ARCA / Idram / Telcell)
 
-Because of the Stripe payout limitation above, an Armenia-based processor is
-worth adding either alongside or instead of Stripe. Quick comparison of the
-three most common options:
+**ArCa** (via ACBA's vPOS) and **Idram** are both live, real payment options
+on the cart page — see their sections below. **Telcell** is a third
+Armenian wallet option (~900k+ users) that isn't implemented; worth adding
+later if there's specific demand for it.
 
-| | ArCa | Idram | Telcell |
-|---|---|---|---|
-| What it is | Armenia's national card-processing network (Visa/Mastercard acquiring via a member bank) | Digital wallet + card/account linking, ~1,000+ e-commerce integrations | Digital wallet with its own app, ~900k+ users |
-| How you get it | Open a merchant account with a member bank (e.g. Ameriabank, Ardshinbank, ACBA, Converse Bank) — they issue your API credentials | Apply directly with Idram as a business, described as a same-day "simple multi-page API integration" | Apply through Telcell Business |
-| Best for | Customers paying by card who expect a familiar bank-checkout flow | Customers who already have an Idram wallet/account — very common in Armenia | Reaching Telcell's wallet user base |
-| Currencies | AMD (plus USD/EUR/RUB) | AMD | AMD |
-
-**Recommendation:** don't try to integrate all three at once. Start with
-**ArCa** (via whichever bank you already do business banking with — it's the
-most "default" option, comparable to Stripe/card checkout) to cover card
-payments, then add **Idram** as a second option once that's stable, since
-wallet payments are extremely common in Armenia and having only cards will
-turn away real customers. Add Telcell later if you see demand for it
-specifically. This mirrors how several Armenian stores actually do it (one
-source describes bank decline rates dropping from ~30% to under 5% after
-adding multiple local providers instead of relying on one). **ArCa and
-Idram are both done** — see their sections below; Telcell is still
-unimplemented.
-
-**What integration actually looks like:** all three work like Stripe does
-today — the merchant account/bank gives you API credentials, your server
-creates a payment session and redirects the customer to a hosted payment
-page, then (ideally) the processor calls your server back to confirm
-payment before you mark the order paid, the same idea as
-`app/api/webhook/route.ts` for Stripe or `app/api/idram/callback` for
-Idram. `lib/stripe.ts` and `app/api/checkout/route.ts` were written to keep
-all Stripe-specific logic in those two files precisely so a second processor
-can be added as a sibling (`lib/idram.ts` / `lib/arca.ts` + a checkout
-branch) without touching the cart, product, or order code.
+**What integration looks like:** both work the same way — the bank/wallet
+gives you API credentials, your server creates a payment session and
+redirects the customer to a hosted payment page, then (ideally) the
+processor calls your server back to confirm payment before you mark the
+order paid — `app/api/idram/callback` for Idram, or a pull-based check
+against `getOrderStatusExtended.do` for ArCa (see `lib/arca.ts`). A third
+processor (e.g. Telcell) would follow the same pattern as a sibling
+(`lib/telcell.ts` + a checkout branch) without touching the cart, product,
+or order code.
 
 Sources: [Armenia's Payment Rails — ArCa, Idram & Instant Transfers](https://www.transfi.com/blog/armenias-payment-rails-how-they-work---arca-idram-instant-transfers), [ArCa for e-merchants](https://old.arca.am/en/emerchants), [Idram online payment system](https://www.idram.am/?l=en), [Telcell Business](https://telcell.am/en/business), [Guide to Payment Processing Solutions in Armenia](https://armenian-lawyer.com/business-immigration/payment-processing-armenia/).
 
 ### Idram payment integration
 
-Idram is a real, live payment option on the cart page alongside Stripe,
+Idram is a real, live payment option on the cart page alongside ArCa,
 following Idram's own merchant interface doc. Customers pick "Card" or
 "Idram" under Payment method; choosing Idram also asks for an email address,
-since (unlike Stripe's hosted checkout) Idram never gives the merchant the
-customer's email.
+since Idram never gives the merchant the customer's email.
 
 - **`lib/checkout-validation.ts`** — the cart validation (product prices,
   stock, fulfillment fee, promo code, delivery address) shared by both
@@ -539,11 +501,11 @@ customer's email.
 - **`app/(site)/checkout/idram/success/page.tsx`** and **`.../fail/page.tsx`**
   — SUCCESS_URL / FAIL_URL. Just UX confirmation pages; the real source of
   truth for whether a payment happened is the RESULT_URL callback above, not
-  these pages (same pattern as Stripe's webhook being authoritative over the
-  `/checkout/success` redirect).
+  these pages (same pattern as ArCa's return page pulling from
+  `getOrderStatusExtended.do` rather than trusting the redirect itself).
 - **`lib/checkout-emails.ts`** — the staff new-order-notification email,
-  shared by the Stripe webhook, the Idram callback, and the ArCa return page
-  so the template only lives in one place. (Distinct from
+  shared by the Idram callback and the ArCa return page so the template
+  only lives in one place. (Distinct from
   `lib/order-emails.ts`, which sends the admin's manual order-status-change
   emails from `/admin/orders`.) The customer-facing order confirmation itself
   is an Omnisend automation, not sent from here — see "Omnisend" below;
@@ -585,7 +547,7 @@ customer's email.
 
 Structurally it mirrors the Idram integration above, with one real
 difference: **EPG's merchant guide documents no server-to-server push
-callback** the way Idram's RESULT_URL or Stripe's webhook does (there is a
+callback** the way Idram's RESULT_URL does (there is a
 "Sending callback notification is allowed" permission listed among the
 bank's optional merchant options, which would need to be requested from
 ACBA separately if you want one). So instead of verifying an inbound
@@ -646,9 +608,7 @@ See `.env.example` for the full list with comments. Summary:
 |---|---|---|
 | `DATABASE_URL` | Yes | SQLite file path locally; a real Postgres connection string in production (see "Admin panel & database") |
 | `ADMIN_BOOTSTRAP_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` | Yes, once | Creates the first admin account when `npm run db:seed` runs and no admin exists yet |
-| `STRIPE_SECRET_KEY` | Yes, for checkout | Server-side Stripe API calls |
-| `STRIPE_WEBHOOK_SECRET` | Yes, for order creation | Verifies Stripe webhook signatures |
-| `IDRAM_REC_ACCOUNT` / `IDRAM_SECRET_KEY` | No | Enables the "Idram" payment option on the cart page (see "Idram payment integration"). Without them, that option shows a setup error and only card payment works. |
+| `IDRAM_REC_ACCOUNT` / `IDRAM_SECRET_KEY` | No | Enables the "Idram" payment option on the cart page (see "Idram payment integration"). Without them, that option shows a setup error. |
 | `ARCA_USERNAME` / `ARCA_PASSWORD` | No | Enables the "Card (ArCa)" payment option on the cart page (see "ARCA (ACBA vPOS) payment integration"). Without them, that option shows a setup error. |
 | `RESEND_API_KEY` | No | Enables staff new-order notifications, order-status update, and contact form emails. Without it, they're logged to the server console only. |
 | `GOOGLE_TRANSLATE_API_KEY` | No | Enables the "Auto-translate" button on the product form. Without it, the button shows a setup message instead of translating. |
@@ -690,9 +650,8 @@ the same checks, printed to your terminal instead of emailed.
 4. Deploy. Vercel auto-detects Next.js — no extra configuration needed.
 5. Point your domain's DNS at Vercel and set `NEXT_PUBLIC_SITE_URL` to match
    (see "Domain setup" above).
-6. Add a **live** Stripe webhook endpoint pointing at
-   `https://yourdomain.com/api/webhook` once you're ready to go live, and
-   update `STRIPE_WEBHOOK_SECRET` accordingly.
+6. Give Idram the three live URLs (SUCCESS_URL/FAIL_URL/RESULT_URL) once
+   you're ready to go live — see "Idram payment integration" above.
 
 ## What we still need from the business before launch
 
@@ -724,8 +683,6 @@ the same checks, printed to your terminal instead of emailed.
 - [ ] **Confirm address geocoordinates** — `data/site.ts` has approximate
       lat/long for Mashtots Avenue; confirm against your Google Business
       Profile listing so the embedded map and schema markup are exact.
-- [ ] **Stripe live keys** — see "Stripe setup" above, including resolving
-      the Armenia payout question before going live.
 - [ ] **Shipping/returns policy specifics** — `app/policies/shipping` and
       `app/policies/returns` contain reasonable defaults (30-day returns,
       pickup + Yerevan local delivery) marked `TODO` — confirm real terms,
@@ -769,10 +726,11 @@ the same checks, printed to your terminal instead of emailed.
   manually (individually or in bulk) from `/admin/products`. Low-stock
   alerts flag items proactively, but nothing auto-updates counts from a
   physical-store sale yet.
-- No automated test suite — this was scoped as a static/lightly-dynamic
-  marketing + storefront site, not a large application. If the product
-  catalog or order logic grows significantly, adding integration tests
-  around `/api/checkout` would be the highest-value next step.
+- Only unit tests today (`npm test`, Vitest) covering internal logic like
+  checkout validation — no integration tests exercising the actual
+  `/api/checkout/idram` / `/api/checkout/arca` routes end-to-end. If the
+  product catalog or order logic grows significantly, that would be the
+  highest-value next step.
 - Because pages read the locale from a cookie, most routes are dynamically
   server-rendered rather than statically pre-built (see
   "Internationalization"). Fine at this traffic scale; revisit if the site

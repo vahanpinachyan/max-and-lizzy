@@ -95,8 +95,7 @@ export async function registerArcaOrder(fields: {
 }): Promise<{ ok: true; result: ArcaRegisterResult } | { ok: false; error: string }> {
   const data = await postToArca("register.do", {
     orderNumber: fields.orderNumber,
-    // "Order amount in the minor denomination" — AMD's minor unit (luma),
-    // same convention as lib/stripe.ts's unit_amount for AMD.
+    // "Order amount in the minor denomination" — AMD's minor unit (luma).
     amount: String(Math.round(fields.amountAmd * 100)),
     currency: ARCA_CURRENCY_AMD,
     returnUrl: fields.returnUrl,

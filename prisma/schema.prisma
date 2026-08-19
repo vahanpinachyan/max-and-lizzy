@@ -124,11 +124,10 @@ model Order {
   id               String   @id @default(cuid())
   // Exactly one of these is set, matching which processor the customer
   // paid through — see paymentProvider below.
-  stripeSessionId  String?  @unique
   idramBillNo      String?  @unique
   arcaOrderId      String?  @unique
-  // "stripe" | "idram" | "arca"
-  paymentProvider  String   @default("stripe")
+  // "idram" | "arca"
+  paymentProvider  String   @default("arca")
   customer         Customer @relation(fields: [customerId], references: [id])
   customerId       String
   // "pending" | "ready_for_pickup" | "shipped" | "completed" | "cancelled"

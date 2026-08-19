@@ -39,10 +39,10 @@ export interface ValidatedCheckout {
   totalAmd: number;
 }
 
-// Shared by both payment providers (Stripe and Idram) so the
+// Shared by both payment providers (Idram and ArCa) so the
 // security-critical rules — never trust a client-sent price, fee, or
-// discount — only live in one place. See app/api/checkout/route.ts and
-// app/api/checkout/idram/route.ts.
+// discount — only live in one place. See app/api/checkout/idram/route.ts
+// and app/api/checkout/arca/route.ts.
 export async function validateCheckoutRequest(body: {
   items?: CheckoutRequestItem[];
   promoCode?: string | null;

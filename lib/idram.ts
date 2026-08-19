@@ -10,8 +10,7 @@ import crypto from "node:crypto";
 // app/api/checkout/idram/route.ts), keyed by that row's id, which doubles
 // as EDP_BILL_NO. The RESULT_URL callback (app/api/idram/callback) looks
 // that row up rather than trusting anything embedded in the bill number
-// itself — the row's existence and status are the source of truth, the
-// same role Stripe's Checkout Session object plays for the Stripe path.
+// itself — the row's existence and status are the source of truth.
 
 export const IDRAM_PAYMENT_URL = "https://banking.idram.am/Payment/GetPayment";
 

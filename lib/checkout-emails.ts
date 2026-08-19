@@ -18,7 +18,7 @@ export async function sendNewOrderNotificationEmail(
   if (!apiKey) return;
 
   const customerName = order.customerName || "Հաճախորդ";
-  const paymentLabel = order.paymentProvider === "idram" ? "Idram" : "բանկային քարտ (Stripe)";
+  const paymentLabel = order.paymentProvider === "idram" ? "Idram" : "ArCa (բանկային քարտ)";
   const fulfillment = localizeFulfillmentOptions("hy").find((o) => o.id === order.fulfillmentMethod);
   const orderRef = order.id.slice(-10);
   const placedDate = formatDate(order.createdAt.toISOString(), "hy");

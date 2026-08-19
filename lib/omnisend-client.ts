@@ -52,7 +52,8 @@ function toLineItem(item: { slug: string; name: string; priceAmd: number; image?
 
 // Fires when an item is added to cart — starts the "cart abandonment"
 // automation in Omnisend. Cancelled automatically once the "placed order"
-// event fires (lib/omnisend.ts, sent server-side from the Stripe webhook).
+// event fires (lib/omnisend.ts, sent server-side once Idram or ArCa
+// confirms payment).
 export function trackAddedToCart(product: Product, quantity: number, cartItems: CartItem[], cartId: string) {
   const omnisend = getOmnisend();
   if (!omnisend) return;
