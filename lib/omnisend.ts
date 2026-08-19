@@ -15,6 +15,32 @@ function authHeaders() {
   };
 }
 
+// Omnisend's Segments feature (needed to Split an automation on a custom
+// property) is a paid-plan feature. Tags are free on every plan and are
+// selectable directly in the Split step's "Tag" filter, so we tag contacts
+// with their storefront locale instead — see the "Order Confirmation"
+// automation, which Splits on this tag to send Armenian customers a
+// translated email.
+const LANGUAGE_TAG_PREFIX = "lang-";
+
+/**
+ * Looks up a contact's current tags by email so upsertContact can replace
+ * only the lang-* tag and leave any other tags (VIP, manual segments, etc.)
+ * intact — POSTing to /contacts REPLACES the tags array wholesale rather
+ * than merging, confirmed against the live API, so skipping this lookup
+ * would silently wipe out unrelated tags on every order.
+ */
+async function fetchExistingTags(email: string, headers: Record<string, string>): Promise<string[]> {
+  try {
+    const res = await fetch(`${API_BASE}/contacts?${new URLSearchParams({ email })}`, { headers });
+    if (!res.ok) return [];
+    const data = (await res.json()) as { contacts?: { tags?: string[] }[] };
+    return data.contacts?.[0]?.tags ?? [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Creates or updates an Omnisend contact, opted in to email marketing.
  * Silently no-ops when OMNISEND_API_KEY is unset so signups/checkout never
@@ -31,15 +57,19 @@ export async function upsertContact({
   firstName?: string;
   lastName?: string;
   // "en" | "hy" | "ru" — the storefront locale the contact last ordered/
-  // signed up in. Sent as a custom property (Omnisend contacts have no
-  // native language field) so the "Order Confirmation" automation can
-  // Split on it and send the right translated email.
+  // signed up in. Sent as a "lang-<code>" tag (see LANGUAGE_TAG_PREFIX).
   language?: string;
 }): Promise<void> {
   const headers = authHeaders();
   if (!headers) return;
 
   try {
+    let tags: string[] | undefined;
+    if (language) {
+      const existing = await fetchExistingTags(email, headers);
+      tags = [...existing.filter((t) => !t.startsWith(LANGUAGE_TAG_PREFIX)), `${LANGUAGE_TAG_PREFIX}${language}`];
+    }
+
     const res = await fetch(`${API_BASE}/contacts`, {
       method: "POST",
       headers,
@@ -58,7 +88,7 @@ export async function upsertContact({
         ],
         ...(firstName ? { firstName } : {}),
         ...(lastName ? { lastName } : {}),
-        ...(language ? { customProperties: { language } } : {}),
+        ...(tags ? { tags } : {}),
       }),
     });
     if (!res.ok) {
