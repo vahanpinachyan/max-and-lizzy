@@ -67,6 +67,7 @@ interface PlacedOrderLineItem {
   productName: string;
   priceAmd: number;
   productUrl?: string;
+  imageUrl?: string;
 }
 
 /**
@@ -109,6 +110,7 @@ export async function sendPlacedOrderEvent({
             productTitle: item.productName,
             productPrice: item.priceAmd,
             productURL: item.productUrl,
+            productImageURL: item.imageUrl,
           })),
         },
       }),

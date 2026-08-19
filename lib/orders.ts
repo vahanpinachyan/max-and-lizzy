@@ -120,6 +120,7 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
       productName: item.productName,
       priceAmd: item.priceAmd,
       productUrl: item.productSlug ? `${site.url}/product/${item.productSlug}` : undefined,
+      imageUrl: item.imageUrl ?? undefined,
     })),
   });
 
@@ -225,6 +226,7 @@ export async function createOrderFromIdramPayment(pending: PendingIdramOrderRow)
       productName: item.name,
       priceAmd: item.unitPriceAmd,
       productUrl: `${site.url}/product/${item.slug}`,
+      imageUrl: item.imageSrc ? absoluteUrl(item.imageSrc) : undefined,
     })),
   });
 
@@ -326,6 +328,7 @@ export async function createOrderFromArcaPayment(pending: PendingArcaOrderRow) {
       productName: item.name,
       priceAmd: item.unitPriceAmd,
       productUrl: `${site.url}/product/${item.slug}`,
+      imageUrl: item.imageSrc ? absoluteUrl(item.imageSrc) : undefined,
     })),
   });
 
