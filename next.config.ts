@@ -16,13 +16,19 @@ import type { NextConfig } from "next";
 //     (components/home/InstagramFeed.tsx) renders images straight from
 //     Instagram's CDN, which uses many rotating scontent-* subdomains that
 //     can't be pinned to a fixed allowlist.
+//   - script-src/connect-src allow *.i.posthog.com — PostHog's session
+//     replay extension is lazy-loaded from its asset CDN (a subdomain of
+//     i.posthog.com that differs by cloud region), and event/recording
+//     capture requests go to the region's own api_host (see
+//     instrumentation-client.ts). The wildcard covers both without pinning
+//     to one region.
 const cspDirectives = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://omnisnippet1.com`,
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://omnisnippet1.com https://*.i.posthog.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.omnisend.com https://omnisnippet1.com",
+  "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.omnisend.com https://omnisnippet1.com https://*.i.posthog.com",
   "frame-src https://www.google.com",
   "object-src 'none'",
   "base-uri 'self'",

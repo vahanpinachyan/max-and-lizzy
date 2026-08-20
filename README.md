@@ -614,6 +614,7 @@ See `.env.example` for the full list with comments. Summary:
 | `GOOGLE_TRANSLATE_API_KEY` | No | Enables the "Auto-translate" button on the product form. Without it, the button shows a setup message instead of translating. |
 | `BLOB_READ_WRITE_TOKEN` | No | Enables the "+ Add photos" uploader on the product form. Without it, upload attempts show a setup message. See "Product photo uploads" below. |
 | `NEXT_PUBLIC_GA_ID` | No | Enables Google Analytics 4. Without it, no analytics script loads. |
+| `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` | No | Enables PostHog (pageviews, autocapture, session replay — see `instrumentation-client.ts`). Without a key, nothing loads. Session recording input masking is on by default. |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Your real domain, used in canonical URLs, sitemap, and JSON-LD |
 | `CRON_SECRET` / `QA_REPORT_EMAIL` | No | Enables the daily QA watcher email (see "QA watcher" below). Without them, the check still runs on schedule but only logs its report. |
 
@@ -692,6 +693,13 @@ the same checks, printed to your terminal instead of emailed.
 - [ ] **Google Analytics 4 property** — get a Measurement ID and set
       `NEXT_PUBLIC_GA_ID`; the integration is already wired up
       (`components/seo/GoogleAnalytics.tsx`).
+- [ ] **PostHog project** — sign up at posthog.com (EU Cloud recommended —
+      lower latency from Armenia and closer data-residency alignment with
+      Armenia's own data protection law than US Cloud), create a project,
+      and set `NEXT_PUBLIC_POSTHOG_KEY` (and `NEXT_PUBLIC_POSTHOG_HOST` if
+      not EU Cloud). Session recording is enabled with all inputs masked by
+      default (`instrumentation-client.ts`) — the site has no cookie-consent
+      banner, so revisit that if recording raw visitor sessions long-term.
 - [ ] **Production domain** — update `NEXT_PUBLIC_SITE_URL` and
       `data/site.ts`'s `url` fallback once you have one.
 
