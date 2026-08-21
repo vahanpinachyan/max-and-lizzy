@@ -97,6 +97,7 @@ export function QuickViewModal({
             </Button>
             <Link
               href={`/product/${product.slug}`}
+              onClick={onClose}
               className="inline-flex items-center font-semibold text-terracotta-dark hover:underline"
             >
               {t.product.viewFullDetails}

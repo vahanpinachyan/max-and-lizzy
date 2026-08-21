@@ -103,7 +103,11 @@ export function ProductCard({
               onQuickView(product);
             }}
             aria-label={`${t.product.quickView}: ${product.name}`}
-            className="absolute bottom-2 right-2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-espresso opacity-0 shadow transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            // pointer-events-none while hidden — without it this button sits
+            // invisibly on top of the card on touch devices (which have no
+            // :hover), silently swallowing taps meant for the product link
+            // underneath and popping open Quick View unexpectedly.
+            className="absolute bottom-2 right-2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-espresso opacity-0 shadow transition-opacity pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
               <path

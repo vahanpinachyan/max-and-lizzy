@@ -14,6 +14,7 @@ import { organizationJsonLd } from "@/lib/seo";
 import { GoogleAnalytics } from "@/components/seo/GoogleAnalytics";
 import { OmnisendSnippet } from "@/components/marketing/OmnisendSnippet";
 import { PostHogInit } from "@/components/marketing/PostHogInit";
+import { ScrollToTopOnNavigate } from "@/components/layout/ScrollToTopOnNavigate";
 import { I18nProvider } from "@/lib/i18n/context";
 import { getLocale } from "@/lib/i18n/server";
 
@@ -87,6 +88,7 @@ export default async function RootLayout({
         <GoogleAnalytics />
         <OmnisendSnippet />
         <PostHogInit />
+        <ScrollToTopOnNavigate />
         <I18nProvider locale={locale}>
           <CartProvider>
             <Header />
