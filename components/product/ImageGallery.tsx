@@ -50,7 +50,7 @@ export function ImageGallery({ images, productName }: { images: ProductImage[]; 
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <div
         className="group relative aspect-square touch-pan-y overflow-hidden rounded-3xl bg-beige"
         onTouchStart={hasMultiple ? handleTouchStart : undefined}
