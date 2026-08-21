@@ -9,6 +9,7 @@ import { getArcaOrderStatus, ARCA_ORDER_STATUS } from "@/lib/arca";
 import { createOrderFromArcaPayment } from "@/lib/orders";
 import { sendNewOrderNotificationEmail } from "@/lib/checkout-emails";
 import { ClearCartOnMount } from "@/components/cart/ClearCartOnMount";
+import { TrackPurchaseOnMount } from "@/components/marketing/TrackPurchaseOnMount";
 import type { OrderItem } from "@prisma/client";
 
 export const metadata: Metadata = { title: "Payment Status", robots: { index: false, follow: false } };
@@ -18,6 +19,8 @@ interface ResolvedPayment {
   state: ResultState;
   items?: OrderItem[];
   customerEmail?: string;
+  orderId?: string;
+  totalAmd?: number;
 }
 
 // EPG has no server-to-server push callback documented in the merchant
@@ -33,7 +36,13 @@ async function resolvePayment(ref: string | undefined): Promise<ResolvedPayment>
 
   if (pending.status === "confirmed") {
     const order = await prisma.order.findUnique({ where: { arcaOrderId: pending.id }, include: { items: true } });
-    return { state: "paid", items: order?.items ?? [], customerEmail: pending.customerEmail };
+    return {
+      state: "paid",
+      items: order?.items ?? [],
+      customerEmail: pending.customerEmail,
+      orderId: order?.id,
+      totalAmd: order?.totalAmd,
+    };
   }
   if (pending.status === "failed" || !pending.epgOrderId) return { state: "declined" };
 
@@ -64,7 +73,13 @@ async function resolvePayment(ref: string | undefined): Promise<ResolvedPayment>
   await prisma.pendingArcaOrder.update({ where: { id: pending.id }, data: { status: "confirmed" } });
   await sendNewOrderNotificationEmail(order, pending.customerEmail);
 
-  return { state: "paid", items: order.items, customerEmail: pending.customerEmail };
+  return {
+    state: "paid",
+    items: order.items,
+    customerEmail: pending.customerEmail,
+    orderId: order.id,
+    totalAmd: order.totalAmd,
+  };
 }
 
 export default async function ArcaReturnPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
@@ -76,6 +91,14 @@ export default async function ArcaReturnPage({ searchParams }: { searchParams: P
     return (
       <Container className="max-w-2xl py-16 text-center">
         <ClearCartOnMount />
+        {result.orderId && result.totalAmd !== undefined && (
+          <TrackPurchaseOnMount
+            orderId={result.orderId}
+            totalAmd={result.totalAmd}
+            itemCount={result.items?.reduce((sum, i) => sum + i.quantity, 0) ?? 0}
+            paymentMethod="arca"
+          />
+        )}
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sage/15 text-sage-dark">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
             <path d="M20 6L9 17l-5-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />

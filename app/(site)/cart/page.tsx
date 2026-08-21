@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import { trackStartedCheckout } from "@/lib/omnisend-client";
+import { trackCheckoutStarted, stashPendingIdramPurchase } from "@/lib/posthog-client";
 import { formatAmd } from "@/lib/format";
 import { Container } from "@/components/ui/Container";
 import { Button, LinkButton } from "@/components/ui/Button";
@@ -141,6 +142,7 @@ export default function CartPage() {
     setLoading(true);
     setError(null);
     if (cartId) trackStartedCheckout(items, grandTotalAmd, cartId);
+    trackCheckoutStarted(items, grandTotalAmd);
 
     const name = `${firstName.trim()} ${lastName.trim()}`.trim();
     const sharedBody = {
@@ -165,6 +167,10 @@ export default function CartPage() {
         const data = await res.json();
         if (!res.ok || !data.actionUrl) {
           throw new Error(data.error || t.cart.checkoutErrorGeneric);
+        }
+        if (data.fields?.EDP_BILL_NO) {
+          const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+          stashPendingIdramPurchase(data.fields.EDP_BILL_NO, grandTotalAmd, itemCount);
         }
         submitIdramForm(data.actionUrl, data.fields);
         return;

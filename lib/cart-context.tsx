@@ -14,6 +14,7 @@ import type { Locale } from "@/lib/i18n/locales";
 import { useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
 import { trackAddedToCart } from "@/lib/omnisend-client";
+import { trackAddToCart } from "@/lib/posthog-client";
 
 const STORAGE_KEY = "max-and-lizzy-cart";
 const PROMO_STORAGE_KEY = "max-and-lizzy-promo-code";
@@ -134,6 +135,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Fired from inside the updater so it always sees the resulting cart
       // contents/value — a harmless side effect (analytics, not state).
       if (cartId) trackAddedToCart(product, quantity, next, cartId);
+      trackAddToCart(product, quantity, next);
       return next;
     });
     setIsDrawerOpen(true);
