@@ -118,11 +118,18 @@ export async function sendPlacedOrderEvent({
   orderId,
   totalAmd,
   items,
+  fulfillmentMethod,
 }: {
   email: string;
   orderId: string;
   totalAmd: number;
   items: PlacedOrderLineItem[];
+  // "pickup" | "delivery_yerevan" | "delivery_outside" | null (see
+  // data/fulfillment.ts) — sent as a trigger-event property so the "Order
+  // Confirmation" automation's Split step can branch on it directly (no
+  // Segments/tag workaround needed here, unlike language, since this is
+  // read from the specific order event, not stored on the contact).
+  fulfillmentMethod: string | null;
 }): Promise<void> {
   const headers = authHeaders();
   if (!headers) return;
@@ -142,6 +149,7 @@ export async function sendPlacedOrderEvent({
           totalPrice: totalAmd,
           currency: "AMD",
           createdAt: new Date().toISOString(),
+          fulfillmentMethod: fulfillmentMethod ?? undefined,
           lineItems: items.map((item) => ({
             productID: item.productSlug ?? undefined,
             productTitle: item.productName,

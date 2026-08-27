@@ -101,6 +101,7 @@ export async function createOrderFromIdramPayment(pending: PendingIdramOrderRow)
     email: pending.customerEmail,
     orderId: order.id,
     totalAmd: pending.amountAmd,
+    fulfillmentMethod: pending.fulfillmentMethod,
     items: items.map((item) => ({
       productSlug: item.slug,
       productName: item.name,
@@ -205,6 +206,7 @@ export async function createOrderFromArcaPayment(pending: PendingArcaOrderRow) {
     email: pending.customerEmail,
     orderId: order.id,
     totalAmd: pending.amountAmd,
+    fulfillmentMethod: pending.fulfillmentMethod,
     items: items.map((item) => ({
       productSlug: item.slug,
       productName: item.name,
