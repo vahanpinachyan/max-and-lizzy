@@ -16,19 +16,19 @@ import type { NextConfig } from "next";
 //     (components/home/InstagramFeed.tsx) renders images straight from
 //     Instagram's CDN, which uses many rotating scontent-* subdomains that
 //     can't be pinned to a fixed allowlist.
-//   - script-src/connect-src allow *.i.posthog.com — PostHog's session
-//     replay extension is lazy-loaded from its asset CDN (a subdomain of
-//     i.posthog.com that differs by cloud region), and event/recording
-//     capture requests go to the region's own api_host (see
-//     instrumentation-client.ts). The wildcard covers both without pinning
-//     to one region.
+//   - PostHog traffic (script-src/connect-src) no longer needs an
+//     *.i.posthog.com allowance — it's proxied through our own /relay path
+//     (see rewrites() below and components/marketing/PostHogInit.tsx), so
+//     the browser sees same-origin requests covered by 'self'. The proxy
+//     exists so ad blockers that filter known tracker domains don't also
+//     block our own first-party analytics.
 const cspDirectives = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://omnisnippet1.com https://*.i.posthog.com`,
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://omnisnippet1.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.omnisend.com https://omnisnippet1.com https://*.i.posthog.com",
+  "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.omnisend.com https://omnisnippet1.com",
   "frame-src https://www.google.com",
   "object-src 'none'",
   "base-uri 'self'",
@@ -37,6 +37,22 @@ const cspDirectives = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // Reverse-proxies PostHog traffic through our own domain at /relay
+  // instead of the browser talking to i.posthog.com directly — ad blockers
+  // that filter known analytics domains don't touch first-party paths like
+  // this. Static/array rewrites must come before the catch-all (Next.js
+  // evaluates rules in order). NEXT_PUBLIC_POSTHOG_HOST is set to "/relay"
+  // (see .env.example) so the client SDK already points here.
+  async rewrites() {
+    return [
+      { source: "/relay/static/:path*", destination: "https://eu-assets.i.posthog.com/static/:path*" },
+      { source: "/relay/array/:path*", destination: "https://eu-assets.i.posthog.com/array/:path*" },
+      { source: "/relay/:path*", destination: "https://eu.i.posthog.com/:path*" },
+    ];
+  },
+  // Required by PostHog's reverse-proxy setup — without it, Next.js's
+  // default trailing-slash redirect can interfere with the rewrites above.
+  skipTrailingSlashRedirect: true,
   async headers() {
     return [
       {
