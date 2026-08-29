@@ -200,7 +200,7 @@ export function Header() {
           <button
             onClick={openDrawer}
             disabled={pathname === "/cart"}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-espresso hover:bg-beige transition-colors disabled:cursor-default disabled:hover:bg-transparent"
             aria-label={`${t.nav.cart}, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
           >
             <span className="relative inline-flex">

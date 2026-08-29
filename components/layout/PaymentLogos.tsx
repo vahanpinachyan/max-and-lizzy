@@ -3,6 +3,9 @@ import Image from "next/image";
 const LOGOS = [
   { src: "/images/payments/idram-logo.svg", alt: "Idram", width: 70, height: 21 },
   { src: "/images/payments/arca-logo.svg", alt: "ArCa", width: 71, height: 18 },
+  { src: "/images/payments/visa-logo.svg", alt: "Visa", width: 39, height: 24 },
+  { src: "/images/payments/mastercard-logo.svg", alt: "Mastercard", width: 34, height: 24 },
+  { src: "/images/payments/amex-logo.png", alt: "American Express", width: 24, height: 24 },
 ];
 
 export function PaymentLogos({ label }: { label: string }) {
