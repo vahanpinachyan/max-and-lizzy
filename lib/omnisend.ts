@@ -146,7 +146,7 @@ export async function sendPlacedOrderEvent({
         eventVersion: "v2",
         contact: { email },
         properties: {
-          orderID: orderId,
+          orderID: orderId.slice(-10),
           totalPrice: totalAmd,
           currency: "AMD",
           createdAt: new Date().toISOString(),
@@ -230,7 +230,7 @@ export async function sendOrderStatusEvent({
         eventVersion: "v2",
         contact: { email },
         properties: {
-          orderID: orderId,
+          orderID: orderId.slice(-10),
           totalPrice: totalAmd,
           currency: "AMD",
           ...(status === "cancelled"

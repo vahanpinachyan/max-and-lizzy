@@ -54,66 +54,68 @@ export function OrderStatusSelect({
 
   return (
     <div>
-      <div className="relative" ref={wrapRef}>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => setOpen((v) => !v)}
-          aria-haspopup="true"
-          aria-expanded={open}
-          className="flex items-center gap-2 rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {dict.statusLabels[displayedStatus]}
-          <motion.svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            aria-hidden="true"
-            animate={{ rotate: open ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
+      <div className="flex justify-end">
+        <div className="relative" ref={wrapRef}>
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => setOpen((v) => !v)}
+            aria-haspopup="true"
+            aria-expanded={open}
+            className="flex items-center gap-2 rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige transition-colors disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </motion.svg>
-        </button>
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.15, ease: "easeOut" }}
-              role="menu"
-              aria-label="Order status"
-              className="absolute right-0 top-[calc(100%+0.5rem)] z-30 min-w-[11rem] overflow-hidden rounded-2xl border border-tan/60 bg-white p-1.5 shadow-2xl"
+            {dict.statusLabels[displayedStatus]}
+            <motion.svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+              animate={{ rotate: open ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
             >
-              {ORDER_STATUSES.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  role="menuitemradio"
-                  aria-checked={s === displayedStatus}
-                  onClick={() => {
-                    setResult(null);
-                    setPendingStatus(s);
-                    setOpen(false);
-                  }}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition-colors ${
-                    s === displayedStatus ? "bg-beige font-semibold text-terracotta-dark" : "text-espresso hover:bg-beige"
-                  }`}
-                >
-                  {dict.statusLabels[s]}
-                  {s === displayedStatus && (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                      <path d="M20 6L9 17l-5-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </motion.svg>
+          </button>
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+                role="menu"
+                aria-label="Order status"
+                className="absolute right-0 top-[calc(100%+0.5rem)] z-30 min-w-[11rem] overflow-hidden rounded-2xl border border-tan/60 bg-white p-1.5 shadow-2xl"
+              >
+                {ORDER_STATUSES.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={s === displayedStatus}
+                    onClick={() => {
+                      setResult(null);
+                      setPendingStatus(s);
+                      setOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition-colors ${
+                      s === displayedStatus ? "bg-beige font-semibold text-terracotta-dark" : "text-espresso hover:bg-beige"
+                    }`}
+                  >
+                    {dict.statusLabels[s]}
+                    {s === displayedStatus && (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {pendingStatus && (
