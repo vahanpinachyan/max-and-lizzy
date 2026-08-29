@@ -1,5 +1,6 @@
 import "server-only";
 import { randomUUID } from "crypto";
+import { getFulfillmentOption } from "@/data/fulfillment";
 
 const API_BASE = "https://api.omnisend.com/api";
 const API_VERSION = "2026-03-15";
@@ -165,5 +166,91 @@ export async function sendPlacedOrderEvent({
     }
   } catch (error) {
     console.error("[omnisend] Failed to send placed-order event:", error);
+  }
+}
+
+export type OmnisendOrderStatus = "ready_for_pickup" | "shipped" | "completed" | "cancelled";
+
+// A tag on Omnisend's built-in "order fulfilled" event (not a genuinely
+// custom event name) — the automation trigger picker only offers Omnisend's
+// fixed catalog of recognized e-commerce events (Placed order, Order
+// fulfilled, Order canceled, ...), confirmed by inspecting it directly;
+// arbitrary custom event names never showed up there even after being sent.
+// ready_for_pickup/shipped/completed all fire "order fulfilled" (they're all
+// "your order left our hands" from the customer's perspective) and are told
+// apart by this tag, via a Split step on the "Order Tags" trigger filter —
+// same Split-on-a-tag pattern the "Order Confirmation" automation already
+// uses for language. cancelled has its own dedicated built-in event instead
+// ("order canceled" — note the US spelling Omnisend's API expects), so no
+// tag is needed there. "pending" isn't here: it's the order's initial state
+// (set at creation, not via a status change) and still gets its confirmation
+// email through the existing checkout flow.
+const ORDER_STATUS_TAGS: Record<Exclude<OmnisendOrderStatus, "cancelled">, string> = {
+  ready_for_pickup: "ready-for-pickup",
+  shipped: "shipped",
+  completed: "completed",
+};
+
+/**
+ * Sends a status-change event for orders now handled by Omnisend automations
+ * instead of the plain Resend email in lib/order-emails.ts (see that file's
+ * SUBJECT_AND_BODY — the entries for these 4 statuses are unused as of this
+ * change). Returns a sent/reason pair, not void like the other functions
+ * here, because the admin order-detail page shows staff whether the
+ * notification actually went out.
+ */
+export async function sendOrderStatusEvent({
+  email,
+  orderId,
+  status,
+  totalAmd,
+  fulfillmentMethod,
+}: {
+  email: string;
+  orderId: string;
+  status: OmnisendOrderStatus;
+  totalAmd: number;
+  fulfillmentMethod: string | null;
+}): Promise<{ sent: boolean; reason?: string }> {
+  const headers = authHeaders();
+  if (!headers) {
+    return { sent: false, reason: "OMNISEND_API_KEY is not configured — see README 'Environment variables'." };
+  }
+
+  const shippingMethodLabel = fulfillmentMethod ? getFulfillmentOption(fulfillmentMethod)?.label : undefined;
+
+  try {
+    const res = await fetch(`${API_BASE}/events`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        eventName: status === "cancelled" ? "order canceled" : "order fulfilled",
+        eventID: randomUUID(),
+        origin: "api",
+        eventVersion: "v2",
+        contact: { email },
+        properties: {
+          orderID: orderId,
+          totalPrice: totalAmd,
+          currency: "AMD",
+          ...(status === "cancelled"
+            ? {}
+            : {
+                fulfillmentStatus: "fulfilled",
+                tags: [ORDER_STATUS_TAGS[status]],
+                shippingMethod: shippingMethodLabel,
+              }),
+        },
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      console.error(`[omnisend] Order-status event failed (${res.status}):`, body);
+      return { sent: false, reason: "Send failed — check server logs." };
+    }
+    return { sent: true };
+  } catch (error) {
+    console.error("[omnisend] Failed to send order-status event:", error);
+    return { sent: false, reason: "Send failed — check server logs." };
   }
 }

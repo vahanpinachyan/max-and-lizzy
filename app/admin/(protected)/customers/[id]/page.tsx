@@ -39,7 +39,7 @@ export default async function AdminCustomerDetailPage({ params }: { params: Prom
       </div>
 
       <h2 className="mt-8 font-semibold text-espresso">Order history</h2>
-      <div className="mt-3 overflow-hidden rounded-2xl border border-tan/50 bg-white">
+      <div className="mt-3 overflow-x-auto rounded-2xl border border-tan/50 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-tan/50 bg-beige/50 text-xs font-bold uppercase text-espresso/70">
             <tr>

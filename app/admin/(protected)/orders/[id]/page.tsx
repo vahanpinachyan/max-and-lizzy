@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { formatAmd, formatDate, formatShippingAddress } from "@/lib/format";
 import { localizeFulfillmentOptions } from "@/lib/i18n/localize-data";
+import { GIFT_WRAP_FEE_AMD } from "@/data/fulfillment";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
 import { SendOrderEmailButton } from "@/components/admin/SendOrderEmailButton";
 import { getAdminLocale, getAdminDictionary } from "@/lib/admin/i18n";
@@ -76,7 +77,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         )}
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-tan/50 bg-white">
+      <div className="mt-6 overflow-x-auto rounded-2xl border border-tan/50 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-tan/50 bg-beige/50 text-xs font-bold uppercase text-espresso/70">
             <tr>
@@ -110,6 +111,18 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                 <td className="px-4 py-3 text-espresso/70">{formatAmd(item.priceAmd)}</td>
               </tr>
             ))}
+            {fulfillment && fulfillment.feeAmd > 0 && (
+              <tr>
+                <td colSpan={3} className="px-4 py-3 text-espresso/70">{fulfillment.label}</td>
+                <td className="px-4 py-3 text-espresso/70">{formatAmd(fulfillment.feeAmd)}</td>
+              </tr>
+            )}
+            {order.giftWrap && (
+              <tr>
+                <td colSpan={3} className="px-4 py-3 text-espresso/70">{t.orderDetail.giftWrapFeeLine}</td>
+                <td className="px-4 py-3 text-espresso/70">{formatAmd(GIFT_WRAP_FEE_AMD)}</td>
+              </tr>
+            )}
           </tbody>
           <tfoot className="border-t border-tan/50">
             <tr>

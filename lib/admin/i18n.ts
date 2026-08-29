@@ -67,6 +67,7 @@ export interface AdminDictionary {
     qty: string;
     price: string;
     total: string;
+    giftWrapFeeLine: string;
     resendStatusEmail: string;
     sending: string;
     emailSent: string;
@@ -138,6 +139,7 @@ const en: AdminDictionary = {
     qty: "Qty",
     price: "Price",
     total: "Total",
+    giftWrapFeeLine: "Gift wrapping",
     resendStatusEmail: "Resend status email",
     sending: "Sending…",
     emailSent: "Email sent.",
@@ -209,6 +211,7 @@ const hy: AdminDictionary = {
     qty: "Քանակ",
     price: "Գին",
     total: "Ընդամենը",
+    giftWrapFeeLine: "Նվեր փաթեթավորում",
     resendStatusEmail: "Կրկին ուղարկել կարգավիճակի նամակը",
     sending: "Ուղարկվում է…",
     emailSent: "Նամակն ուղարկվել է։",
