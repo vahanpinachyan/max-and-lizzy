@@ -342,7 +342,7 @@ export default function CartPage() {
                 {fulfillmentOptions.map((option) => (
                   <label
                     key={option.id}
-                    className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
+                    className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
                       fulfillmentMethod === option.id
                         ? "border-terracotta bg-terracotta/5"
                         : "border-tan/60 hover:border-tan"
@@ -354,7 +354,7 @@ export default function CartPage() {
                       value={option.id}
                       checked={fulfillmentMethod === option.id}
                       onChange={() => setFulfillmentMethod(option.id)}
-                      className="mt-0.5 h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
+                      className="h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
                     />
                     <span className="flex-1">
                       <span className="flex items-center justify-between gap-2 font-semibold text-espresso">
@@ -382,7 +382,7 @@ export default function CartPage() {
                 ).map((option) => (
                   <label
                     key={option.id}
-                    className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
+                    className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
                       paymentMethod === option.id ? "border-terracotta bg-terracotta/5" : "border-tan/60 hover:border-tan"
                     }`}
                   >
@@ -392,7 +392,7 @@ export default function CartPage() {
                       value={option.id}
                       checked={paymentMethod === option.id}
                       onChange={() => setPaymentMethod(option.id)}
-                      className="mt-0.5 h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
+                      className="h-4 w-4 shrink-0 text-terracotta focus-visible:outline-terracotta"
                     />
                     <span className="flex-1">
                       <span className="block font-semibold text-espresso">{option.label}</span>

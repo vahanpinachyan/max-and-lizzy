@@ -30,8 +30,8 @@ const content: Record<
         ),
       },
       {
-        heading: "Delivery within Yerevan (500 AMD)",
-        body: 'Choose "Delivery within Yerevan" at checkout for delivery within 24 hours. This service costs a flat 500 AMD.',
+        heading: "Delivery within Yerevan (1,000 AMD)",
+        body: 'Choose "Delivery within Yerevan" at checkout for delivery within 24 hours. This service costs a flat 1,000 AMD.',
       },
       {
         heading: "Delivery outside Yerevan (from 1,000 AMD)",
@@ -63,8 +63,8 @@ const content: Record<
         ),
       },
       {
-        heading: "Առաքում Երևանում (500 ՀՀ դրամ)",
-        body: "Ընտրեք «Առաքում Երևանում» պատվերի ձևակերպման ժամանակ՝ 24 ժամվա ընթացքում առաքման համար։ Այս ծառայությունն արժե ֆիքսված 500 ՀՀ դրամ։",
+        heading: "Առաքում Երևանում (1,000 ՀՀ դրամ)",
+        body: "Ընտրեք «Առաքում Երևանում» պատվերի ձևակերպման ժամանակ՝ 24 ժամվա ընթացքում առաքման համար։ Այս ծառայությունն արժե ֆիքսված 1,000 ՀՀ դրամ։",
       },
       {
         heading: "Առաքում Երևանից դուրս (1,000 ՀՀ դրամից)",
@@ -96,8 +96,8 @@ const content: Record<
         ),
       },
       {
-        heading: "Доставка по Еревану (500 AMD)",
-        body: "Выберите «Доставка по Еревану» при оформлении заказа для доставки в течение 24 часов. Стоимость этой услуги — фиксированные 500 AMD.",
+        heading: "Доставка по Еревану (1 000 AMD)",
+        body: "Выберите «Доставка по Еревану» при оформлении заказа для доставки в течение 24 часов. Стоимость этой услуги — фиксированные 1 000 AMD.",
       },
       {
         heading: "Доставка за пределы Еревана (от 1 000 AMD)",

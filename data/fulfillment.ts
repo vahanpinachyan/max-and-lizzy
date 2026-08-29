@@ -17,7 +17,7 @@ export const FULFILLMENT_OPTIONS: FulfillmentOption[] = [
   },
   {
     id: "delivery_yerevan",
-    feeAmd: 500,
+    feeAmd: 1000,
     label: "Delivery within Yerevan",
     eta: "Within 24 hours",
   },
