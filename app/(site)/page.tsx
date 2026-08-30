@@ -17,6 +17,15 @@ export const metadata: Metadata = buildMetadata({
     "Shop safety-tested educational, wooden, and eco-friendly toys for babies and preschoolers. Visit our Yerevan store on Mashtots Avenue or shop online.",
   pathname: "/",
   image: "/images/hero-maxlizzy-v1.jpg",
+  keywords: [
+    "wooden toys Yerevan",
+    "educational toys Armenia",
+    "eco-friendly toys for kids",
+    "toy store Yerevan",
+    "Montessori toys Armenia",
+    "baby toys Armenia",
+    "safety-tested wooden toys",
+  ],
 });
 
 export default async function HomePage() {

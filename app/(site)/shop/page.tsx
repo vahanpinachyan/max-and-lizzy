@@ -10,6 +10,13 @@ export const metadata: Metadata = buildMetadata({
   description:
     "Browse our full collection of educational, wooden, and eco-friendly toys for babies and preschoolers, with filters for age, price, material, and brand.",
   pathname: "/shop",
+  keywords: [
+    "wooden toys Yerevan",
+    "shop wooden toys online Armenia",
+    "educational toys for babies",
+    "eco-friendly toys for toddlers",
+    "buy toys online Yerevan",
+  ],
 });
 
 export default async function ShopPage() {

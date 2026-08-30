@@ -57,6 +57,17 @@ export const metadata: Metadata = {
     template: `%s | ${site.name}`,
   },
   description: site.description,
+  keywords: [
+    "wooden toys Yerevan",
+    "educational toys Armenia",
+    "eco-friendly toys",
+    "wooden toys for kids",
+    "Montessori toys Armenia",
+    "toy store Yerevan",
+    "baby toys Armenia",
+    "toddler toys Yerevan",
+    "Max & Lizzy",
+  ],
   openGraph: {
     siteName: site.name,
     type: "website",

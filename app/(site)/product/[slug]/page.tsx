@@ -40,6 +40,13 @@ export async function generateMetadata({
     description: product.shortDescription,
     pathname: `/product/${product.slug}`,
     image: product.images[0]?.src,
+    keywords: [
+      product.name,
+      `${product.name} Yerevan`,
+      `${product.brand} toys`,
+      ...product.materials.map((m) => `${m.toLowerCase()} toys`),
+      "wooden toys Armenia",
+    ],
   });
 }
 

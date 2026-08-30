@@ -19,7 +19,7 @@ export const site = {
   emailFromName: "Max & Lizzy Toys",
   tagline: "Educational, wooden & eco-friendly toys",
   description:
-    "Max & Lizzy is a Yerevan toy store specializing in educational, wooden, and eco-friendly toys for babies and preschoolers. Visit us on Mashtots Avenue or shop online.",
+    "Max & Lizzy is a toy store in Yerevan specializing in educational, wooden, and eco-friendly toys for children. Visit us on Mashtots Avenue or shop online.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://maxandlizzy.com",
   address: {
     street: "50 Mesrop Mashtots Avenue",

@@ -116,7 +116,7 @@ export const en = {
     viewFullDetails: "View full details →",
     shopTitle: "Shop All Toys",
     shopDescription:
-      "Every toy in our collection is safety-tested and chosen for real educational value. Use the filters to find the right fit for your child.",
+      "Every toy in our collection is safety-tested and chosen for real educational value.",
     addToCartAria: "Add {name} to cart",
     soldOutAria: "{name} is sold out",
     imagesAria: "{name} images",
@@ -338,7 +338,7 @@ export const en = {
   },
   blogPage: {
     subtitle:
-      "Gift guides, age-appropriate toy advice, and educational play tips, written by our team to help you choose well, not just often.",
+      "Gift guides, age-appropriate toy advice, and educational play tips.",
     moreGuides: "More guides",
     readMore: "Read more →",
   },
@@ -346,7 +346,7 @@ export const en = {
     eyebrow: "Our Story",
     title: "Toys chosen the way we'd choose them for our own kids",
     intro:
-      "We started Max & Lizzy because we wanted a toy store we could trust for our own kids: real wood over plastic, toys built to survive years of play, and picked because they actually help children learn, not just because they're loud or trendy.",
+      "We started Max & Lizzy because we couldn't find a toy store we trusted for our own kids. So we built one: real wood over plastic, toys sturdy enough to survive years of play, and every piece chosen because it helps a child learn something.",
     whyTitle: "Why wooden, educational, and eco-friendly?",
     whyParagraph1:
       "Every product on our shelves is chosen against three questions. Is it made from honest, sustainable materials? Does it hold up to real, everyday play? And does it actually build a skill, such as fine motor control, early language, or spatial reasoning, rather than just occupying a few minutes of attention?",

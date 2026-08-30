@@ -27,6 +27,12 @@ export async function generateMetadata({
     description: `Shop ${category.name.toLowerCase()} toys: ${category.shortDescription}`,
     pathname: `/shop/${category.slug}`,
     image: category.image,
+    keywords: [
+      `${category.name.toLowerCase()} toys Yerevan`,
+      `${category.name.toLowerCase()} toys Armenia`,
+      `wooden ${category.name.toLowerCase()} toys`,
+      "educational toys Yerevan",
+    ],
   });
 }
 

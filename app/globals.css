@@ -125,6 +125,7 @@ textarea:focus-visible,
 }
 
 .scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
   height: 6px;
 }
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mascot } from "@/components/ui/Mascot";
 import { Button } from "@/components/ui/Button";
 import { useI18n } from "@/lib/i18n/context";
 import { identifyOmnisendContact } from "@/lib/omnisend-client";
@@ -135,7 +135,13 @@ export function WelcomeModal() {
               </svg>
             </button>
 
-            <Mascot className="mx-auto h-28 w-28" ariaLabel={t.mascot.ariaLabel} />
+            <Image
+              src="/images/logo-icon.png"
+              alt=""
+              width={676}
+              height={322}
+              className="mx-auto h-20 w-auto sm:h-24"
+            />
 
             {status === "success" ? (
               <>

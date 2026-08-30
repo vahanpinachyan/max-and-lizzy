@@ -12,17 +12,20 @@ export function buildMetadata({
   pathname,
   image,
   noIndex,
+  keywords,
 }: {
   title: string;
   description: string;
   pathname: string;
   image?: string;
   noIndex?: boolean;
+  keywords?: string[];
 }): Metadata {
   const url = absoluteUrl(pathname);
   return {
     title,
     description,
+    keywords: keywords?.length ? keywords : undefined,
     alternates: { canonical: url },
     robots: noIndex ? { index: false, follow: false } : { index: true, follow: true },
     openGraph: {
