@@ -28,8 +28,8 @@ export const en = {
     shopAll: "Shop All Toys",
     visitStore: "Visit Our Store",
     trustBadge: "Safety-tested & certified",
-    maxIntro: "Hi, I'm Max! I love building, wheels, and anything that moves.",
-    lizzyIntro: "Hi, I'm Lizzy! I love music, pretend play, and cozy stories.",
+    maxIntro: "Hey! I'm Max! I love building towers and playing with cars!",
+    lizzyIntro: "Hi, I'm Lizzy! I love singing and playing with my puppets!",
   },
   home: {
     featuredEyebrow: "Handpicked",
