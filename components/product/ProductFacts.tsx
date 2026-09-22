@@ -14,33 +14,37 @@ export async function ProductFacts({ product }: { product: Product }) {
         <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.brand}</dt>
         <dd className="mt-1 text-espresso">{product.brand}</dd>
       </div>
-      <div className="sm:col-span-2">
-        <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.materials}</dt>
-        <dd className="mt-1 text-espresso">{product.materials.map((m) => materialLabel(m, locale)).join(", ")}</dd>
-      </div>
-      <div className="sm:col-span-2">
-        <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.safety}</dt>
-        <dd className="mt-1">
-          <ul className="space-y-1 text-espresso">
-            {product.safetyInfo.map((info) => (
-              <li key={info} className="flex items-start gap-2">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--color-sage-dark)"
-                  className="mt-1 shrink-0"
-                  aria-hidden="true"
-                >
-                  <path d="M20 6L9 17l-5-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                {safetyInfoLabel(info, locale)}
-              </li>
-            ))}
-          </ul>
-        </dd>
-      </div>
+      {product.materials.length > 0 && (
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.materials}</dt>
+          <dd className="mt-1 text-espresso">{product.materials.map((m) => materialLabel(m, locale)).join(", ")}</dd>
+        </div>
+      )}
+      {product.safetyInfo.length > 0 && (
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.safety}</dt>
+          <dd className="mt-1">
+            <ul className="space-y-1 text-espresso">
+              {product.safetyInfo.map((info) => (
+                <li key={info} className="flex items-start gap-2">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--color-sage-dark)"
+                    className="mt-1 shrink-0"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6L9 17l-5-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {safetyInfoLabel(info, locale)}
+                </li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      )}
       {product.dimensions && (
         <div>
           <dt className="text-xs font-bold uppercase tracking-wide text-espresso/70">{t.product.dimensions}</dt>
