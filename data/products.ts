@@ -107,9 +107,140 @@ export async function getBestsellers(locale: Locale = "en"): Promise<Product[]> 
   return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
+// "You might also like". Only the original hand-curated products carry
+// relatedSlugs; everything imported via /admin CSV has none, so without a
+// fallback the section disappears on almost the whole catalogue. Curated
+// slugs still win and keep their order — we only top the list up to RELATED_COUNT.
+const RELATED_COUNT = 4;
+const AGE_ORDER: readonly string[] = ["0-3", "3-6", "6-12"];
+// At most this many suggestions from one product family, so a lift-out puzzle
+// doesn't recommend three more lift-out puzzles.
+const MAX_PER_FAMILY = 2;
+
+type RelatedCandidate = {
+  slug: string;
+  name: string;
+  priceAmd: number;
+  category: string;
+  subcategory: string;
+  ageRange: string;
+  brand: string;
+  inStock: boolean;
+  bestseller: boolean;
+  featured: boolean;
+};
+
+// Groups near-identical products ("Goki Inlay Puzzle, Africa" / ", Space") by
+// the first few words of the untranslated name, which is the part that repeats.
+function familyKey(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(" ")
+    .slice(0, 3)
+    .join(" ");
+}
+
+function relatedScore(base: RelatedCandidate, other: RelatedCandidate): number {
+  let score = 0;
+  if (other.subcategory === base.subcategory) score += 100;
+  else if (other.category === base.category) score += 40;
+
+  const baseAge = AGE_ORDER.indexOf(base.ageRange);
+  const otherAge = AGE_ORDER.indexOf(other.ageRange);
+  if (baseAge !== -1 && otherAge !== -1) {
+    const gap = Math.abs(baseAge - otherAge);
+    score += gap === 0 ? 30 : gap === 1 ? 12 : 0;
+  }
+
+  if (other.brand === base.brand) score += 10;
+
+  // Log ratio so the penalty is scale-free: a 4x difference in either
+  // direction scores 0, which keeps a 140,000 AMD pedal car out of the
+  // suggestions under a 400 AMD sliding puzzle.
+  if (base.priceAmd > 0 && other.priceAmd > 0) {
+    const ratio = Math.abs(Math.log(other.priceAmd / base.priceAmd));
+    score += Math.max(0, 40 * (1 - ratio / Math.log(4)));
+  }
+
+  if (other.inStock) score += 15;
+  if (other.bestseller) score += 6;
+  if (other.featured) score += 4;
+  return score;
+}
+
+const RELATED_SELECT = {
+  slug: true,
+  name: true,
+  priceAmd: true,
+  category: true,
+  subcategory: true,
+  ageRange: true,
+  brand: true,
+  inStock: true,
+  bestseller: true,
+  featured: true,
+} as const;
+
+async function computeRelatedSlugs(product: Product, exclude: string[], take: number): Promise<string[]> {
+  if (take <= 0) return [];
+  const skip = new Set([product.slug, ...exclude]);
+
+  // Same category first (at most a few hundred narrow rows); widen to the
+  // whole catalogue only if that isn't enough to fill the row.
+  let rows: RelatedCandidate[] = await prisma.product.findMany({
+    where: { category: product.category, slug: { notIn: Array.from(skip) } },
+    select: RELATED_SELECT,
+  });
+  if (rows.length < take) {
+    rows = await prisma.product.findMany({
+      where: { slug: { notIn: Array.from(skip) } },
+      select: RELATED_SELECT,
+    });
+  }
+
+  const base: RelatedCandidate = {
+    slug: product.slug,
+    name: product.name,
+    priceAmd: product.priceAmd,
+    category: product.category,
+    subcategory: product.subcategory,
+    ageRange: product.ageRange,
+    brand: product.brand,
+    inStock: product.inStock,
+    bestseller: product.bestseller ?? false,
+    featured: product.featured ?? false,
+  };
+
+  const ranked = rows
+    .map((row) => ({ row, score: relatedScore(base, row) }))
+    // Slug breaks ties so the row is stable between requests and deploys.
+    .sort((a, b) => b.score - a.score || a.row.slug.localeCompare(b.row.slug));
+
+  const picked: string[] = [];
+  const familyCount = new Map<string, number>();
+  for (const pass of [MAX_PER_FAMILY, Infinity]) {
+    for (const { row } of ranked) {
+      if (picked.length >= take) break;
+      if (picked.includes(row.slug)) continue;
+      const key = familyKey(row.name);
+      const used = familyCount.get(key) ?? 0;
+      if (used >= pass) continue;
+      familyCount.set(key, used + 1);
+      picked.push(row.slug);
+    }
+    if (picked.length >= take) break;
+  }
+  return picked;
+}
+
 export async function getRelatedProducts(product: Product, locale: Locale = "en"): Promise<Product[]> {
-  if (!product.relatedSlugs?.length) return [];
-  return getProductsBySlugs(product.relatedSlugs, locale);
+  const curated = (product.relatedSlugs ?? []).filter((s) => s !== product.slug);
+  const computed = await computeRelatedSlugs(product, curated, RELATED_COUNT - curated.length);
+  const slugs = [...curated, ...computed].slice(0, RELATED_COUNT);
+  if (slugs.length === 0) return [];
+  return getProductsBySlugs(slugs, locale);
 }
 
 export async function getAllMaterials(): Promise<string[]> {
