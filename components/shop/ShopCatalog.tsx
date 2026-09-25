@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
 import type { Product, AgeRange, CategoryInfo } from "@/types";
 import { ageRangeLabel, materialLabel } from "@/lib/format";
+import { productMaterialGroups } from "@/lib/materials";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { QuickViewModal } from "@/components/shop/QuickViewModal";
 import { PriceRangeFilter } from "@/components/shop/PriceRangeFilter";
@@ -86,7 +87,10 @@ export function ShopCatalog({
       result = result.filter((p) => p.priceAmd >= priceRange[0] && p.priceAmd <= priceRange[1]);
     }
     if (selectedMaterials.length) {
-      result = result.filter((p) => p.materials.some((m) => selectedMaterials.includes(m)));
+      // Match on the filter group, not the raw string — the facet lists groups.
+      result = result.filter((p) =>
+        productMaterialGroups(p.materials).some((g) => selectedMaterials.includes(g))
+      );
     }
     if (selectedBrands.length) {
       result = result.filter((p) => selectedBrands.includes(p.brand));
