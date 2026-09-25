@@ -4,6 +4,7 @@ import type { Product, ProductImage, AgeRange, Category } from "@/types";
 import type { Locale } from "@/lib/i18n/locales";
 import type { Product as DbProduct } from "@prisma/client";
 import { getRatingsMap } from "@/lib/reviews";
+import { MATERIAL_GROUPS, productMaterialGroups } from "@/lib/materials";
 
 // Product data now lives in the database (see prisma/schema.prisma) so it
 // can be managed from /admin instead of requiring a code change + deploy
@@ -243,11 +244,15 @@ export async function getRelatedProducts(product: Product, locale: Locale = "en"
   return getProductsBySlugs(slugs, locale);
 }
 
+// Returns the filter groups in use, not the raw strings. The raw values are
+// specific free text ("Food-grade silicone", "Natural hide drumhead") that
+// reads well on a product page but makes a useless facet — 56 distinct values,
+// half of them on a single product. See lib/materials.ts.
 export async function getAllMaterials(): Promise<string[]> {
   const rows = await prisma.product.findMany({ select: { materials: true } });
   const set = new Set<string>();
-  rows.forEach((r) => (JSON.parse(r.materials) as string[]).forEach((m) => set.add(m)));
-  return Array.from(set).sort();
+  rows.forEach((r) => productMaterialGroups(JSON.parse(r.materials) as string[]).forEach((g) => set.add(g)));
+  return MATERIAL_GROUPS.filter((g) => set.has(g));
 }
 
 export async function getAllBrands(): Promise<string[]> {

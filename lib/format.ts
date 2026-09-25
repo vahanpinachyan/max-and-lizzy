@@ -52,42 +52,53 @@ export function ageRangeLabel(range: string, locale: Locale = "en"): string {
 
 // Product materials are free-text on the Product row (English only), so
 // translated labels are looked up here rather than stored per-locale.
-// Filtering still matches on the original English value — only the
-// displayed label changes.
+// Covers both the raw per-product values (shown on the product page) and the
+// filter groups from lib/materials.ts (shown in the shop facet). Filtering
+// matches on the English group name — only the displayed label changes.
 const materialLabels: Record<Locale, Record<string, string>> = {
   en: {},
   hy: {
     Cardboard: "Ստվարաթուղթ",
+    Cotton: "Բամբակ",
     "Cardboard pattern cards": "Ստվարաթղթե նմուշի քարտեր",
     Cork: "Խցան",
     Fabric: "Գործվածք",
+    Felt: "Ֆետր",
     "Felt wool": "Ֆետրե բուրդ",
     "Maple wood": "Թխկու փայտ",
     Metal: "Մետաղ",
     "Metal tone bars": "Մետաղական հնչողական սալիկներ",
     "Metal wire": "Մետաղալար",
     Plastic: "Պլաստիկ",
+    Plush: "Փափուկ հյուսվածք",
+    Rubber: "Ռետին",
     Silicone: "Սիլիկոն",
     Sisal: "Սիզալ",
     "Solid beechwood": "Զանգվածեղեն բոխու փայտ",
     "Solid wood": "Զանգվածեղեն փայտ",
+    Textile: "Տեքստիլ",
     Wood: "Փայտ",
   },
   ru: {
     Cardboard: "Картон",
+    Cotton: "Хлопок",
     "Cardboard pattern cards": "Картонные карточки-образцы",
     Cork: "Пробка",
     Fabric: "Ткань",
+    Felt: "Фетр",
     "Felt wool": "Фетр",
     "Maple wood": "Древесина клёна",
     Metal: "Металл",
     "Metal tone bars": "Металлические тон-пластины",
     "Metal wire": "Металлическая проволока",
     Plastic: "Пластик",
+    Plush: "Плюш",
+    Rubber: "Резина",
     Silicone: "Силикон",
     Sisal: "Сизаль",
     "Solid beechwood": "Массив бука",
     "Solid wood": "Массив дерева",
+    Textile: "Текстиль",
     Wood: "Дерево",
   },
 };

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MATERIAL_GROUPS, productMaterialGroups } from "@/lib/materials";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { categories, getCategory } from "@/data/categories";
@@ -53,7 +54,8 @@ export default async function CategoryPage({
   const { dict: t, locale } = await getServerDictionary();
   const category = localizeCategory(rawCategory, locale);
   const categoryProducts = await getProductsByCategory(rawCategory.slug, locale);
-  const materials = Array.from(new Set(categoryProducts.flatMap((p) => p.materials))).sort();
+  const inUse = new Set(categoryProducts.flatMap((p) => productMaterialGroups(p.materials)));
+  const materials = MATERIAL_GROUPS.filter((g) => inUse.has(g));
   const brands = Array.from(new Set(categoryProducts.map((p) => p.brand))).sort();
 
   return (
