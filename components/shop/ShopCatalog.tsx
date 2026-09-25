@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
 import type { Product, AgeRange, CategoryInfo } from "@/types";
@@ -16,6 +16,24 @@ type SortKey = "featured" | "price-asc" | "price-desc" | "name-asc";
 
 const PRICE_MIN = 0;
 const PRICE_MAX = 200000;
+// Divisible by the 2 / 3 / 4 column grid, so the last row is never ragged.
+const PAGE_SIZE = 24;
+
+// Page numbers to render: always the first and last, plus a window around the
+// current one, with gaps collapsed to an ellipsis. Returns e.g. [1,"…",6,7,8,"…",30].
+function pageItems(current: number, total: number): (number | "gap")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = new Set([1, total, current, current - 1, current + 1]);
+  if (current <= 3) [2, 3, 4].forEach((n) => pages.add(n));
+  if (current >= total - 2) [total - 1, total - 2, total - 3].forEach((n) => pages.add(n));
+  const sorted = [...pages].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+  const out: (number | "gap")[] = [];
+  sorted.forEach((n, i) => {
+    if (i > 0 && n - sorted[i - 1] > 1) out.push("gap");
+    out.push(n);
+  });
+  return out;
+}
 
 function toggle<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -44,6 +62,11 @@ export function ShopCatalog({
   const [search, setSearch] = useState("");
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const gridTopRef = useRef<HTMLDivElement>(null);
+  // Set once the user actually changes pages, so the first paint doesn't
+  // scroll and deep-linking straight into the grid still lands naturally.
+  const hasPagedRef = useRef(false);
   const t = useTranslations();
   const { locale } = useI18n();
   const localizedCategory = category ? localizeCategory(category, locale) : undefined;
@@ -97,6 +120,39 @@ export function ShopCatalog({
     }
     return sorted;
   }, [products, subcategory, ageRanges, priceRange, selectedMaterials, selectedBrands, selectedPicks, search, sort]);
+
+  // Any change to the result set puts the user back on page 1 — staying on
+  // page 7 of a freshly filtered list is disorienting. Adjusted during render
+  // off the memo's identity (which already tracks exactly the filter, sort and
+  // search inputs) rather than in an effect, which would render the stale page
+  // first and then immediately re-render. This is React's documented pattern
+  // for adjusting state when inputs change.
+  const [lastFiltered, setLastFiltered] = useState(filtered);
+  let pendingPage = page;
+  if (lastFiltered !== filtered) {
+    setLastFiltered(filtered);
+    setPage(1);
+    pendingPage = 1;
+  }
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  // Clamp rather than trust state: a filter that shrinks the result set can
+  // leave `page` past the end, which would otherwise render an empty grid.
+  const currentPage = Math.min(pendingPage, totalPages);
+  const paginated = useMemo(
+    () => filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [filtered, currentPage]
+  );
+
+  useEffect(() => {
+    if (!hasPagedRef.current) return;
+    gridTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentPage]);
+
+  function goToPage(next: number) {
+    hasPagedRef.current = true;
+    setPage(Math.min(Math.max(1, next), totalPages));
+  }
 
   const priceIsActive = priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX;
   const activeFilterCount =
@@ -303,18 +359,75 @@ export function ShopCatalog({
 
         <p className="mt-4 text-sm text-espresso/70" aria-live="polite">
           {filtered.length} {filtered.length === 1 ? t.shop.productSingular : t.shop.productPlural}
+          {totalPages > 1 && (
+            <span className="ml-2 text-espresso/50">
+              {t.shop.pageOf.replace("{current}", String(currentPage)).replace("{total}", String(totalPages))}
+            </span>
+          )}
         </p>
+
+        <div ref={gridTopRef} className="scroll-mt-28" />
 
         {filtered.length === 0 ? (
           <p className="mt-10 text-center text-espresso/70">
             {t.shop.noResults}
           </p>
         ) : (
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((product) => (
-              <ProductCard key={product.slug} product={product} onQuickView={setQuickViewProduct} />
-            ))}
-          </div>
+          <>
+            <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+              {paginated.map((product) => (
+                <ProductCard key={product.slug} product={product} onQuickView={setQuickViewProduct} />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <nav
+                className="mt-10 flex flex-wrap items-center justify-center gap-2"
+                aria-label={t.shop.paginationLabel}
+              >
+                <button
+                  type="button"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="rounded-full border border-tan/70 px-4 py-2 text-sm font-medium text-espresso transition hover:bg-tan/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  {t.shop.previousPage}
+                </button>
+
+                {pageItems(currentPage, totalPages).map((item, i) =>
+                  item === "gap" ? (
+                    <span key={`gap-${i}`} aria-hidden="true" className="px-1 text-espresso/40">
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => goToPage(item)}
+                      aria-current={item === currentPage ? "page" : undefined}
+                      aria-label={t.shop.goToPage.replace("{page}", String(item))}
+                      className={
+                        item === currentPage
+                          ? "min-w-10 rounded-full bg-espresso px-3 py-2 text-sm font-bold text-cream"
+                          : "min-w-10 rounded-full border border-tan/70 px-3 py-2 text-sm font-medium text-espresso transition hover:bg-tan/30"
+                      }
+                    >
+                      {item}
+                    </button>
+                  )
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="rounded-full border border-tan/70 px-4 py-2 text-sm font-medium text-espresso transition hover:bg-tan/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  {t.shop.nextPage}
+                </button>
+              </nav>
+            )}
+          </>
         )}
       </div>
 
