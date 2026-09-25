@@ -68,6 +68,17 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Product photos are pre-optimized at source (775 files, ~47 KB average,
+    // 1200px max, progressive JPEG), so Vercel's optimizer has almost nothing
+    // left to do for them — but every variant it generates still counts
+    // against the plan's transformation quota. With 710 products across
+    // several breakpoints that quota is exhausted immediately, and once it
+    // is, /_next/image returns 402 for EVERY image and the whole storefront
+    // renders broken while the underlying files serve fine at 200.
+    // Serving the originals directly is both free and, at this file size,
+    // very close in weight. Revisit if the catalogue ever carries large
+    // unoptimized uploads: re-enabling this is a one-line change.
+    unoptimized: true,
     // Placeholder SVGs (scripts/generate-placeholder-images.mjs) are local
     // and trusted, so SVG optimization is safe to allow.
     dangerouslyAllowSVG: true,
