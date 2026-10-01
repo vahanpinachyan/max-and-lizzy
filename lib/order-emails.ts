@@ -31,6 +31,21 @@ const STORE_BLOCK = `<p style="margin:16px 0;line-height:1.6;">
 // never a dead end.
 const reviewHref = () => site.googleReviewUrl ?? site.googleMapsUrl;
 
+// ⚠️ ONLY `pending` IS SENT FROM THIS FILE.
+//
+// ready_for_pickup / shipped / completed / cancelled are sent by **Omnisend
+// automations**, not from here — see notifyOrderStatus in
+// app/admin/(protected)/orders/actions.ts, which routes every status except
+// "pending" to sendOrderStatusEvent (lib/omnisend.ts). The live copy for those
+// lives in the Omnisend dashboard, in the "Order Status Updates" and "Order
+// Cancelled" workflows, which also carry the Armenian/Russian variants and the
+// Google review link.
+//
+// The four templates below are therefore a fallback that nothing currently
+// reaches. Editing them does NOT change what a customer receives. They are kept
+// so the shop still notifies customers if Omnisend is ever removed — but if you
+// came here to change a pickup or thank-you email, the dashboard is the place.
+
 const SUBJECT_AND_BODY: Record<OrderStatus, (ctx: OrderEmailContext) => { subject: string; html: string }> = {
   pending: (ctx) => ({
     subject: `Your ${site.name} order is confirmed`,
