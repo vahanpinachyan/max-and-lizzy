@@ -10,6 +10,27 @@ interface OrderEmailContext {
   fulfillmentMethod: string | null;
 }
 
+// Minimal inline-styled building blocks. Email clients strip <style> blocks
+// and ignore most modern CSS, so anything visual has to be inline and
+// table-free enough to survive Gmail, Outlook and Apple Mail.
+const BUTTON = (href: string, label: string) =>
+  `<p style="margin:24px 0;"><a href="${href}" style="background:#6B4A32;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:999px;font-weight:bold;display:inline-block;">${label}</a></p>`;
+
+const REF = (orderId: string) =>
+  `<p style="color:#6b6b6b;font-size:14px;">Order reference: <strong>${orderId.slice(-10)}</strong></p>`;
+
+const STORE_BLOCK = `<p style="margin:16px 0;line-height:1.6;">
+  <strong>${site.name}</strong><br/>
+  ${site.address.street}, ${site.address.city}<br/>
+  Open every day, 10:00–21:00<br/>
+  <a href="${site.phoneHref}">${site.phone}</a>
+</p>`;
+
+// The direct review form if it has been configured, otherwise the Maps
+// listing — which still puts a review button one tap away, so the ask is
+// never a dead end.
+const reviewHref = () => site.googleReviewUrl ?? site.googleMapsUrl;
+
 const SUBJECT_AND_BODY: Record<OrderStatus, (ctx: OrderEmailContext) => { subject: string; html: string }> = {
   pending: (ctx) => ({
     subject: `Your ${site.name} order is confirmed`,
@@ -18,11 +39,14 @@ const SUBJECT_AND_BODY: Record<OrderStatus, (ctx: OrderEmailContext) => { subjec
            <p>Order reference: ${ctx.orderId.slice(-10)}</p>`,
   }),
   ready_for_pickup: (ctx) => ({
-    subject: `Your ${site.name} order is ready for pickup`,
+    subject: `Your ${site.name} order is ready to collect`,
     html: `<p>Hi ${ctx.customerName ?? "there"},</p>
-           <p>Good news — your order is ready for pickup at <strong>${site.address.street}, ${site.address.city}</strong>.</p>
-           <p>Order reference: ${ctx.orderId.slice(-10)}</p>
-           <p>Our hours: Mo–Su 10:00–21:00. See you soon!</p>`,
+           <p>Good news — your order is packed and waiting for you at the store.</p>
+           ${STORE_BLOCK}
+           <p>Just show this email, or give us the order reference below, and we'll hand it over.</p>
+           ${REF(ctx.orderId)}
+           ${BUTTON(site.googleMapsUrl, "Get directions")}
+           <p style="color:#6b6b6b;font-size:14px;">We'll keep it aside for you. If you need longer, or someone else is collecting on your behalf, just reply to this email and let us know.</p>`,
   }),
   shipped: (ctx) => ({
     subject: `Your ${site.name} order has shipped`,
@@ -30,12 +54,22 @@ const SUBJECT_AND_BODY: Record<OrderStatus, (ctx: OrderEmailContext) => { subjec
            <p>Your order is on its way for local delivery in Yerevan.</p>
            <p>Order reference: ${ctx.orderId.slice(-10)}</p>`,
   }),
+  // Staff set this once the order is physically in the customer's hands —
+  // collected at the counter, or delivered. It is the one moment the customer
+  // is most likely to leave a review, so this is where the Google ask goes.
   completed: (ctx) => ({
-    subject: `Thanks for shopping with ${site.name}!`,
+    subject: `Thank you for your purchase — ${site.name}`,
     html: `<p>Hi ${ctx.customerName ?? "there"},</p>
-           <p>Your order is complete — we hope your little one loves it! If anything's not right, just reply to this email.</p>
-           <p>Order reference: ${ctx.orderId.slice(-10)}</p>
-           <p><a href="${site.url}/orders/${ctx.orderId}/review">Leave a review →</a></p>`,
+           <p>${
+             ctx.fulfillmentMethod === "pickup"
+               ? "Thank you for collecting your order, and for coming to see us."
+               : "Thank you for your order — we hope it arrived safely."
+           } We hope your little one loves it.</p>
+           ${REF(ctx.orderId)}
+           <p style="margin-top:28px;">If you have a moment, a short Google review genuinely helps a small shop like ours — it is how most families in Yerevan find us.</p>
+           ${BUTTON(reviewHref(), "Leave a Google review")}
+           <p style="color:#6b6b6b;font-size:14px;">You can also <a href="${site.url}/orders/${ctx.orderId}/review">review the toys themselves</a> on our site, which helps other parents choose.</p>
+           <p style="color:#6b6b6b;font-size:14px;">If anything is not right, reply to this email and we will sort it out.</p>`,
   }),
   cancelled: (ctx) => ({
     subject: `Your ${site.name} order was cancelled`,

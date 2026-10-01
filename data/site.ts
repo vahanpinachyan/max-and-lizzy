@@ -64,6 +64,14 @@ export const site = {
   locale: "en-US",
   googleMapsEmbedSrc: `https://www.google.com/maps?q=${encodeURIComponent(GOOGLE_MAPS_QUERY)}&output=embed`,
   googleMapsQuery: GOOGLE_MAPS_QUERY,
+  googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(GOOGLE_MAPS_QUERY)}`,
+  // Direct link to the "write a review" form on our Google Business Profile.
+  // Google only exposes this per-listing, so it can't be derived from the
+  // name or address — copy it from the Business Profile dashboard ("Ask for
+  // reviews" / "Get more reviews"); it looks like https://g.page/r/XXXX/review.
+  // Unset, the thank-you email links to the Maps listing instead, where the
+  // review button is one tap away — so the email works either way.
+  googleReviewUrl: process.env.GOOGLE_REVIEW_URL || null,
   ageRanges: ["0-3", "3-6"] as const,
 } as const;
 
