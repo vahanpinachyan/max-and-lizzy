@@ -9,6 +9,7 @@ import { deleteProduct, toggleStock, bulkUpdateProducts, type BulkFlagUpdates } 
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { FlagsCell } from "@/components/admin/FlagsCell";
 import { isLowStock } from "@/lib/inventory";
+import { filterProducts } from "@/lib/admin/product-search";
 
 export type ProductRow = {
   id: string;
@@ -42,9 +43,22 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
   const [flagKey, setFlagKey] = useState<keyof BulkFlagUpdates>("featured");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [query, setQuery] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
 
-  const allSelected = products.length > 0 && selected.size === products.length;
+  // Matching rules live in lib/admin/product-search.ts so they are unit-tested
+  // without rendering this table.
+  const visible = useMemo(() => filterProducts(products, query), [products, query]);
+
+  // Bulk actions change prices, so a selection must never include rows the
+  // search has hidden — a staff member cannot see what they would be editing.
+  // Changing the query clears the selection rather than carrying it invisibly.
+  function updateQuery(next: string) {
+    setQuery(next);
+    setSelected(new Set());
+  }
+
+  const allSelected = visible.length > 0 && visible.every((p) => selected.has(p.id));
 
   function toggleOne(id: string) {
     setSelected((prev) => {
@@ -56,7 +70,10 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
   }
 
   function toggleAll() {
-    setSelected((prev) => (prev.size === products.length ? new Set() : new Set(products.map((p) => p.id))));
+    setSelected((prev) => {
+      const everyVisibleSelected = visible.length > 0 && visible.every((p) => prev.has(p.id));
+      return everyVisibleSelected ? new Set() : new Set(visible.map((p) => p.id));
+    });
   }
 
   const selectedIds = useMemo(() => Array.from(selected), [selected]);
@@ -171,6 +188,44 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
         </div>
       )}
 
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[260px]">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-espresso/40"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+          </svg>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => updateQuery(e.target.value)}
+            placeholder="Search by product name or SKU"
+            aria-label="Search products by name or SKU"
+            className="w-full rounded-xl border border-tan bg-white py-2 pl-9 pr-3 text-sm text-espresso placeholder:text-espresso/40"
+          />
+        </div>
+        {query.trim() && (
+          <p className="text-sm text-espresso/70" aria-live="polite">
+            {visible.length} of {products.length}
+            <button
+              type="button"
+              onClick={() => updateQuery("")}
+              className="ml-3 text-xs font-semibold text-espresso/60 underline hover:text-espresso"
+            >
+              Clear
+            </button>
+          </p>
+        )}
+      </div>
+
       <div className="overflow-x-auto rounded-2xl border border-tan/50 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-tan/50 bg-beige/50 text-xs font-bold uppercase text-espresso/70">
@@ -188,7 +243,7 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-tan/30">
-            {products.map((p) => {
+            {visible.map((p) => {
               const boundToggle = toggleStock.bind(null, p.id, !p.inStock);
               const boundDelete = deleteProduct.bind(null, p.id);
               return (
@@ -265,6 +320,11 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
             })}
           </tbody>
         </table>
+        {visible.length === 0 && (
+          <p className="px-4 py-10 text-center text-sm text-espresso/60">
+            No products match “{query.trim()}”. Try part of the name, or the SKU from the box.
+          </p>
+        )}
       </div>
     </div>
   );
