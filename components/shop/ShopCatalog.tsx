@@ -6,6 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import type { Product, AgeRange, CategoryInfo } from "@/types";
 import { ageRangeLabel, materialLabel } from "@/lib/format";
 import { productMaterialGroups } from "@/lib/materials";
+import { matchesShopQuery } from "@/lib/admin/product-search";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { QuickViewModal } from "@/components/shop/QuickViewModal";
 import { PriceRangeFilter } from "@/components/shop/PriceRangeFilter";
@@ -99,13 +100,8 @@ export function ShopCatalog({
       result = result.filter((p) => p.pickBy && selectedPicks.includes(p.pickBy));
     }
     if (search.trim()) {
-      const q = search.trim().toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.shortDescription.toLowerCase().includes(q) ||
-          p.materials.some((m) => m.toLowerCase().includes(q))
-      );
+      // Matching rules live in lib/admin/product-search.ts so they are tested.
+      result = result.filter((p) => matchesShopQuery(p, search));
     }
 
     const sorted = [...result];

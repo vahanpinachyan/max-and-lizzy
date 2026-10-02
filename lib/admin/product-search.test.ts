@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { filterProducts, matchesProductQuery } from "./product-search";
+import { filterProducts, matchesProductQuery, matchesShopQuery } from "./product-search";
 
 const p = (name: string, sku: string) => ({ name, sku });
 
@@ -51,5 +51,33 @@ describe("filterProducts", () => {
 
   test("returns nothing when there is no match", () => {
     expect(filterProducts(products, "zzzz")).toEqual([]);
+  });
+});
+
+describe("matchesShopQuery", () => {
+  const doudou = {
+    name: "Nattou Doudou Susie & Bonnie, Dusty Rose",
+    sku: "508483",
+    shortDescription: "A bunny comforter in dusty rose from the Susie & Bonnie range.",
+    materials: ["Soft plush"],
+  };
+
+  test("matches the SKU — the case this was added for", () => {
+    expect(matchesShopQuery(doudou, "508483")).toBe(true);
+    expect(matchesShopQuery(doudou, "5084")).toBe(true);
+  });
+
+  test("still matches name, blurb and material", () => {
+    expect(matchesShopQuery(doudou, "susie")).toBe(true);
+    expect(matchesShopQuery(doudou, "comforter")).toBe(true);
+    expect(matchesShopQuery(doudou, "plush")).toBe(true);
+  });
+
+  test("an empty term matches everything", () => {
+    expect(matchesShopQuery(doudou, "  ")).toBe(true);
+  });
+
+  test("does not match an unrelated term", () => {
+    expect(matchesShopQuery(doudou, "tractor")).toBe(false);
   });
 });
