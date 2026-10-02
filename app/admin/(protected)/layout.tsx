@@ -67,20 +67,28 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
           </Link>
         </>
       )}
+      {/* Sits with the nav rather than in the account group at the bottom of
+          the sidebar. The sidebar is as tall as the page, so on /admin/products
+          — 710 rows — the bottom group is thousands of pixels down, and getting
+          back to the storefront meant scrolling the whole catalogue. Outside
+          the manager-only block above so cashiers get it too. */}
+      <Link
+        href="/"
+        className="mt-2 block rounded-lg border-t border-tan/50 px-3 pb-2 pt-4 text-sm text-espresso/70 hover:bg-beige"
+      >
+        {t.nav.backToStore}
+      </Link>
     </>
   );
 
+  // Sign out stays down here on its own: it is rare and not something to put
+  // directly under the nav links, where it would be easy to hit by accident.
   const footerLinks = (
-    <>
-      <Link href="/" className="block rounded-lg px-3 py-2 text-sm text-espresso/70 hover:bg-beige">
-        {t.nav.backToStore}
-      </Link>
-      <form action={logoutAction}>
-        <button type="submit" className="mt-1 block w-full rounded-lg px-3 py-2 text-left text-sm text-terracotta-dark hover:bg-beige">
-          {t.nav.signOut}
-        </button>
-      </form>
-    </>
+    <form action={logoutAction}>
+      <button type="submit" className="block w-full rounded-lg px-3 py-2 text-left text-sm text-terracotta-dark hover:bg-beige">
+        {t.nav.signOut}
+      </button>
+    </form>
   );
 
   return (
