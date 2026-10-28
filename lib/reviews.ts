@@ -1,5 +1,7 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
+import { REVIEWS_CACHE_TAG, CACHE_SECONDS } from "@/lib/cache-tags";
 import type { ProductReview, ProductRating } from "@/types";
 
 function toProductReview(row: {
@@ -24,12 +26,25 @@ function toProductReview(row: {
   };
 }
 
+// Mapped to ProductReview *inside* the cache, not after it. unstable_cache
+// serializes what it stores, so a Date comes back out as a string on every
+// request after the first — a cached row handed to toProductReview would
+// throw "createdAt.toISOString is not a function" on the second view. Keep
+// every Date conversion on this side of the cache boundary.
+const cachedApprovedReviews = unstable_cache(
+  async (slug: string) => {
+    const rows = await prisma.review.findMany({
+      where: { productSlug: slug, approved: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return rows.map(toProductReview);
+  },
+  ["approved-reviews"],
+  { tags: [REVIEWS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
 export async function getApprovedReviews(slug: string): Promise<ProductReview[]> {
-  const rows = await prisma.review.findMany({
-    where: { productSlug: slug, approved: true },
-    orderBy: { createdAt: "desc" },
-  });
-  return rows.map(toProductReview);
+  return cachedApprovedReviews(slug);
 }
 
 export async function getAverageRating(slug: string): Promise<number | null> {
@@ -40,17 +55,31 @@ export async function getAverageRating(slug: string): Promise<number | null> {
   return result._avg.rating ? Math.round(result._avg.rating * 10) / 10 : null;
 }
 
+// Every approved product's rating in one grouped query. Only products that
+// actually have reviews come back, so this stays small however big the
+// catalogue gets — which is why it is cached whole and filtered in memory
+// rather than keyed on the caller's slug list. A shop page asking for 700
+// slugs would otherwise produce a 700-element cache key, and each distinct
+// slug combination its own entry.
+const cachedApprovedRatings = unstable_cache(
+  async () =>
+    prisma.review.groupBy({
+      by: ["productSlug"],
+      where: { approved: true },
+      _avg: { rating: true },
+      _count: { _all: true },
+    }),
+  ["approved-ratings"],
+  { tags: [REVIEWS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
 // Single grouped query for rating/count across many products at once, so
 // list pages (Shop, Home) don't run one query per ProductCard.
 export async function getRatingsMap(slugs: string[]): Promise<Map<string, ProductRating>> {
   const map = new Map<string, ProductRating>();
   if (slugs.length === 0) return map;
-  const grouped = await prisma.review.groupBy({
-    by: ["productSlug"],
-    where: { productSlug: { in: slugs }, approved: true },
-    _avg: { rating: true },
-    _count: { _all: true },
-  });
+  const wanted = new Set(slugs);
+  const grouped = (await cachedApprovedRatings()).filter((g) => wanted.has(g.productSlug));
   for (const g of grouped) {
     map.set(g.productSlug, {
       average: g._avg.rating ? Math.round(g._avg.rating * 10) / 10 : null,

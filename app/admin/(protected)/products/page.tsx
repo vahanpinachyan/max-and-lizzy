@@ -8,10 +8,10 @@ import { isLowStock } from "@/lib/inventory";
 export default async function AdminProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lowStock?: string }>;
+  searchParams: Promise<{ lowStock?: string; outOfStock?: string }>;
 }) {
   await requireManagerSession();
-  const { lowStock } = await searchParams;
+  const { lowStock, outOfStock } = await searchParams;
   const products = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
 
   const rows: ProductRow[] = products
@@ -34,14 +34,26 @@ export default async function AdminProductsPage({
         image: images[0]?.src ?? null,
       };
     })
-    .filter((p) => (lowStock === "1" ? isLowStock(p) : true));
+    .filter((p) => {
+      if (lowStock === "1") return isLowStock(p);
+      if (outOfStock === "1") return !p.inStock;
+      return true;
+    });
 
   const lowStockCount = products.filter((p) => isLowStock(p)).length;
+  // Counted off inStock alone, not stockQuantity: the stock sync that would
+  // populate quantities has never run, so every product's stockQuantity is
+  // null and a quantity-based count would always read zero.
+  const outOfStockCount = products.filter((p) => !p.inStock).length;
+  const filtered = lowStock === "1" || outOfStock === "1";
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-espresso">Products ({products.length})</h1>
+        <h1 className="text-2xl font-bold text-espresso">
+          Products ({rows.length}
+          {filtered && ` of ${products.length}`})
+        </h1>
         <Link
           href="/admin/products/new"
           className="rounded-full bg-wood px-5 py-2.5 text-sm font-semibold text-white hover:bg-wood-dark"
@@ -53,7 +65,7 @@ export default async function AdminProductsPage({
       <div className="mt-4 flex flex-wrap gap-2">
         <Link
           href="/admin/products"
-          className={`rounded-full px-3 py-1.5 text-sm font-semibold ${!lowStock ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
+          className={`rounded-full px-3 py-1.5 text-sm font-semibold ${!filtered ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
         >
           All
         </Link>
@@ -62,6 +74,12 @@ export default async function AdminProductsPage({
           className={`rounded-full px-3 py-1.5 text-sm font-semibold ${lowStock === "1" ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
         >
           Low stock {lowStockCount > 0 && `(${lowStockCount})`}
+        </Link>
+        <Link
+          href="/admin/products?outOfStock=1"
+          className={`rounded-full px-3 py-1.5 text-sm font-semibold ${outOfStock === "1" ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
+        >
+          Out of stock {outOfStockCount > 0 && `(${outOfStockCount})`}
         </Link>
       </div>
 

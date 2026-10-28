@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { PRODUCTS_CACHE_TAG } from "@/lib/cache-tags";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireManagerAction } from "@/lib/admin/permissions";
@@ -130,6 +131,7 @@ export async function createProduct(_prevState: { error: string | null }, formDa
     return { error: `A product with slug "${data.slug}" already exists.` };
   }
   await prisma.product.create({ data });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   redirect("/admin/products");
@@ -146,6 +148,7 @@ export async function updateProduct(id: string, _prevState: { error: string | nu
     return { error: `A product with slug "${data.slug}" already exists.` };
   }
   await prisma.product.update({ where: { id }, data });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath(`/product/${data.slug}`);
@@ -155,6 +158,7 @@ export async function updateProduct(id: string, _prevState: { error: string | nu
 export async function deleteProduct(id: string) {
   await requireManagerAction();
   await prisma.product.delete({ where: { id } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
 }
@@ -162,6 +166,7 @@ export async function deleteProduct(id: string) {
 export async function toggleStock(id: string, inStock: boolean) {
   await requireManagerAction();
   await prisma.product.update({ where: { id }, data: { inStock } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
 }
@@ -169,6 +174,7 @@ export async function toggleStock(id: string, inStock: boolean) {
 export async function setFlag(id: string, flag: "featured" | "bestseller" | "newArrival", value: boolean) {
   await requireManagerAction();
   await prisma.product.update({ where: { id }, data: { [flag]: value } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -180,6 +186,7 @@ export async function setFlag(id: string, flag: "featured" | "bestseller" | "new
 export async function setPickBy(id: string, pickBy: "max" | "lizzy" | null) {
   await requireManagerAction();
   await prisma.product.update({ where: { id }, data: { pickBy } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -226,6 +233,7 @@ export async function bulkUpdateProducts(input: {
     return { error: "Choose a price change or a tag to apply." };
   }
 
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -330,6 +338,7 @@ export async function importProductsFromCsv(formData: FormData): Promise<CsvImpo
     }
   }
 
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
