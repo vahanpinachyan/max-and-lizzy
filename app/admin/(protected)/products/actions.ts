@@ -2,6 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { PRODUCTS_CACHE_TAG } from "@/lib/cache-tags";
+import { salePriceFor } from "@/lib/pricing";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireManagerAction } from "@/lib/admin/permissions";
@@ -199,10 +200,19 @@ export type BulkFlagUpdates = Partial<Record<"featured" | "bestseller" | "newArr
 // starting one needs no new column and no schema change.
 //
 // startSale stores the pre-sale price in compareAtPriceAmd and discounts
-// priceAmd; endSale puts it back and clears the marker. Note startSale keeps
-// an existing compareAtPriceAmd rather than overwriting it: discounting an
-// already-discounted product twice must not lose the original price, or
-// "End sale" would restore the wrong number.
+// priceAmd; endSale puts it back and clears the marker.
+//
+// The discount is taken off the *regular* price (compareAtPriceAmd when the
+// product is already on sale, otherwise priceAmd), never off an already
+// discounted figure. Applying 10% across the catalogue therefore puts
+// everything at 10% off its real price rather than compounding -- a product
+// already at 20% off would otherwise land at 28% while its neighbours sat at
+// 10%, and running the same sale twice would keep cutting deeper.
+//
+// It also never raises a price: a product already discounted *below* the new
+// sale price keeps the lower one. A shopper seeing a price go up in the middle
+// of a sale is the one outcome worth engineering against, and it means an
+// existing deeper discount survives a shallower catalogue-wide one.
 export async function bulkUpdateProducts(input: {
   ids: string[];
   priceMode?: "set" | "adjustPercent" | "startSale" | "endSale";
@@ -250,7 +260,7 @@ export async function bulkUpdateProducts(input: {
           where: { id: p.id },
           data: {
             compareAtPriceAmd: p.compareAtPriceAmd ?? p.priceAmd,
-            priceAmd: Math.max(1, Math.round(p.priceAmd * (1 - priceValue / 100))),
+            priceAmd: salePriceFor(p, priceValue),
             ...flagData,
           },
         })
