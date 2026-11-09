@@ -98,9 +98,12 @@ export default async function ProductPage({
           <div className="flex flex-wrap gap-2">
             <Badge variant="sage">{ageRangeLabel(product.ageRange, locale)}</Badge>
             {product.compareAtPriceAmd && product.compareAtPriceAmd > product.priceAmd && (
-              <Badge variant="rose">
-                -{Math.round(100 - (product.priceAmd / product.compareAtPriceAmd) * 100)}%
-              </Badge>
+              <>
+                <Badge variant="rose">{t.badges.sale}</Badge>
+                <Badge variant="rose">
+                  -{Math.round(100 - (product.priceAmd / product.compareAtPriceAmd) * 100)}%
+                </Badge>
+              </>
             )}
             {product.pickBy && (
               <Badge variant={product.pickBy === "max" ? "wood" : "rose"}>
