@@ -4,6 +4,8 @@ import { BulkProductsTable, type ProductRow } from "@/components/admin/BulkProdu
 import { CsvImportForm } from "@/components/admin/CsvImportForm";
 import { requireManagerSession } from "@/lib/admin/permissions";
 import { isLowStock } from "@/lib/inventory";
+import { getAdminLocale, getAdminDictionary } from "@/lib/admin/i18n";
+import { interpolate } from "@/lib/i18n/interpolate";
 
 export default async function AdminProductsPage({
   searchParams,
@@ -11,6 +13,7 @@ export default async function AdminProductsPage({
   searchParams: Promise<{ lowStock?: string; outOfStock?: string }>;
 }) {
   await requireManagerSession();
+  const t = getAdminDictionary(await getAdminLocale()).productsList;
   const { lowStock, outOfStock } = await searchParams;
   // Only the columns the table actually renders. Selecting everything pulled
   // all three languages of description and safetyInfo as well — about 1.9MB
@@ -73,15 +76,12 @@ export default async function AdminProductsPage({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-espresso">
-          Products ({rows.length}
-          {filtered && ` of ${products.length}`})
-        </h1>
+        <h1 className="text-2xl font-bold text-espresso">{interpolate(filtered ? t.titleFiltered : t.title, { shown: rows.length, total: products.length })}</h1>
         <Link
           href="/admin/products/new"
           className="rounded-full bg-wood px-5 py-2.5 text-sm font-semibold text-white hover:bg-wood-dark"
         >
-          + Add Product
+          {t.addProduct}
         </Link>
       </div>
 
@@ -90,28 +90,28 @@ export default async function AdminProductsPage({
           href="/admin/products"
           className={`rounded-full px-3 py-1.5 text-sm font-semibold ${!filtered ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
         >
-          All
+          {t.filterAll}
         </Link>
         <Link
           href="/admin/products?lowStock=1"
           className={`rounded-full px-3 py-1.5 text-sm font-semibold ${lowStock === "1" ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
         >
-          Low stock {lowStockCount > 0 && `(${lowStockCount})`}
+          {t.filterLowStock} {lowStockCount > 0 && `(${lowStockCount})`}
         </Link>
         <Link
           href="/admin/products?outOfStock=1"
           className={`rounded-full px-3 py-1.5 text-sm font-semibold ${outOfStock === "1" ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
         >
-          Out of stock {outOfStockCount > 0 && `(${outOfStockCount})`}
+          {t.filterOutOfStock} {outOfStockCount > 0 && `(${outOfStockCount})`}
         </Link>
       </div>
 
       <div className="mt-6">
-        <CsvImportForm />
+        <CsvImportForm t={t} />
       </div>
 
       <div className="mt-6">
-        <BulkProductsTable products={rows} />
+        <BulkProductsTable products={rows} t={t} />
       </div>
     </div>
   );

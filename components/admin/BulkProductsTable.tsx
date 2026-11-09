@@ -10,6 +10,8 @@ import { DeleteButton } from "@/components/admin/DeleteButton";
 import { FlagsCell } from "@/components/admin/FlagsCell";
 import { isLowStock } from "@/lib/inventory";
 import { filterProducts } from "@/lib/admin/product-search";
+import type { AdminDictionary } from "@/lib/admin/i18n";
+import { interpolate } from "@/lib/i18n/interpolate";
 
 export type ProductRow = {
   id: string;
@@ -37,14 +39,22 @@ export type ProductRow = {
 // operates on everything the search matches.
 const PAGE_SIZE = 50;
 
-const FLAG_OPTIONS: { key: keyof BulkFlagUpdates; label: string }[] = [
-  { key: "featured", label: "Featured" },
-  { key: "bestseller", label: "Bestseller" },
-  { key: "newArrival", label: "New" },
-  { key: "onSale", label: "Sale" },
-];
+const FLAG_KEYS: (keyof BulkFlagUpdates)[] = ["featured", "bestseller", "newArrival", "onSale"];
 
-export function BulkProductsTable({ products }: { products: ProductRow[] }) {
+function flagLabel(t: AdminDictionary["productsList"], key: keyof BulkFlagUpdates): string {
+  if (key === "featured") return t.flagFeatured;
+  if (key === "bestseller") return t.flagBestseller;
+  if (key === "newArrival") return t.flagNew;
+  return t.flagSale;
+}
+
+export function BulkProductsTable({
+  products,
+  t,
+}: {
+  products: ProductRow[];
+  t: AdminDictionary["productsList"];
+}) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [priceMode, setPriceMode] = useState<"set" | "adjustPercent" | "startSale">("set");
@@ -208,29 +218,29 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
         <div ref={formRef} className="mb-4 rounded-2xl border border-wood/40 bg-wood/5 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-espresso">
-              {selected.size} product{selected.size === 1 ? "" : "s"} selected
+              {interpolate(t.selectedCount, { n: selected.size })}
             </p>
             <button
               type="button"
               onClick={() => setSelected(new Set())}
               className="text-xs font-semibold text-espresso/60 hover:text-espresso"
             >
-              Clear selection
+              {t.clearSelection}
             </button>
           </div>
 
           <div className="mt-3 flex flex-wrap items-end gap-4">
             <div className="flex items-end gap-2">
               <label className="block">
-                <span className="block text-xs font-semibold text-espresso">Price</span>
+                <span className="block text-xs font-semibold text-espresso">{t.price}</span>
                 <select
                   value={priceMode}
                   onChange={(e) => setPriceMode(e.target.value as "set" | "adjustPercent" | "startSale")}
                   className="mt-1 rounded-xl border border-tan bg-white px-2 py-2 text-sm"
                 >
-                  <option value="set">Set to (AMD)</option>
-                  <option value="adjustPercent">Adjust by (%)</option>
-                  <option value="startSale">Put on sale (% off)</option>
+                  <option value="set">{t.priceSetTo}</option>
+                  <option value="adjustPercent">{t.priceAdjustPercent}</option>
+                  <option value="startSale">{t.pricePutOnSale}</option>
                 </select>
               </label>
               <input
@@ -248,7 +258,7 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 disabled={pending || !priceValue}
                 className="rounded-full bg-wood px-4 py-2 text-sm font-semibold text-white hover:bg-wood-dark disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {priceMode === "startSale" ? "Start sale" : "Apply price"}
+                {priceMode === "startSale" ? t.startSale : t.applyPrice}
               </button>
               <button
                 type="button"
@@ -256,41 +266,41 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 disabled={pending}
                 className="rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-60"
               >
-                End sale
+                {t.endSale}
               </button>
             </div>
 
             <div className="flex items-end gap-2">
               <label className="block">
-                <span className="block text-xs font-semibold text-espresso">Scheduled sale</span>
+                <span className="block text-xs font-semibold text-espresso">{t.scheduledSale}</span>
                 <input
                   type="number"
                   min={1}
                   max={99}
                   value={salePercent}
                   onChange={(e) => setSalePercent(e.target.value)}
-                  placeholder="% off"
-                  aria-label="Scheduled sale percentage off"
+                  placeholder={t.percentOff}
+                  aria-label={t.scheduledSale}
                   className="mt-1 w-24 rounded-xl border border-tan bg-white px-3 py-2 text-sm"
                 />
               </label>
               <label className="block">
-                <span className="block text-xs font-semibold text-espresso">From</span>
+                <span className="block text-xs font-semibold text-espresso">{t.from}</span>
                 <input
                   type="date"
                   value={saleStartsOn}
                   onChange={(e) => setSaleStartsOn(e.target.value)}
-                  aria-label="Sale start date"
+                  aria-label={t.from}
                   className="mt-1 rounded-xl border border-tan bg-white px-3 py-2 text-sm"
                 />
               </label>
               <label className="block">
-                <span className="block text-xs font-semibold text-espresso">To</span>
+                <span className="block text-xs font-semibold text-espresso">{t.to}</span>
                 <input
                   type="date"
                   value={saleEndsOn}
                   onChange={(e) => setSaleEndsOn(e.target.value)}
-                  aria-label="Sale end date"
+                  aria-label={t.to}
                   className="mt-1 rounded-xl border border-tan bg-white px-3 py-2 text-sm"
                 />
               </label>
@@ -300,7 +310,7 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 disabled={pending || !salePercent || !saleStartsOn || !saleEndsOn}
                 className="rounded-full bg-wood px-4 py-2 text-sm font-semibold text-white hover:bg-wood-dark disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Schedule
+                {t.schedule}
               </button>
               <button
                 type="button"
@@ -308,20 +318,20 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 disabled={pending}
                 className="rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Cancel scheduled
+                {t.cancelScheduled}
               </button>
             </div>
 
             <div className="flex items-end gap-2">
               <label className="block">
-                <span className="block text-xs font-semibold text-espresso">Tag</span>
+                <span className="block text-xs font-semibold text-espresso">{t.tag}</span>
                 <select
                   value={flagAction}
                   onChange={(e) => setFlagAction(e.target.value as "add" | "remove")}
                   className="mt-1 rounded-xl border border-tan bg-white px-2 py-2 text-sm"
                 >
-                  <option value="add">Add</option>
-                  <option value="remove">Remove</option>
+                  <option value="add">{t.tagAdd}</option>
+                  <option value="remove">{t.tagRemove}</option>
                 </select>
               </label>
               <select
@@ -329,8 +339,10 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 onChange={(e) => setFlagKey(e.target.value as keyof BulkFlagUpdates)}
                 className="mt-1 rounded-xl border border-tan bg-white px-2 py-2 text-sm"
               >
-                {FLAG_OPTIONS.map((f) => (
-                  <option key={f.key} value={f.key}>{f.label}</option>
+                {FLAG_KEYS.map((key) => (
+                  <option key={key} value={key}>
+                    {flagLabel(t, key)}
+                  </option>
                 ))}
               </select>
               <button
@@ -339,7 +351,7 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 disabled={pending}
                 className="rounded-full bg-wood px-4 py-2 text-sm font-semibold text-white hover:bg-wood-dark disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Apply tag
+                {t.applyTag}
               </button>
             </div>
           </div>
@@ -367,20 +379,20 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
             type="search"
             value={query}
             onChange={(e) => updateQuery(e.target.value)}
-            placeholder="Search by product name or SKU"
-            aria-label="Search products by name or SKU"
+            placeholder={t.searchPlaceholder}
+            aria-label={t.searchAria}
             className="w-full rounded-xl border border-tan bg-white py-2 pl-9 pr-3 text-sm text-espresso placeholder:text-espresso/40"
           />
         </div>
         {query.trim() && (
           <p className="text-sm text-espresso/70" aria-live="polite">
-            {visible.length} of {products.length}
+            {interpolate(t.searchResults, { shown: visible.length, total: products.length })}
             <button
               type="button"
               onClick={() => updateQuery("")}
               className="ml-3 text-xs font-semibold text-espresso/60 underline hover:text-espresso"
             >
-              Clear
+              {t.clear}
             </button>
           </p>
         )}
@@ -388,13 +400,13 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
 
       {pageAllSelected && moreBeyondPage && !allMatchingSelected && (
         <div className="mb-3 rounded-xl border border-wood/30 bg-wood/5 px-4 py-2.5 text-sm text-espresso">
-          All {pageRows.length} products on this page are selected.{" "}
+          {interpolate(t.pageAllSelected, { n: pageRows.length })}{" "}
           <button
             type="button"
             onClick={selectAllMatching}
             className="font-semibold text-terracotta-dark underline underline-offset-2"
           >
-            Select all {visible.length} matching products
+            {interpolate(t.selectAllMatching, { n: visible.length })}
           </button>
         </div>
       )}
@@ -408,15 +420,15 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                   type="checkbox"
                   checked={pageAllSelected}
                   onChange={toggleAll}
-                  aria-label="Select all products on this page"
+                  aria-label={t.selectAllAria}
                 />
               </th>
-              <th className="px-4 py-3">Product</th>
-              <th className="px-4 py-3">SKU</th>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Price</th>
-              <th className="px-4 py-3">Stock</th>
-              <th className="px-4 py-3">Flags</th>
+              <th className="px-4 py-3">{t.colProduct}</th>
+              <th className="px-4 py-3">{t.colSku}</th>
+              <th className="px-4 py-3">{t.colCategory}</th>
+              <th className="px-4 py-3">{t.colPrice}</th>
+              <th className="px-4 py-3">{t.colStock}</th>
+              <th className="px-4 py-3">{t.colFlags}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -463,12 +475,12 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                           p.inStock ? "bg-sage/15 text-sage-dark" : "bg-terracotta/15 text-terracotta-dark"
                         }`}
                       >
-                        {p.inStock ? "In stock" : "Out of stock"}
+                        {p.inStock ? t.inStock : t.outOfStock}
                       </button>
                     </form>
                     {isLowStock(p) && (
                       <p className="mt-1 text-xs font-semibold text-terracotta-dark">
-                        ⚠ Low stock — {p.stockQuantity} left
+                        {interpolate(t.lowStockLeft, { n: p.stockQuantity ?? 0 })}
                       </p>
                     )}
                   </td>
@@ -480,17 +492,18 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                       newArrival={p.newArrival}
                       onSale={p.onSale}
                       pickBy={p.pickBy}
+                      t={t}
                     />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <Link href={`/admin/products/${p.id}/edit`} className="text-sm font-semibold text-terracotta-dark hover:underline">
-                        Edit
+                        {t.edit}
                       </Link>
                       <DeleteButton
                         action={boundDelete}
-                        label="Delete"
-                        confirmMessage={`Delete "${p.name}"? This can't be undone.`}
+                        label={t.deleteLabel}
+                        confirmMessage={interpolate(t.deleteConfirm, { name: p.name })}
                       />
                     </div>
                   </td>
@@ -501,27 +514,24 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
         </table>
         {visible.length === 0 && (
           <p className="px-4 py-10 text-center text-sm text-espresso/60">
-            No products match “{query.trim()}”. Try part of the name, or the SKU from the box.
+            {interpolate(t.noMatches, { query: query.trim() })}
           </p>
         )}
       </div>
 
       {totalPages > 1 && (
-        <nav className="mt-4 flex items-center justify-between gap-3" aria-label="Product pages">
+        <nav className="mt-4 flex items-center justify-between gap-3" aria-label={t.colProduct}>
           <button
             type="button"
             onClick={() => setPage(currentPage - 1)}
             disabled={currentPage === 1}
             className="rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-40"
           >
-            ← Previous
+            {t.previous}
           </button>
           <p className="text-sm text-espresso/70" aria-live="polite">
-            Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, visible.length)} of{" "}
-            {visible.length}
-            <span className="ml-2 text-espresso/50">
-              (page {currentPage} of {totalPages})
-            </span>
+            {interpolate(t.showingRange, { from: (currentPage - 1) * PAGE_SIZE + 1, to: Math.min(currentPage * PAGE_SIZE, visible.length), total: visible.length })}
+            <span className="ml-2 text-espresso/50">{interpolate(t.pageOf, { page: currentPage, total: totalPages })}</span>
           </p>
           <button
             type="button"
@@ -529,7 +539,7 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
             disabled={currentPage === totalPages}
             className="rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Next →
+            {t.next}
           </button>
         </nav>
       )}
