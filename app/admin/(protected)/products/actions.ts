@@ -194,9 +194,18 @@ export async function setPickBy(id: string, pickBy: "max" | "lizzy" | null) {
 
 export type BulkFlagUpdates = Partial<Record<"featured" | "bestseller" | "newArrival", boolean>>;
 
+// A sale is just a compare-at price above the current price -- that is what
+// already drives the "-X%" badge and the struck-through price on the shop, so
+// starting one needs no new column and no schema change.
+//
+// startSale stores the pre-sale price in compareAtPriceAmd and discounts
+// priceAmd; endSale puts it back and clears the marker. Note startSale keeps
+// an existing compareAtPriceAmd rather than overwriting it: discounting an
+// already-discounted product twice must not lose the original price, or
+// "End sale" would restore the wrong number.
 export async function bulkUpdateProducts(input: {
   ids: string[];
-  priceMode?: "set" | "adjustPercent";
+  priceMode?: "set" | "adjustPercent" | "startSale" | "endSale";
   priceValue?: number;
   flags?: BulkFlagUpdates;
 }): Promise<{ error: string | null }> {
@@ -224,6 +233,42 @@ export async function bulkUpdateProducts(input: {
         prisma.product.update({
           where: { id: p.id },
           data: { priceAmd: Math.max(0, Math.round(p.priceAmd * (1 + priceValue / 100))), ...flagData },
+        })
+      )
+    );
+  } else if (priceMode === "startSale") {
+    if (typeof priceValue !== "number" || !Number.isFinite(priceValue) || priceValue <= 0 || priceValue >= 100) {
+      return { error: "Enter a discount between 1 and 99 percent." };
+    }
+    const products = await prisma.product.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, priceAmd: true, compareAtPriceAmd: true },
+    });
+    await prisma.$transaction(
+      products.map((p) =>
+        prisma.product.update({
+          where: { id: p.id },
+          data: {
+            compareAtPriceAmd: p.compareAtPriceAmd ?? p.priceAmd,
+            priceAmd: Math.max(1, Math.round(p.priceAmd * (1 - priceValue / 100))),
+            ...flagData,
+          },
+        })
+      )
+    );
+  } else if (priceMode === "endSale") {
+    // Only products actually on sale are touched; the rest are left alone so
+    // running this over a whole-catalogue selection is safe.
+    const products = await prisma.product.findMany({
+      where: { id: { in: ids }, compareAtPriceAmd: { not: null } },
+      select: { id: true, compareAtPriceAmd: true },
+    });
+    if (products.length === 0) return { error: "None of the selected products are on sale." };
+    await prisma.$transaction(
+      products.map((p) =>
+        prisma.product.update({
+          where: { id: p.id },
+          data: { priceAmd: p.compareAtPriceAmd as number, compareAtPriceAmd: null, ...flagData },
         })
       )
     );

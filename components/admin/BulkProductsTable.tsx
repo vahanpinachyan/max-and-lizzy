@@ -45,7 +45,7 @@ const FLAG_OPTIONS: { key: keyof BulkFlagUpdates; label: string }[] = [
 export function BulkProductsTable({ products }: { products: ProductRow[] }) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [priceMode, setPriceMode] = useState<"set" | "adjustPercent">("set");
+  const [priceMode, setPriceMode] = useState<"set" | "adjustPercent" | "startSale">("set");
   const [priceValue, setPriceValue] = useState("");
   const [flagAction, setFlagAction] = useState<"add" | "remove">("add");
   const [flagKey, setFlagKey] = useState<keyof BulkFlagUpdates>("featured");
@@ -135,6 +135,17 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
     });
   }
 
+  // Restores each selected product's pre-sale price from compareAtPriceAmd.
+  // Takes no percentage, so it sits outside the price-mode dropdown.
+  function endSale() {
+    setError(null);
+    startTransition(async () => {
+      const result = await bulkUpdateProducts({ ids: selectedIds, priceMode: "endSale" });
+      if (result.error) setError(result.error);
+      else router.refresh();
+    });
+  }
+
   function applyFlag() {
     setError(null);
     startTransition(async () => {
@@ -168,18 +179,21 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 <span className="block text-xs font-semibold text-espresso">Price</span>
                 <select
                   value={priceMode}
-                  onChange={(e) => setPriceMode(e.target.value as "set" | "adjustPercent")}
+                  onChange={(e) => setPriceMode(e.target.value as "set" | "adjustPercent" | "startSale")}
                   className="mt-1 rounded-xl border border-tan bg-white px-2 py-2 text-sm"
                 >
                   <option value="set">Set to (AMD)</option>
                   <option value="adjustPercent">Adjust by (%)</option>
+                  <option value="startSale">Put on sale (% off)</option>
                 </select>
               </label>
               <input
                 type="number"
                 value={priceValue}
                 onChange={(e) => setPriceValue(e.target.value)}
-                placeholder={priceMode === "set" ? "e.g. 12000" : "e.g. -10 or 15"}
+                placeholder={
+                  priceMode === "set" ? "e.g. 12000" : priceMode === "startSale" ? "e.g. 20" : "e.g. -10 or 15"
+                }
                 className="mt-1 w-36 rounded-xl border border-tan bg-white px-3 py-2 text-sm"
               />
               <button
@@ -188,7 +202,15 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 disabled={pending || !priceValue}
                 className="rounded-full bg-wood px-4 py-2 text-sm font-semibold text-white hover:bg-wood-dark disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Apply price
+                {priceMode === "startSale" ? "Start sale" : "Apply price"}
+              </button>
+              <button
+                type="button"
+                onClick={endSale}
+                disabled={pending}
+                className="rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                End sale
               </button>
             </div>
 
