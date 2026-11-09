@@ -24,6 +24,7 @@ export type ProductRow = {
   featured: boolean;
   bestseller: boolean;
   newArrival: boolean;
+  onSale: boolean;
   pickBy: string | null;
   image: string | null;
 };
@@ -40,6 +41,7 @@ const FLAG_OPTIONS: { key: keyof BulkFlagUpdates; label: string }[] = [
   { key: "featured", label: "Featured" },
   { key: "bestseller", label: "Bestseller" },
   { key: "newArrival", label: "New" },
+  { key: "onSale", label: "Sale" },
 ];
 
 export function BulkProductsTable({ products }: { products: ProductRow[] }) {
@@ -476,6 +478,7 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                       featured={p.featured}
                       bestseller={p.bestseller}
                       newArrival={p.newArrival}
+                      onSale={p.onSale}
                       pickBy={p.pickBy}
                     />
                   </td>

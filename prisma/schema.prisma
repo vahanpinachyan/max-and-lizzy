@@ -82,6 +82,13 @@ model Product {
   bestseller Boolean @default(false)
   newArrival Boolean @default(false)
 
+  // A Sale label staff apply by hand, independent of price. The badge also
+  // appears on its own whenever a product is actually discounted (a
+  // compare-at price above the current one, or a live scheduled sale), so
+  // this is for the case where staff want the label without, or ahead of,
+  // a price change.
+  onSale     Boolean @default(false)
+
   dimensions       String?
   weightGrams      Int?
   careInstructions String?

@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { setFlag, setPickBy } from "@/app/admin/(protected)/products/actions";
 
-type FlagKey = "featured" | "bestseller" | "newArrival" | "maxPick" | "lizzyPick";
-const ALL_FLAGS: FlagKey[] = ["featured", "bestseller", "newArrival", "maxPick", "lizzyPick"];
+type FlagKey = "featured" | "bestseller" | "newArrival" | "onSale" | "maxPick" | "lizzyPick";
+const ALL_FLAGS: FlagKey[] = ["featured", "bestseller", "newArrival", "onSale", "maxPick", "lizzyPick"];
 
 const FLAG_META: Record<FlagKey, { label: string; className: string }> = {
   featured: { label: "Featured", className: "bg-terracotta/15 text-terracotta-dark" },
   bestseller: { label: "Bestseller", className: "bg-wood/15 text-wood-dark" },
   newArrival: { label: "New", className: "bg-sage/15 text-sage-dark" },
+  onSale: { label: "Sale", className: "bg-rose/15 text-rose-dark" },
   maxPick: { label: "Max's Pick", className: "bg-sage/15 text-sage-dark" },
   lizzyPick: { label: "Lizzy's Pick", className: "bg-rose/15 text-rose-dark" },
 };
@@ -19,18 +20,21 @@ export function FlagsCell({
   featured,
   bestseller,
   newArrival,
+  onSale,
   pickBy,
 }: {
   productId: string;
   featured: boolean;
   bestseller: boolean;
   newArrival: boolean;
+  onSale: boolean;
   pickBy: string | null;
 }) {
   const active: FlagKey[] = [
     ...(featured ? (["featured"] as const) : []),
     ...(bestseller ? (["bestseller"] as const) : []),
     ...(newArrival ? (["newArrival"] as const) : []),
+    ...(onSale ? (["onSale"] as const) : []),
     ...(pickBy === "max" ? (["maxPick"] as const) : []),
     ...(pickBy === "lizzy" ? (["lizzyPick"] as const) : []),
   ];

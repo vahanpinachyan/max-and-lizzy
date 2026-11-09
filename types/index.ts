@@ -55,6 +55,7 @@ export interface Product {
   featured?: boolean;
   bestseller?: boolean;
   newArrival?: boolean;
+  onSale?: boolean;
   relatedSlugs?: string[];
   dimensions?: string;
   weightGrams?: number;

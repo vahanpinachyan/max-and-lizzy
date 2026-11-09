@@ -30,6 +30,7 @@ export default async function AdminProductsPage({
       featured: true,
       bestseller: true,
       newArrival: true,
+      onSale: true,
       pickBy: true,
       images: true,
     },
@@ -51,6 +52,7 @@ export default async function AdminProductsPage({
         featured: p.featured,
         bestseller: p.bestseller,
         newArrival: p.newArrival,
+        onSale: p.onSale,
         pickBy: p.pickBy,
         image: images[0]?.src ?? null,
       };

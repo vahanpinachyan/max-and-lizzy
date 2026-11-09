@@ -59,6 +59,7 @@ function mapProduct(row: DbProduct, locale: Locale): Product {
     featured: row.featured,
     bestseller: row.bestseller,
     newArrival: row.newArrival,
+    onSale: row.onSale,
     relatedSlugs: row.relatedSlugs ? JSON.parse(row.relatedSlugs) : undefined,
     dimensions: row.dimensions ?? undefined,
     weightGrams: row.weightGrams ?? undefined,

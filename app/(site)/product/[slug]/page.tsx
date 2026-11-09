@@ -97,13 +97,13 @@ export default async function ProductPage({
         <div>
           <div className="flex flex-wrap gap-2">
             <Badge variant="sage">{ageRangeLabel(product.ageRange, locale)}</Badge>
+            {(product.onSale || (product.compareAtPriceAmd && product.compareAtPriceAmd > product.priceAmd)) && (
+              <Badge variant="rose">{t.badges.sale}</Badge>
+            )}
             {product.compareAtPriceAmd && product.compareAtPriceAmd > product.priceAmd && (
-              <>
-                <Badge variant="rose">{t.badges.sale}</Badge>
-                <Badge variant="rose">
-                  -{Math.round(100 - (product.priceAmd / product.compareAtPriceAmd) * 100)}%
-                </Badge>
-              </>
+              <Badge variant="rose">
+                -{Math.round(100 - (product.priceAmd / product.compareAtPriceAmd) * 100)}%
+              </Badge>
             )}
             {product.pickBy && (
               <Badge variant={product.pickBy === "max" ? "wood" : "rose"}>
