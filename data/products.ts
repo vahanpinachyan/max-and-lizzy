@@ -7,6 +7,7 @@ import type { Product as DbProduct } from "@prisma/client";
 import { getRatingsMap } from "@/lib/reviews";
 import { MATERIAL_GROUPS, productMaterialGroups } from "@/lib/materials";
 import { PRODUCTS_CACHE_TAG, CACHE_SECONDS } from "@/lib/cache-tags";
+import { activeSalePercent, salePriceFor } from "@/lib/pricing";
 
 // Product data now lives in the database (see prisma/schema.prisma) so it
 // can be managed from /admin instead of requiring a code change + deploy
@@ -20,13 +21,32 @@ function pick(locale: Locale, en: string, hy: string | null, ru: string | null):
 }
 
 function mapProduct(row: DbProduct, locale: Locale): Product {
+  // A scheduled sale is applied here, on read, rather than being written into
+  // priceAmd. This is the single place the rest of the app gets a price from —
+  // product pages, cards, the cart, and checkout-validation.ts, which
+  // re-derives what the customer is actually charged server-side instead of
+  // trusting the basket. Discounting here therefore reaches the charge too; a
+  // display-only discount would show a sale price and bill the full one.
+  //
+  // It is also recomputed per request. The cached fetchers above cache the raw
+  // rows, not this mapping, so a sale still starts and ends on its boundary
+  // rather than whenever the cache happens to turn over.
+  const scheduledPercent = activeSalePercent(row);
+  const onSale = scheduledPercent !== null;
+  const effectivePrice = onSale ? salePriceFor(row, scheduledPercent) : row.priceAmd;
+  // While a scheduled sale runs, the regular price is what gets struck
+  // through, which is what already drives the "-X%" badge on a product card.
+  const effectiveCompareAt = onSale
+    ? (row.compareAtPriceAmd ?? row.priceAmd)
+    : (row.compareAtPriceAmd ?? undefined);
+
   return {
     slug: row.slug,
     name: pick(locale, row.name, row.nameHy, row.nameRu),
     shortDescription: pick(locale, row.shortDescription, row.shortDescriptionHy, row.shortDescriptionRu),
     description: pick(locale, row.description, row.descriptionHy, row.descriptionRu),
-    priceAmd: row.priceAmd,
-    compareAtPriceAmd: row.compareAtPriceAmd ?? undefined,
+    priceAmd: effectivePrice,
+    compareAtPriceAmd: effectiveCompareAt,
     category: row.category as Category,
     subcategory: row.subcategory,
     ageRange: row.ageRange as AgeRange,
@@ -70,10 +90,14 @@ async function attachRatings(products: Product[]): Promise<Product[]> {
 // and the locale mapping still runs per request on the cached rows.
 //
 // Careful with Date columns: unstable_cache serializes what it stores, so
-// createdAt/updatedAt come back as strings on every request after the first.
-// mapProduct never reads them (they are only ever used for SQL ordering), so
-// these entries are safe — but anything added here that converts a Date must
-// do it inside the cached function, not on the result.
+// every Date comes back as an ISO string after the first request, while
+// TypeScript still types it as Date. createdAt/updatedAt are only ever used
+// for SQL ordering, so they are harmless — but the sale window columns are
+// read, and comparing a Date against one of those strings coerces it to NaN,
+// which makes every comparison false. That shipped once as a sale that could
+// never end. activeSalePercent in lib/pricing.ts normalises both forms;
+// anything else added here that reads a Date must do the same, or convert it
+// inside the cached function.
 //
 // getAllProducts is deliberately NOT cached: the full catalogue serializes to
 // ~1.9MB, which is at the 2MB ceiling for a single data cache entry, so it

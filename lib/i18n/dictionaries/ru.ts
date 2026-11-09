@@ -129,6 +129,7 @@ export const ru: Dictionary = {
     quickViewCloseAria: "Закрыть быстрый просмотр",
   },
   badges: {
+    sale: "Распродажа",
     bestseller: "Хит продаж",
     new: "Новинка",
     outOfStock: "Нет в наличии",

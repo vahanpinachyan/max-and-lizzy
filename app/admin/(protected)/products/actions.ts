@@ -2,7 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { PRODUCTS_CACHE_TAG } from "@/lib/cache-tags";
-import { salePriceFor } from "@/lib/pricing";
+import { salePriceFor, shopDayEnd, shopDayStart } from "@/lib/pricing";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireManagerAction } from "@/lib/admin/permissions";
@@ -215,12 +215,14 @@ export type BulkFlagUpdates = Partial<Record<"featured" | "bestseller" | "newArr
 // existing deeper discount survives a shallower catalogue-wide one.
 export async function bulkUpdateProducts(input: {
   ids: string[];
-  priceMode?: "set" | "adjustPercent" | "startSale" | "endSale";
+  priceMode?: "set" | "adjustPercent" | "startSale" | "endSale" | "scheduleSale" | "cancelScheduledSale";
   priceValue?: number;
+  saleStartsOn?: string;
+  saleEndsOn?: string;
   flags?: BulkFlagUpdates;
 }): Promise<{ error: string | null }> {
   await requireManagerAction();
-  const { ids, priceMode, priceValue, flags } = input;
+  const { ids, priceMode, priceValue, saleStartsOn, saleEndsOn, flags } = input;
   if (!ids.length) return { error: "No products selected." };
 
   const flagData = flags && Object.keys(flags).length ? flags : null;
@@ -282,6 +284,26 @@ export async function bulkUpdateProducts(input: {
         })
       )
     );
+  } else if (priceMode === "scheduleSale") {
+    if (typeof priceValue !== "number" || !Number.isFinite(priceValue) || priceValue <= 0 || priceValue >= 100) {
+      return { error: "Enter a discount between 1 and 99 percent." };
+    }
+    const startsAt = shopDayStart(saleStartsOn ?? "");
+    const endsAt = shopDayEnd(saleEndsOn ?? "");
+    if (!startsAt || !endsAt) return { error: "Pick a start and an end date." };
+    if (endsAt <= startsAt) return { error: "The sale must end after it starts." };
+    // Nothing about priceAmd changes. The discount is applied when a product
+    // is read (mapProduct), so the regular price survives the sale intact and
+    // the sale ends on its own without anything having to run.
+    await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data: { salePercent: Math.round(priceValue), saleStartsAt: startsAt, saleEndsAt: endsAt, ...flagData },
+    });
+  } else if (priceMode === "cancelScheduledSale") {
+    await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data: { salePercent: null, saleStartsAt: null, saleEndsAt: null, ...flagData },
+    });
   } else if (flagData) {
     await prisma.product.updateMany({ where: { id: { in: ids } }, data: flagData });
   } else {

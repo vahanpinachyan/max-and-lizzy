@@ -129,6 +129,7 @@ export const hy: Dictionary = {
     quickViewCloseAria: "Փակել արագ դիտումը",
   },
   badges: {
+    sale: "Զեղչ",
     bestseller: "Բեսթսելլեր",
     new: "Նոր",
     outOfStock: "Առկա չէ",

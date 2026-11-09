@@ -56,9 +56,14 @@ export function ProductCard({
         />
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1">
           {discountPct !== null && (
-            <Badge variant="rose" onImage className="justify-center leading-none">
-              -{discountPct}%
-            </Badge>
+            <>
+              <Badge variant="rose" onImage className="justify-center leading-none">
+                {t.badges.sale}
+              </Badge>
+              <Badge variant="rose" onImage className="justify-center leading-none">
+                -{discountPct}%
+              </Badge>
+            </>
           )}
           {product.pickBy && (
             <Badge

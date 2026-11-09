@@ -55,6 +55,14 @@ model Product {
   priceAmd          Int
   compareAtPriceAmd Int?
 
+  // Scheduled sale. The discount is applied when the product is read (see
+  // mapProduct in data/products.ts), not written into priceAmd, so a sale
+  // starts and ends on time without a cron job and cannot get stuck "on"
+  // because a job failed to run. priceAmd stays the regular price throughout.
+  salePercent  Int?
+  saleStartsAt DateTime?
+  saleEndsAt   DateTime?
+
   category    String
   subcategory String
   ageRange    String

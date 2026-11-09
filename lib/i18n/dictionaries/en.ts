@@ -127,6 +127,7 @@ export const en = {
     quickViewCloseAria: "Close quick view",
   },
   badges: {
+    sale: "Sale",
     bestseller: "Bestseller",
     new: "New",
     outOfStock: "Out of stock",

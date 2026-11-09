@@ -52,6 +52,9 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [query, setQuery] = useState("");
+  const [salePercent, setSalePercent] = useState("");
+  const [saleStartsOn, setSaleStartsOn] = useState("");
+  const [saleEndsOn, setSaleEndsOn] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
 
   // Matching rules live in lib/admin/product-search.ts so they are unit-tested
@@ -146,6 +149,47 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
     });
   }
 
+  // Schedules a dated sale. Unlike "Start sale" this writes no prices at all —
+  // the discount is applied when products are read, so it switches itself on
+  // and off at the dates and leaves the regular price untouched throughout.
+  function scheduleSale() {
+    setError(null);
+    const percent = Number(salePercent);
+    if (!Number.isFinite(percent) || percent <= 0 || percent >= 100) {
+      setError("Enter a discount between 1 and 99 percent.");
+      return;
+    }
+    if (!saleStartsOn || !saleEndsOn) {
+      setError("Pick a start and an end date.");
+      return;
+    }
+    startTransition(async () => {
+      const result = await bulkUpdateProducts({
+        ids: selectedIds,
+        priceMode: "scheduleSale",
+        priceValue: percent,
+        saleStartsOn,
+        saleEndsOn,
+      });
+      if (result.error) setError(result.error);
+      else {
+        setSalePercent("");
+        setSaleStartsOn("");
+        setSaleEndsOn("");
+        router.refresh();
+      }
+    });
+  }
+
+  function cancelScheduledSale() {
+    setError(null);
+    startTransition(async () => {
+      const result = await bulkUpdateProducts({ ids: selectedIds, priceMode: "cancelScheduledSale" });
+      if (result.error) setError(result.error);
+      else router.refresh();
+    });
+  }
+
   function applyFlag() {
     setError(null);
     startTransition(async () => {
@@ -211,6 +255,58 @@ export function BulkProductsTable({ products }: { products: ProductRow[] }) {
                 className="rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-60"
               >
                 End sale
+              </button>
+            </div>
+
+            <div className="flex items-end gap-2">
+              <label className="block">
+                <span className="block text-xs font-semibold text-espresso">Scheduled sale</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={99}
+                  value={salePercent}
+                  onChange={(e) => setSalePercent(e.target.value)}
+                  placeholder="% off"
+                  aria-label="Scheduled sale percentage off"
+                  className="mt-1 w-24 rounded-xl border border-tan bg-white px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="block">
+                <span className="block text-xs font-semibold text-espresso">From</span>
+                <input
+                  type="date"
+                  value={saleStartsOn}
+                  onChange={(e) => setSaleStartsOn(e.target.value)}
+                  aria-label="Sale start date"
+                  className="mt-1 rounded-xl border border-tan bg-white px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="block">
+                <span className="block text-xs font-semibold text-espresso">To</span>
+                <input
+                  type="date"
+                  value={saleEndsOn}
+                  onChange={(e) => setSaleEndsOn(e.target.value)}
+                  aria-label="Sale end date"
+                  className="mt-1 rounded-xl border border-tan bg-white px-3 py-2 text-sm"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={scheduleSale}
+                disabled={pending || !salePercent || !saleStartsOn || !saleEndsOn}
+                className="rounded-full bg-wood px-4 py-2 text-sm font-semibold text-white hover:bg-wood-dark disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Schedule
+              </button>
+              <button
+                type="button"
+                onClick={cancelScheduledSale}
+                disabled={pending}
+                className="rounded-full border border-tan bg-white px-4 py-2 text-sm font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Cancel scheduled
               </button>
             </div>
 
