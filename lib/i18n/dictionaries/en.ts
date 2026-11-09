@@ -127,6 +127,7 @@ export const en = {
     quickViewCloseAria: "Close quick view",
   },
   badges: {
+    sale: "Sale",
     bestseller: "Bestseller",
     new: "New",
     outOfStock: "Out of stock",
@@ -293,6 +294,20 @@ export const en = {
     title: "Payment didn't go through",
     body: "Your Idram payment wasn't completed. No charge was made. Please try again.",
     backToCart: "Back to cart",
+  },
+  errorPages: {
+    notFoundTitle: "We couldn't find that page",
+    notFoundBody:
+      "The link may be out of date, or the toy may no longer be in our catalogue. Everything we stock is in the shop.",
+    notFoundShop: "Browse the shop",
+    notFoundHome: "Go to the homepage",
+    errorTitle: "Something went wrong at our end",
+    errorBody:
+      "This page didn't load, and it isn't your connection. Try again in a moment — if it keeps happening, please tell us.",
+    errorRetry: "Try again",
+    errorHome: "Go to the homepage",
+    contactPrompt: "Still stuck?",
+    contactLink: "Contact us",
   },
   arcaResult: {
     paidTitle: "Payment successful",

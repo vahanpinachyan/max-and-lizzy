@@ -1,10 +1,13 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import type { Product, ProductImage, AgeRange, Category } from "@/types";
 import type { Locale } from "@/lib/i18n/locales";
 import type { Product as DbProduct } from "@prisma/client";
 import { getRatingsMap } from "@/lib/reviews";
 import { MATERIAL_GROUPS, productMaterialGroups } from "@/lib/materials";
+import { PRODUCTS_CACHE_TAG, CACHE_SECONDS } from "@/lib/cache-tags";
+import { activeSalePercent, salePriceFor } from "@/lib/pricing";
 
 // Product data now lives in the database (see prisma/schema.prisma) so it
 // can be managed from /admin instead of requiring a code change + deploy
@@ -18,13 +21,32 @@ function pick(locale: Locale, en: string, hy: string | null, ru: string | null):
 }
 
 function mapProduct(row: DbProduct, locale: Locale): Product {
+  // A scheduled sale is applied here, on read, rather than being written into
+  // priceAmd. This is the single place the rest of the app gets a price from —
+  // product pages, cards, the cart, and checkout-validation.ts, which
+  // re-derives what the customer is actually charged server-side instead of
+  // trusting the basket. Discounting here therefore reaches the charge too; a
+  // display-only discount would show a sale price and bill the full one.
+  //
+  // It is also recomputed per request. The cached fetchers above cache the raw
+  // rows, not this mapping, so a sale still starts and ends on its boundary
+  // rather than whenever the cache happens to turn over.
+  const scheduledPercent = activeSalePercent(row);
+  const onSale = scheduledPercent !== null;
+  const effectivePrice = onSale ? salePriceFor(row, scheduledPercent) : row.priceAmd;
+  // While a scheduled sale runs, the regular price is what gets struck
+  // through, which is what already drives the "-X%" badge on a product card.
+  const effectiveCompareAt = onSale
+    ? (row.compareAtPriceAmd ?? row.priceAmd)
+    : (row.compareAtPriceAmd ?? undefined);
+
   return {
     slug: row.slug,
     name: pick(locale, row.name, row.nameHy, row.nameRu),
     shortDescription: pick(locale, row.shortDescription, row.shortDescriptionHy, row.shortDescriptionRu),
     description: pick(locale, row.description, row.descriptionHy, row.descriptionRu),
-    priceAmd: row.priceAmd,
-    compareAtPriceAmd: row.compareAtPriceAmd ?? undefined,
+    priceAmd: effectivePrice,
+    compareAtPriceAmd: effectiveCompareAt,
     category: row.category as Category,
     subcategory: row.subcategory,
     ageRange: row.ageRange as AgeRange,
@@ -63,6 +85,75 @@ async function attachRatings(products: Product[]): Promise<Product[]> {
   });
 }
 
+// Cached row fetchers. These sit under the exported accessors below so that
+// callers keep the same signatures — only the database round trip is cached,
+// and the locale mapping still runs per request on the cached rows.
+//
+// Careful with Date columns: unstable_cache serializes what it stores, so
+// every Date comes back as an ISO string after the first request, while
+// TypeScript still types it as Date. createdAt/updatedAt are only ever used
+// for SQL ordering, so they are harmless — but the sale window columns are
+// read, and comparing a Date against one of those strings coerces it to NaN,
+// which makes every comparison false. That shipped once as a sale that could
+// never end. activeSalePercent in lib/pricing.ts normalises both forms;
+// anything else added here that reads a Date must do the same, or convert it
+// inside the cached function.
+//
+// getAllProducts is deliberately NOT cached: the full catalogue serializes to
+// ~1.9MB, which is at the 2MB ceiling for a single data cache entry, so it
+// would silently fail to store and grow worse with every product added. It
+// backs one route (/shop); the per-slug and per-category entries below cover
+// the 700+ product pages that crawlers actually hammer.
+const cachedProductRow = unstable_cache(
+  async (slug: string) => prisma.product.findUnique({ where: { slug } }),
+  ["product-row"],
+  { tags: [PRODUCTS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
+const cachedCategoryRows = unstable_cache(
+  async (category: string) => prisma.product.findMany({ where: { category }, orderBy: { createdAt: "asc" } }),
+  ["product-rows-by-category"],
+  { tags: [PRODUCTS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
+const cachedFlaggedRows = unstable_cache(
+  async (flag: "featured" | "bestseller") =>
+    prisma.product.findMany({ where: { [flag]: true }, orderBy: { createdAt: "asc" } }),
+  ["product-rows-by-flag"],
+  { tags: [PRODUCTS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
+const cachedRowsBySlugs = unstable_cache(
+  async (slugs: string[]) => prisma.product.findMany({ where: { slug: { in: slugs } } }),
+  ["product-rows-by-slugs"],
+  { tags: [PRODUCTS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
+// Keyed on the category alone rather than on the exclusion list, so the whole
+// catalogue shares two entries instead of one per product. The slugs to skip
+// are filtered out in memory below — same result, far fewer cache entries.
+const cachedRelatedCandidates = unstable_cache(
+  async (category: string | null) =>
+    prisma.product.findMany({
+      where: category === null ? {} : { category },
+      select: RELATED_SELECT,
+    }),
+  ["related-candidates"],
+  { tags: [PRODUCTS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
+const cachedMaterialRows = unstable_cache(
+  async () => prisma.product.findMany({ select: { materials: true } }),
+  ["product-materials"],
+  { tags: [PRODUCTS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
+const cachedBrandRows = unstable_cache(
+  async () => prisma.product.findMany({ select: { brand: true }, distinct: ["brand"] }),
+  ["product-brands"],
+  { tags: [PRODUCTS_CACHE_TAG], revalidate: CACHE_SECONDS },
+);
+
 export async function getAllProducts(locale: Locale = "en"): Promise<Product[]> {
   const rows = await prisma.product.findMany({ orderBy: { createdAt: "asc" } });
   return attachRatings(rows.map((r) => mapProduct(r, locale)));
@@ -74,7 +165,7 @@ export async function getAllProductSlugs(): Promise<string[]> {
 }
 
 export async function getProduct(slug: string, locale: Locale = "en"): Promise<Product | undefined> {
-  const row = await prisma.product.findUnique({ where: { slug } });
+  const row = await cachedProductRow(slug);
   if (!row) return undefined;
   const [withRating] = await attachRatings([mapProduct(row, locale)]);
   return withRating;
@@ -82,7 +173,7 @@ export async function getProduct(slug: string, locale: Locale = "en"): Promise<P
 
 export async function getProductsBySlugs(slugs: string[], locale: Locale = "en"): Promise<Product[]> {
   if (slugs.length === 0) return [];
-  const rows = await prisma.product.findMany({ where: { slug: { in: slugs } } });
+  const rows = await cachedRowsBySlugs(slugs);
   const bySlug = new Map(rows.map((r) => [r.slug, r]));
   // Preserve the caller's slug order (matters for related-products and
   // wishlist display order) rather than whatever order the DB returns.
@@ -94,17 +185,17 @@ export async function getProductsBySlugs(slugs: string[], locale: Locale = "en")
 }
 
 export async function getProductsByCategory(category: string, locale: Locale = "en"): Promise<Product[]> {
-  const rows = await prisma.product.findMany({ where: { category }, orderBy: { createdAt: "asc" } });
+  const rows = await cachedCategoryRows(category);
   return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
 export async function getFeaturedProducts(locale: Locale = "en"): Promise<Product[]> {
-  const rows = await prisma.product.findMany({ where: { featured: true }, orderBy: { createdAt: "asc" } });
+  const rows = await cachedFlaggedRows("featured");
   return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
 export async function getBestsellers(locale: Locale = "en"): Promise<Product[]> {
-  const rows = await prisma.product.findMany({ where: { bestseller: true }, orderBy: { createdAt: "asc" } });
+  const rows = await cachedFlaggedRows("bestseller");
   return attachRatings(rows.map((r) => mapProduct(r, locale)));
 }
 
@@ -190,15 +281,11 @@ async function computeRelatedSlugs(product: Product, exclude: string[], take: nu
 
   // Same category first (at most a few hundred narrow rows); widen to the
   // whole catalogue only if that isn't enough to fill the row.
-  let rows: RelatedCandidate[] = await prisma.product.findMany({
-    where: { category: product.category, slug: { notIn: Array.from(skip) } },
-    select: RELATED_SELECT,
-  });
+  let rows: RelatedCandidate[] = (await cachedRelatedCandidates(product.category)).filter(
+    (r) => !skip.has(r.slug),
+  );
   if (rows.length < take) {
-    rows = await prisma.product.findMany({
-      where: { slug: { notIn: Array.from(skip) } },
-      select: RELATED_SELECT,
-    });
+    rows = (await cachedRelatedCandidates(null)).filter((r) => !skip.has(r.slug));
   }
 
   const base: RelatedCandidate = {
@@ -249,13 +336,13 @@ export async function getRelatedProducts(product: Product, locale: Locale = "en"
 // reads well on a product page but makes a useless facet — 56 distinct values,
 // half of them on a single product. See lib/materials.ts.
 export async function getAllMaterials(): Promise<string[]> {
-  const rows = await prisma.product.findMany({ select: { materials: true } });
+  const rows = await cachedMaterialRows();
   const set = new Set<string>();
   rows.forEach((r) => productMaterialGroups(JSON.parse(r.materials) as string[]).forEach((g) => set.add(g)));
   return MATERIAL_GROUPS.filter((g) => set.has(g));
 }
 
 export async function getAllBrands(): Promise<string[]> {
-  const rows = await prisma.product.findMany({ select: { brand: true }, distinct: ["brand"] });
+  const rows = await cachedBrandRows();
   return rows.map((r) => r.brand).sort();
 }

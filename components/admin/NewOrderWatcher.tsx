@@ -6,7 +6,14 @@ import { useRouter } from "next/navigation";
 // How often to check for a newer order than the one the page was rendered
 // with. Not real-time — just frequent enough that staff notice a new order
 // within a reasonable window without hammering the DB.
-const POLL_INTERVAL_MS = 20000;
+//
+// Each poll costs two queries (the session lookup in requireAdminSession plus
+// the order check), and Neon only scales the compute to zero after five
+// minutes idle. A tab polling on any interval shorter than that keeps the
+// database awake around the clock, so an admin tab forgotten overnight used to
+// burn more compute than the whole month's allowance. Hence the longer gap
+// and, more importantly, the visibility gating below.
+const POLL_INTERVAL_MS = 60000;
 
 /**
  * Bottom-center toast that appears when an order has been placed since this
@@ -21,7 +28,9 @@ export function NewOrderWatcher({ latestOrderCreatedAt }: { latestOrderCreatedAt
   const [polledLatest, setPolledLatest] = useState<string | null>(null);
 
   useEffect(() => {
-    const id = setInterval(async () => {
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    async function check() {
       try {
         const res = await fetch("/api/admin/orders/latest", { cache: "no-store" });
         if (!res.ok) return;
@@ -30,8 +39,40 @@ export function NewOrderWatcher({ latestOrderCreatedAt }: { latestOrderCreatedAt
       } catch {
         // Ignore — just retried on the next interval.
       }
-    }, POLL_INTERVAL_MS);
-    return () => clearInterval(id);
+    }
+
+    function start() {
+      if (timer === null) timer = setInterval(check, POLL_INTERVAL_MS);
+    }
+
+    function stop() {
+      if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    // A background tab is nobody watching, so there is no one to show a toast
+    // to — polling on is pure cost. Coming back to the tab checks immediately
+    // rather than waiting out the interval, so returning staff see a waiting
+    // order straight away instead of a minute later.
+    function onVisibilityChange() {
+      if (document.hidden) {
+        stop();
+        return;
+      }
+      void check();
+      start();
+    }
+
+    // On mount the layout has only just rendered with a fresh timestamp, so
+    // there is nothing to catch up on — just arm the timer.
+    if (!document.hidden) start();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, []);
 
   const hasNewOrder =

@@ -129,6 +129,7 @@ export const hy: Dictionary = {
     quickViewCloseAria: "Փակել արագ դիտումը",
   },
   badges: {
+    sale: "Զեղչ",
     bestseller: "Բեսթսելլեր",
     new: "Նոր",
     outOfStock: "Առկա չէ",
@@ -295,6 +296,20 @@ export const hy: Dictionary = {
     title: "Վճարումը չկատարվեց",
     body: "Ձեր Idram վճարումը չկատարվեց։ Գումար չի գանձվել․ խնդրում ենք փորձել կրկին։",
     backToCart: "Վերադառնալ զամբյուղ",
+  },
+  errorPages: {
+    notFoundTitle: "Չկարողացանք գտնել այդ էջը",
+    notFoundBody:
+      "Հղումը կարող է հնացած լինել, կամ խաղալիքն այլևս մեր կատալոգում չէ։ Այն ամենը, ինչ ունենք, խանութում է։",
+    notFoundShop: "Դիտել խանութը",
+    notFoundHome: "Գլխավոր էջ",
+    errorTitle: "Մեր կողմից սխալ է տեղի ունեցել",
+    errorBody:
+      "Էջը չբեռնվեց, և խնդիրը ձեր կապի մեջ չէ։ Փորձեք մի փոքր ուշ — եթե կրկնվի, խնդրում ենք տեղեկացնել մեզ։",
+    errorRetry: "Փորձել կրկին",
+    errorHome: "Գլխավոր էջ",
+    contactPrompt: "Դեռ խնդի՞ր կա։",
+    contactLink: "Կապվել մեզ հետ",
   },
   arcaResult: {
     paidTitle: "Վճարումը հաջողվեց",

@@ -1,6 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { PRODUCTS_CACHE_TAG } from "@/lib/cache-tags";
+import { salePriceFor, shopDayEnd, shopDayStart } from "@/lib/pricing";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireManagerAction } from "@/lib/admin/permissions";
@@ -130,6 +132,7 @@ export async function createProduct(_prevState: { error: string | null }, formDa
     return { error: `A product with slug "${data.slug}" already exists.` };
   }
   await prisma.product.create({ data });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   redirect("/admin/products");
@@ -146,6 +149,7 @@ export async function updateProduct(id: string, _prevState: { error: string | nu
     return { error: `A product with slug "${data.slug}" already exists.` };
   }
   await prisma.product.update({ where: { id }, data });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath(`/product/${data.slug}`);
@@ -155,6 +159,7 @@ export async function updateProduct(id: string, _prevState: { error: string | nu
 export async function deleteProduct(id: string) {
   await requireManagerAction();
   await prisma.product.delete({ where: { id } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
 }
@@ -162,6 +167,7 @@ export async function deleteProduct(id: string) {
 export async function toggleStock(id: string, inStock: boolean) {
   await requireManagerAction();
   await prisma.product.update({ where: { id }, data: { inStock } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
 }
@@ -169,6 +175,7 @@ export async function toggleStock(id: string, inStock: boolean) {
 export async function setFlag(id: string, flag: "featured" | "bestseller" | "newArrival", value: boolean) {
   await requireManagerAction();
   await prisma.product.update({ where: { id }, data: { [flag]: value } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -180,6 +187,7 @@ export async function setFlag(id: string, flag: "featured" | "bestseller" | "new
 export async function setPickBy(id: string, pickBy: "max" | "lizzy" | null) {
   await requireManagerAction();
   await prisma.product.update({ where: { id }, data: { pickBy } });
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -187,14 +195,34 @@ export async function setPickBy(id: string, pickBy: "max" | "lizzy" | null) {
 
 export type BulkFlagUpdates = Partial<Record<"featured" | "bestseller" | "newArrival", boolean>>;
 
+// A sale is just a compare-at price above the current price -- that is what
+// already drives the "-X%" badge and the struck-through price on the shop, so
+// starting one needs no new column and no schema change.
+//
+// startSale stores the pre-sale price in compareAtPriceAmd and discounts
+// priceAmd; endSale puts it back and clears the marker.
+//
+// The discount is taken off the *regular* price (compareAtPriceAmd when the
+// product is already on sale, otherwise priceAmd), never off an already
+// discounted figure. Applying 10% across the catalogue therefore puts
+// everything at 10% off its real price rather than compounding -- a product
+// already at 20% off would otherwise land at 28% while its neighbours sat at
+// 10%, and running the same sale twice would keep cutting deeper.
+//
+// It also never raises a price: a product already discounted *below* the new
+// sale price keeps the lower one. A shopper seeing a price go up in the middle
+// of a sale is the one outcome worth engineering against, and it means an
+// existing deeper discount survives a shallower catalogue-wide one.
 export async function bulkUpdateProducts(input: {
   ids: string[];
-  priceMode?: "set" | "adjustPercent";
+  priceMode?: "set" | "adjustPercent" | "startSale" | "endSale" | "scheduleSale" | "cancelScheduledSale";
   priceValue?: number;
+  saleStartsOn?: string;
+  saleEndsOn?: string;
   flags?: BulkFlagUpdates;
 }): Promise<{ error: string | null }> {
   await requireManagerAction();
-  const { ids, priceMode, priceValue, flags } = input;
+  const { ids, priceMode, priceValue, saleStartsOn, saleEndsOn, flags } = input;
   if (!ids.length) return { error: "No products selected." };
 
   const flagData = flags && Object.keys(flags).length ? flags : null;
@@ -220,12 +248,69 @@ export async function bulkUpdateProducts(input: {
         })
       )
     );
+  } else if (priceMode === "startSale") {
+    if (typeof priceValue !== "number" || !Number.isFinite(priceValue) || priceValue <= 0 || priceValue >= 100) {
+      return { error: "Enter a discount between 1 and 99 percent." };
+    }
+    const products = await prisma.product.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, priceAmd: true, compareAtPriceAmd: true },
+    });
+    await prisma.$transaction(
+      products.map((p) =>
+        prisma.product.update({
+          where: { id: p.id },
+          data: {
+            compareAtPriceAmd: p.compareAtPriceAmd ?? p.priceAmd,
+            priceAmd: salePriceFor(p, priceValue),
+            ...flagData,
+          },
+        })
+      )
+    );
+  } else if (priceMode === "endSale") {
+    // Only products actually on sale are touched; the rest are left alone so
+    // running this over a whole-catalogue selection is safe.
+    const products = await prisma.product.findMany({
+      where: { id: { in: ids }, compareAtPriceAmd: { not: null } },
+      select: { id: true, compareAtPriceAmd: true },
+    });
+    if (products.length === 0) return { error: "None of the selected products are on sale." };
+    await prisma.$transaction(
+      products.map((p) =>
+        prisma.product.update({
+          where: { id: p.id },
+          data: { priceAmd: p.compareAtPriceAmd as number, compareAtPriceAmd: null, ...flagData },
+        })
+      )
+    );
+  } else if (priceMode === "scheduleSale") {
+    if (typeof priceValue !== "number" || !Number.isFinite(priceValue) || priceValue <= 0 || priceValue >= 100) {
+      return { error: "Enter a discount between 1 and 99 percent." };
+    }
+    const startsAt = shopDayStart(saleStartsOn ?? "");
+    const endsAt = shopDayEnd(saleEndsOn ?? "");
+    if (!startsAt || !endsAt) return { error: "Pick a start and an end date." };
+    if (endsAt <= startsAt) return { error: "The sale must end after it starts." };
+    // Nothing about priceAmd changes. The discount is applied when a product
+    // is read (mapProduct), so the regular price survives the sale intact and
+    // the sale ends on its own without anything having to run.
+    await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data: { salePercent: Math.round(priceValue), saleStartsAt: startsAt, saleEndsAt: endsAt, ...flagData },
+    });
+  } else if (priceMode === "cancelScheduledSale") {
+    await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data: { salePercent: null, saleStartsAt: null, saleEndsAt: null, ...flagData },
+    });
   } else if (flagData) {
     await prisma.product.updateMany({ where: { id: { in: ids } }, data: flagData });
   } else {
     return { error: "Choose a price change or a tag to apply." };
   }
 
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -330,6 +415,7 @@ export async function importProductsFromCsv(formData: FormData): Promise<CsvImpo
     }
   }
 
+  updateTag(PRODUCTS_CACHE_TAG);
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
