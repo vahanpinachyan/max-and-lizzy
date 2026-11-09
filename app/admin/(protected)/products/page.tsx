@@ -12,7 +12,28 @@ export default async function AdminProductsPage({
 }) {
   await requireManagerSession();
   const { lowStock, outOfStock } = await searchParams;
-  const products = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+  // Only the columns the table actually renders. Selecting everything pulled
+  // all three languages of description and safetyInfo as well — about 1.9MB
+  // per page load, none of which is displayed here.
+  const products = await prisma.product.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      slug: true,
+      sku: true,
+      name: true,
+      category: true,
+      priceAmd: true,
+      compareAtPriceAmd: true,
+      inStock: true,
+      stockQuantity: true,
+      featured: true,
+      bestseller: true,
+      newArrival: true,
+      pickBy: true,
+      images: true,
+    },
+  });
 
   const rows: ProductRow[] = products
     .map((p) => {
