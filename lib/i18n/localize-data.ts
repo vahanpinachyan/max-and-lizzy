@@ -144,6 +144,11 @@ interface PromotionTranslation {
 
 const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTranslation>> = {
   hy: {
+    "sale-11-11": {
+      title: "11.11 — 10% զեղչ",
+      subtitle: "10% զեղչ ողջ տեսականու վրա՝ մինչև նոյեմբերի 13-ը",
+      ctaLabel: "Դիտել զեղչերը",
+    },
     "musical-toys": {
       title: "Նոր՝ երաժշտական խաղալիքներ",
       subtitle: "Քսիլոֆոններ, թմբուկներ և մանրանկարային գործիքներ փոքրիկ երաժիշտների համար",
@@ -166,6 +171,11 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
     },
   },
   ru: {
+    "sale-11-11": {
+      title: "11.11 — скидка 10%",
+      subtitle: "Скидка 10% на весь ассортимент до 13 ноября",
+      ctaLabel: "Смотреть скидки",
+    },
     "musical-toys": {
       title: "Новинка: музыкальные игрушки",
       subtitle: "Ксилофоны, барабаны и мини-инструменты для маленьких музыкантов",
