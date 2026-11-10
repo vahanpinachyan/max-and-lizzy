@@ -1,6 +1,7 @@
 import type { CategoryInfo } from "@/types";
 import { categories as baseCategories } from "@/data/categories";
 import { promotions as basePromotions, type Promotion } from "@/data/promotions";
+import { shopDayEnd, shopDayStart } from "@/lib/pricing";
 import { FULFILLMENT_OPTIONS, type FulfillmentOption } from "@/data/fulfillment";
 import { ARMENIA_REGIONS, type ArmeniaRegion } from "@/data/armenia-regions";
 import type { Locale } from "@/lib/i18n/locales";
@@ -145,9 +146,9 @@ interface PromotionTranslation {
 const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTranslation>> = {
   hy: {
     "sale-11-11": {
-      title: "11.11 — 10% զեղչ",
+      title: "11.11 զեղչ՝ 10% ողջ տեսականու վրա",
       subtitle: "10% զեղչ ողջ տեսականու վրա՝ մինչև նոյեմբերի 13-ը",
-      ctaLabel: "Դիտել զեղչերը",
+      ctaLabel: "Այցելել խանութ",
     },
     "musical-toys": {
       title: "Նոր՝ երաժշտական խաղալիքներ",
@@ -172,9 +173,9 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
   },
   ru: {
     "sale-11-11": {
-      title: "11.11 — скидка 10%",
+      title: "11.11: скидка 10% на всё",
       subtitle: "Скидка 10% на весь ассортимент до 13 ноября",
-      ctaLabel: "Смотреть скидки",
+      ctaLabel: "Посетить магазин",
     },
     "musical-toys": {
       title: "Новинка: музыкальные игрушки",
@@ -199,10 +200,22 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
   },
 };
 
-export function localizePromotions(locale: Locale): Promotion[] {
-  if (locale === "en") return basePromotions;
+// Dates are read in shop time (Yerevan, UTC+4) so a campaign ending "13
+// November" runs to the end of that day locally, not to 04:00 as a bare date
+// parsed as UTC would.
+function isRunning(promo: Promotion, now: Date): boolean {
+  const startsAt = promo.startsOn ? shopDayStart(promo.startsOn) : null;
+  const endsAt = promo.endsOn ? shopDayEnd(promo.endsOn) : null;
+  if (startsAt && now < startsAt) return false;
+  if (endsAt && now >= endsAt) return false;
+  return true;
+}
+
+export function localizePromotions(locale: Locale, now: Date = new Date()): Promotion[] {
+  const running = basePromotions.filter((promo) => isRunning(promo, now));
+  if (locale === "en") return running;
   const translations = promotionTranslations[locale];
-  return basePromotions.map((promo) => {
+  return running.map((promo) => {
     const tr = translations[promo.slug];
     return tr ? { ...promo, ...tr } : promo;
   });

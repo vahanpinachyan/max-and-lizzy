@@ -147,3 +147,31 @@ describe("activeSalePercent with cache-serialized dates", () => {
     ).toBeNull();
   });
 });
+
+describe("promotion run windows", () => {
+  // The 11.11 slide has "valid until 13.11.2026" printed inside the artwork,
+  // so it must disappear on its own. These pin the boundary in shop time.
+  const starts = shopDayStart("2026-11-11")!;
+  const ends = shopDayEnd("2026-11-13")!;
+  const running = (now: Date) => now >= starts && now < ends;
+
+  it("is hidden the day before it starts", () => {
+    expect(running(new Date("2026-11-10T12:00:00Z"))).toBe(false);
+  });
+
+  it("is showing on the first day, from local midnight", () => {
+    expect(running(new Date("2026-11-10T20:00:00Z"))).toBe(true); // 11 Nov 00:00 Yerevan
+  });
+
+  it("is still showing late on the final day", () => {
+    expect(running(new Date("2026-11-13T19:59:00Z"))).toBe(true); // 13 Nov 23:59 Yerevan
+  });
+
+  it("is gone the moment the 14th begins in Yerevan", () => {
+    expect(running(new Date("2026-11-13T20:00:00Z"))).toBe(false); // 14 Nov 00:00 Yerevan
+  });
+
+  it("stays gone afterwards", () => {
+    expect(running(new Date("2026-11-20T09:00:00Z"))).toBe(false);
+  });
+});

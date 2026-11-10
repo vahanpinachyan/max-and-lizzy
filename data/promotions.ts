@@ -6,13 +6,14 @@ export interface Promotion {
   href: string;
   ctaLabel: string;
   /**
-   * For slides whose artwork already carries its own headline. The overlay
-   * gradient and text are skipped and the whole slide becomes the link, so the
-   * design is not printed over twice — and nothing is laid across the
-   * characters' faces, which is what happens when a centred design meets a
-   * left-aligned text block.
+   * Optional run dates, YYYY-MM-DD in shop time. A slide outside its window is
+   * not rendered at all, so a dated campaign takes itself down instead of
+   * sitting on the homepage advertising a discount that has expired — which
+   * matters most when the end date is printed inside the artwork and cannot be
+   * edited away. endsOn is inclusive: "2026-11-13" runs through all of the 13th.
    */
-  artworkOnly?: boolean;
+  startsOn?: string;
+  endsOn?: string;
 }
 
 export const promotions: Promotion[] = [
@@ -21,12 +22,13 @@ export const promotions: Promotion[] = [
     // numbers only — "11.11" and "10%" read the same in all three languages —
     // so the copy below stays translatable instead of being baked into the JPEG.
     slug: "sale-11-11",
-    title: "11.11 — 10% off everything",
+    title: "11.11 Sale: 10% off everything",
     subtitle: "Ten percent off the whole catalogue until 13 November",
     image: "/images/promotions/sale-11-11-v3.jpg",
     href: "/shop",
-    ctaLabel: "Shop the sale",
-    artworkOnly: true,
+    ctaLabel: "Visit the store",
+    startsOn: "2026-11-11",
+    endsOn: "2026-11-13",
   },
   {
     slug: "musical-toys",
