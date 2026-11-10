@@ -146,7 +146,7 @@ interface PromotionTranslation {
 const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTranslation>> = {
   hy: {
     "sale-11-11": {
-      title: "11.11 — 10% զեղչ",
+      title: "11.11 զեղչ՝ 10% ողջ տեսականու վրա",
       subtitle: "10% զեղչ ողջ տեսականու վրա՝ մինչև նոյեմբերի 13-ը",
       ctaLabel: "Այցելել խանութ",
     },
@@ -173,7 +173,7 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
   },
   ru: {
     "sale-11-11": {
-      title: "11.11 — скидка 10%",
+      title: "11.11: скидка 10% на всё",
       subtitle: "Скидка 10% на весь ассортимент до 13 ноября",
       ctaLabel: "Посетить магазин",
     },

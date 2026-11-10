@@ -22,7 +22,7 @@ export const promotions: Promotion[] = [
     // numbers only — "11.11" and "10%" read the same in all three languages —
     // so the copy below stays translatable instead of being baked into the JPEG.
     slug: "sale-11-11",
-    title: "11.11 — 10% off everything",
+    title: "11.11 Sale: 10% off everything",
     subtitle: "Ten percent off the whole catalogue until 13 November",
     image: "/images/promotions/sale-11-11-v3.jpg",
     href: "/shop",
