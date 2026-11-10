@@ -13,6 +13,15 @@ export interface Promotion {
    * left-aligned text block.
    */
   artworkOnly?: boolean;
+  /**
+   * Optional run dates, YYYY-MM-DD in shop time. A slide outside its window is
+   * not rendered at all, so a dated campaign takes itself down instead of
+   * sitting on the homepage advertising a discount that has expired — which
+   * matters most when the end date is printed inside the artwork and cannot be
+   * edited away. endsOn is inclusive: "2026-11-13" runs through all of the 13th.
+   */
+  startsOn?: string;
+  endsOn?: string;
 }
 
 export const promotions: Promotion[] = [
@@ -27,6 +36,8 @@ export const promotions: Promotion[] = [
     href: "/shop",
     ctaLabel: "Shop the sale",
     artworkOnly: true,
+    startsOn: "2026-11-10",
+    endsOn: "2026-11-13",
   },
   {
     slug: "musical-toys",
