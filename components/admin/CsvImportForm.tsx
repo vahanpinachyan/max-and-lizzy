@@ -3,8 +3,10 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { importProductsFromCsv, type CsvImportResult } from "@/app/admin/(protected)/products/actions";
+import type { AdminDictionary } from "@/lib/admin/i18n";
+import { interpolate } from "@/lib/i18n/interpolate";
 
-export function CsvImportForm() {
+export function CsvImportForm({ t }: { t: AdminDictionary["productsList"] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -31,20 +33,18 @@ export function CsvImportForm() {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between text-left text-sm font-semibold text-espresso"
       >
-        Import products from CSV
+        {t.csvToggle}
         <span className="text-espresso/50">{open ? "▲" : "▼"}</span>
       </button>
 
       {open && (
         <div className="mt-4">
           <p className="text-xs text-espresso/60">
-            Upload a CSV file to create or update products in bulk — matched by &quot;slug&quot;, so
-            re-uploading the same file updates existing products instead of duplicating them.{" "}
+            {t.csvHelp}{" "}
             <a href="/product-import-template.csv" download className="font-semibold text-terracotta-dark hover:underline">
-              Download the template
+              {t.csvDownloadTemplate}
             </a>{" "}
-            to see the expected columns. Have an Excel workbook? Save/export it as CSV first
-            (File → Save As → CSV in Excel, or File → Download → CSV in Google Sheets).
+            {t.csvExcelNote}
           </p>
 
           <form ref={formRef} onSubmit={handleSubmit} className="mt-3 flex flex-wrap items-center gap-3">
@@ -60,7 +60,7 @@ export function CsvImportForm() {
               disabled={pending}
               className="rounded-full bg-wood px-5 py-2 text-sm font-semibold text-white hover:bg-wood-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {pending ? "Importing…" : "Import"}
+              {pending ? t.csvImporting : t.csvImport}
             </button>
           </form>
 
@@ -77,7 +77,7 @@ export function CsvImportForm() {
                   {result.skipped.length > 0 && (
                     <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto text-xs text-terracotta-dark">
                       {result.skipped.map((s, i) => (
-                        <li key={i}>Row {s.row}: {s.reason}</li>
+                        <li key={i}>{interpolate(t.csvRow, { row: s.row, reason: s.reason })}</li>
                       ))}
                     </ul>
                   )}

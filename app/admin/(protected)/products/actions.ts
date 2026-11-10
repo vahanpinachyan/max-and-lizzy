@@ -90,6 +90,7 @@ function buildProductData(record: Record_) {
     featured: bool(record.featured),
     bestseller: bool(record.bestseller),
     newArrival: bool(record.newArrival),
+    onSale: bool(record.onSale),
     dimensions: str(record.dimensions),
     weightGrams: num(record.weightGrams),
     careInstructions: str(record.careInstructions),
@@ -117,6 +118,7 @@ function formDataToRecord(formData: FormData): Record_ {
   record.featured = formData.get("featured") === "on" ? "true" : "false";
   record.bestseller = formData.get("bestseller") === "on" ? "true" : "false";
   record.newArrival = formData.get("newArrival") === "on" ? "true" : "false";
+  record.onSale = formData.get("onSale") === "on" ? "true" : "false";
   record.assemblyRequired = formData.get("assemblyRequired") === "on" ? "true" : "false";
   return record;
 }
@@ -172,7 +174,7 @@ export async function toggleStock(id: string, inStock: boolean) {
   revalidatePath("/shop");
 }
 
-export async function setFlag(id: string, flag: "featured" | "bestseller" | "newArrival", value: boolean) {
+export async function setFlag(id: string, flag: "featured" | "bestseller" | "newArrival" | "onSale", value: boolean) {
   await requireManagerAction();
   await prisma.product.update({ where: { id }, data: { [flag]: value } });
   updateTag(PRODUCTS_CACHE_TAG);
@@ -193,7 +195,7 @@ export async function setPickBy(id: string, pickBy: "max" | "lizzy" | null) {
   revalidatePath("/");
 }
 
-export type BulkFlagUpdates = Partial<Record<"featured" | "bestseller" | "newArrival", boolean>>;
+export type BulkFlagUpdates = Partial<Record<"featured" | "bestseller" | "newArrival" | "onSale", boolean>>;
 
 // A sale is just a compare-at price above the current price -- that is what
 // already drives the "-X%" badge and the struck-through price on the shop, so
@@ -394,6 +396,7 @@ export async function importProductsFromCsv(formData: FormData): Promise<CsvImpo
     record.featured = csvBool(record.featured ?? undefined, false);
     record.bestseller = csvBool(record.bestseller ?? undefined, false);
     record.newArrival = csvBool(record.newArrival ?? undefined, false);
+    record.onSale = csvBool(record.onSale ?? undefined, false);
 
     const data = buildProductData(record);
     if (!data.slug || !data.name || !data.sku) {

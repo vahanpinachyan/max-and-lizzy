@@ -31,6 +31,7 @@ export interface ProductFormInitial {
   featured: boolean;
   bestseller: boolean;
   newArrival: boolean;
+  onSale: boolean;
   dimensions: string;
   weightGrams: number | "";
   careInstructions: string;
@@ -73,6 +74,7 @@ export const emptyProduct: ProductFormInitial = {
   featured: false,
   bestseller: false,
   newArrival: false,
+  onSale: false,
   dimensions: "",
   weightGrams: "",
   careInstructions: "",
@@ -299,6 +301,10 @@ export function ProductForm({
           <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
             <input type="checkbox" name="newArrival" defaultChecked={initial.newArrival} className="form-checkbox" />
             New badge
+          </label>
+          <label className="flex items-center gap-2 text-sm font-semibold text-espresso">
+            <input type="checkbox" name="onSale" defaultChecked={initial.onSale} className="form-checkbox" />
+            Sale badge
           </label>
         </div>
       </section>

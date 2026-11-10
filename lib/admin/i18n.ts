@@ -80,6 +80,80 @@ export interface AdminDictionary {
     statusUpdatedNotified: string;
     statusUpdatedNoEmail: string;
   };
+  // Every value here is a plain string, deliberately. This object is handed
+  // to BulkProductsTable, a Client Component, and React cannot serialize a
+  // function across that boundary — a `(n) => ...` entry fails at request time
+  // with "Functions cannot be passed directly to Client Components", not at
+  // build time. Counts and names go in as {placeholders} and are filled with
+  // interpolate() at the call site.
+  productsList: {
+    title: string;
+    titleFiltered: string;
+    addProduct: string;
+    filterAll: string;
+    filterLowStock: string;
+    filterOutOfStock: string;
+    selectedCount: string;
+    clearSelection: string;
+    price: string;
+    priceSetTo: string;
+    priceAdjustPercent: string;
+    pricePutOnSale: string;
+    pricePlaceholderSet: string;
+    pricePlaceholderAdjust: string;
+    pricePlaceholderSale: string;
+    applyPrice: string;
+    startSale: string;
+    endSale: string;
+    scheduledSale: string;
+    percentOff: string;
+    from: string;
+    to: string;
+    schedule: string;
+    cancelScheduled: string;
+    tag: string;
+    tagAdd: string;
+    tagRemove: string;
+    applyTag: string;
+    searchPlaceholder: string;
+    searchAria: string;
+    searchResults: string;
+    clear: string;
+    pageAllSelected: string;
+    selectAllMatching: string;
+    selectAllAria: string;
+    colProduct: string;
+    colSku: string;
+    colCategory: string;
+    colPrice: string;
+    colStock: string;
+    colFlags: string;
+    inStock: string;
+    outOfStock: string;
+    lowStockLeft: string;
+    edit: string;
+    deleteLabel: string;
+    deleteConfirm: string;
+    noMatches: string;
+    previous: string;
+    next: string;
+    showingRange: string;
+    pageOf: string;
+    flagFeatured: string;
+    flagBestseller: string;
+    flagNew: string;
+    flagSale: string;
+    flagMaxPick: string;
+    flagLizzyPick: string;
+    addFlagAria: string;
+    csvToggle: string;
+    csvHelp: string;
+    csvDownloadTemplate: string;
+    csvExcelNote: string;
+    csvImport: string;
+    csvImporting: string;
+    csvRow: string;
+  };
 }
 
 const en: AdminDictionary = {
@@ -152,6 +226,74 @@ const en: AdminDictionary = {
     statusUpdatedNotified: "Status updated and customer notified.",
     statusUpdatedNoEmail: "Status updated, but the email wasn't sent",
   },
+  productsList: {
+    title: "Products ({total})",
+    titleFiltered: "Products ({shown} of {total})",
+    addProduct: "+ Add Product",
+    filterAll: "All",
+    filterLowStock: "Low stock",
+    filterOutOfStock: "Out of stock",
+    selectedCount: "{n} selected",
+    clearSelection: "Clear selection",
+    price: "Price",
+    priceSetTo: "Set to (AMD)",
+    priceAdjustPercent: "Adjust by (%)",
+    pricePutOnSale: "Put on sale (% off)",
+    pricePlaceholderSet: "e.g. 12000",
+    pricePlaceholderAdjust: "e.g. -10 or 15",
+    pricePlaceholderSale: "e.g. 20",
+    applyPrice: "Apply price",
+    startSale: "Start sale",
+    endSale: "End sale",
+    scheduledSale: "Scheduled sale",
+    percentOff: "% off",
+    from: "From",
+    to: "To",
+    schedule: "Schedule",
+    cancelScheduled: "Cancel scheduled",
+    tag: "Tag",
+    tagAdd: "Add",
+    tagRemove: "Remove",
+    applyTag: "Apply tag",
+    searchPlaceholder: "Search by product name or SKU",
+    searchAria: "Search products by name or SKU",
+    searchResults: "{shown} of {total}",
+    clear: "Clear",
+    pageAllSelected: "All {n} products on this page are selected.",
+    selectAllMatching: "Select all {n} matching products",
+    selectAllAria: "Select all products on this page",
+    colProduct: "Product",
+    colSku: "SKU",
+    colCategory: "Category",
+    colPrice: "Price",
+    colStock: "Stock",
+    colFlags: "Flags",
+    inStock: "In stock",
+    outOfStock: "Out of stock",
+    lowStockLeft: "⚠ Low stock — {n} left",
+    edit: "Edit",
+    deleteLabel: "Delete",
+    deleteConfirm: "Delete \"{name}\"? This can't be undone.",
+    noMatches: "No products match “{query}”. Try part of the name, or the SKU from the box.",
+    previous: "← Previous",
+    next: "Next →",
+    showingRange: "Showing {from}–{to} of {total}",
+    pageOf: "(page {page} of {total})",
+    flagFeatured: "Featured",
+    flagBestseller: "Bestseller",
+    flagNew: "New",
+    flagSale: "Sale",
+    flagMaxPick: "Max's Pick",
+    flagLizzyPick: "Lizzy's Pick",
+    addFlagAria: "Add tag",
+    csvToggle: "Import products from CSV",
+    csvHelp: "Upload a CSV file to create or update products in bulk — matched by \"slug\", so re-uploading the same file updates existing products instead of duplicating them.",
+    csvDownloadTemplate: "Download the template",
+    csvExcelNote: "to see the expected columns. Have an Excel workbook? Save/export it as CSV first (File → Save As → CSV in Excel, or File → Download → CSV in Google Sheets).",
+    csvImport: "Import",
+    csvImporting: "Importing…",
+    csvRow: "Row {row}: {reason}",
+  },
 };
 
 const hy: AdminDictionary = {
@@ -223,6 +365,74 @@ const hy: AdminDictionary = {
     updating: "Թարմացվում է…",
     statusUpdatedNotified: "Կարգավիճակը թարմացվեց, հաճախորդին տեղեկացվել է։",
     statusUpdatedNoEmail: "Կարգավիճակը թարմացվեց, բայց նամակը չուղարկվեց",
+  },
+  productsList: {
+    title: "Ապրանքներ ({total})",
+    titleFiltered: "Ապրանքներ ({shown} {total}-ից)",
+    addProduct: "+ Ավելացնել ապրանք",
+    filterAll: "Բոլորը",
+    filterLowStock: "Քիչ պաշար",
+    filterOutOfStock: "Առկա չէ",
+    selectedCount: "Ընտրված է {n} ապրանք",
+    clearSelection: "Մաքրել ընտրությունը",
+    price: "Գին",
+    priceSetTo: "Սահմանել (դրամ)",
+    priceAdjustPercent: "Փոխել (%)",
+    pricePutOnSale: "Զեղչել (%)",
+    pricePlaceholderSet: "օր.՝ 12000",
+    pricePlaceholderAdjust: "օր.՝ -10 կամ 15",
+    pricePlaceholderSale: "օր.՝ 20",
+    applyPrice: "Կիրառել գինը",
+    startSale: "Սկսել զեղչը",
+    endSale: "Ավարտել զեղչը",
+    scheduledSale: "Պլանավորված զեղչ",
+    percentOff: "% զեղչ",
+    from: "Սկսած",
+    to: "Մինչև",
+    schedule: "Պլանավորել",
+    cancelScheduled: "Չեղարկել պլանավորվածը",
+    tag: "Պիտակ",
+    tagAdd: "Ավելացնել",
+    tagRemove: "Հեռացնել",
+    applyTag: "Կիրառել պիտակը",
+    searchPlaceholder: "Որոնել ըստ անվան կամ SKU-ի",
+    searchAria: "Որոնել ապրանքներ ըստ անվան կամ SKU-ի",
+    searchResults: "{shown} {total}-ից",
+    clear: "Մաքրել",
+    pageAllSelected: "Այս էջի բոլոր {n} ապրանքներն ընտրված են։",
+    selectAllMatching: "Ընտրել բոլոր {n} համապատասխան ապրանքները",
+    selectAllAria: "Ընտրել այս էջի բոլոր ապրանքները",
+    colProduct: "Ապրանք",
+    colSku: "SKU",
+    colCategory: "Կատեգորիա",
+    colPrice: "Գին",
+    colStock: "Պաշար",
+    colFlags: "Պիտակներ",
+    inStock: "Առկա է",
+    outOfStock: "Առկա չէ",
+    lowStockLeft: "⚠ Քիչ պաշար — մնացել է {n}",
+    edit: "Խմբագրել",
+    deleteLabel: "Ջնջել",
+    deleteConfirm: "Ջնջե՞լ «{name}»-ը։ Այս գործողությունը հնարավոր չէ հետարկել։",
+    noMatches: "«{query}»-ին համապատասխան ապրանք չգտնվեց։ Փորձեք անվան մի մասը կամ SKU-ն։",
+    previous: "← Նախորդ",
+    next: "Հաջորդ →",
+    showingRange: "Ցուցադրվում է {from}–{to} {total}-ից",
+    pageOf: "(էջ {page} {total}-ից)",
+    flagFeatured: "Ընտրված",
+    flagBestseller: "Հիթ վաճառք",
+    flagNew: "Նոր",
+    flagSale: "Զեղչ",
+    flagMaxPick: "Մաքսի ընտրությունը",
+    flagLizzyPick: "Լիզզիի ընտրությունը",
+    addFlagAria: "Ավելացնել պիտակ",
+    csvToggle: "Ներմուծել ապրանքներ CSV-ից",
+    csvHelp: "Վերբեռնեք CSV ֆայլ՝ ապրանքները խմբով ստեղծելու կամ թարմացնելու համար․ համեմատումը կատարվում է «slug»-ով, այնպես որ նույն ֆայլը կրկին վերբեռնելը թարմացնում է առկա ապրանքները, այլ ոչ թե կրկնօրինակում դրանք։",
+    csvDownloadTemplate: "Ներբեռնել ձևանմուշը",
+    csvExcelNote: "՝ ակնկալվող սյունակները տեսնելու համար։ Excel-ի ֆայլ ունե՞ք․ նախ պահպանեք այն CSV ձևաչափով (Excel-ում՝ File → Save As → CSV, Google Sheets-ում՝ File → Download → CSV)։",
+    csvImport: "Ներմուծել",
+    csvImporting: "Ներմուծվում է…",
+    csvRow: "Տող {row}՝ {reason}",
   },
 };
 

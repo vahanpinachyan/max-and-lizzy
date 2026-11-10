@@ -55,15 +55,17 @@ export function ProductCard({
           }
         />
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1">
+          {/* The label shows for a hand-applied Sale tag as well as for a real
+              discount; the percentage only when there is one to state. */}
+          {(discountPct !== null || product.onSale) && (
+            <Badge variant="rose" onImage className="justify-center leading-none">
+              {t.badges.sale}
+            </Badge>
+          )}
           {discountPct !== null && (
-            <>
-              <Badge variant="rose" onImage className="justify-center leading-none">
-                {t.badges.sale}
-              </Badge>
-              <Badge variant="rose" onImage className="justify-center leading-none">
-                -{discountPct}%
-              </Badge>
-            </>
+            <Badge variant="rose" onImage className="justify-center leading-none">
+              -{discountPct}%
+            </Badge>
           )}
           {product.pickBy && (
             <Badge

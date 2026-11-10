@@ -2,35 +2,59 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { setFlag, setPickBy } from "@/app/admin/(protected)/products/actions";
+import type { AdminDictionary } from "@/lib/admin/i18n";
 
-type FlagKey = "featured" | "bestseller" | "newArrival" | "maxPick" | "lizzyPick";
-const ALL_FLAGS: FlagKey[] = ["featured", "bestseller", "newArrival", "maxPick", "lizzyPick"];
+type FlagKey = "featured" | "bestseller" | "newArrival" | "onSale" | "maxPick" | "lizzyPick";
+const ALL_FLAGS: FlagKey[] = ["featured", "bestseller", "newArrival", "onSale", "maxPick", "lizzyPick"];
 
-const FLAG_META: Record<FlagKey, { label: string; className: string }> = {
-  featured: { label: "Featured", className: "bg-terracotta/15 text-terracotta-dark" },
-  bestseller: { label: "Bestseller", className: "bg-wood/15 text-wood-dark" },
-  newArrival: { label: "New", className: "bg-sage/15 text-sage-dark" },
-  maxPick: { label: "Max's Pick", className: "bg-sage/15 text-sage-dark" },
-  lizzyPick: { label: "Lizzy's Pick", className: "bg-rose/15 text-rose-dark" },
+const FLAG_CLASS: Record<FlagKey, string> = {
+  featured: "bg-terracotta/15 text-terracotta-dark",
+  bestseller: "bg-wood/15 text-wood-dark",
+  newArrival: "bg-sage/15 text-sage-dark",
+  onSale: "bg-rose/15 text-rose-dark",
+  maxPick: "bg-sage/15 text-sage-dark",
+  lizzyPick: "bg-rose/15 text-rose-dark",
 };
+
+function flagLabel(t: AdminDictionary["productsList"], key: FlagKey): string {
+  switch (key) {
+    case "featured":
+      return t.flagFeatured;
+    case "bestseller":
+      return t.flagBestseller;
+    case "newArrival":
+      return t.flagNew;
+    case "onSale":
+      return t.flagSale;
+    case "maxPick":
+      return t.flagMaxPick;
+    case "lizzyPick":
+      return t.flagLizzyPick;
+  }
+}
 
 export function FlagsCell({
   productId,
   featured,
   bestseller,
   newArrival,
+  onSale,
   pickBy,
+  t,
 }: {
   productId: string;
   featured: boolean;
   bestseller: boolean;
   newArrival: boolean;
+  onSale: boolean;
   pickBy: string | null;
+  t: AdminDictionary["productsList"];
 }) {
   const active: FlagKey[] = [
     ...(featured ? (["featured"] as const) : []),
     ...(bestseller ? (["bestseller"] as const) : []),
     ...(newArrival ? (["newArrival"] as const) : []),
+    ...(onSale ? (["onSale"] as const) : []),
     ...(pickBy === "max" ? (["maxPick"] as const) : []),
     ...(pickBy === "lizzy" ? (["lizzyPick"] as const) : []),
   ];
@@ -70,10 +94,10 @@ export function FlagsCell({
           type="button"
           disabled={pending}
           onClick={() => toggleFlag(flag, false)}
-          title={`Remove "${FLAG_META[flag].label}"`}
-          className={`group flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold leading-none ${FLAG_META[flag].className} disabled:cursor-not-allowed disabled:opacity-60`}
+          title={`${t.tagRemove}: ${flagLabel(t, flag)}`}
+          className={`group flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold leading-none ${FLAG_CLASS[flag]} disabled:cursor-not-allowed disabled:opacity-60`}
         >
-          {FLAG_META[flag].label}
+          {flagLabel(t, flag)}
           <span className="inline-block w-2 text-center text-espresso/50 opacity-0 transition-opacity group-hover:opacity-100">✕</span>
         </button>
       ))}
@@ -84,7 +108,7 @@ export function FlagsCell({
             type="button"
             onClick={() => setOpen((v) => !v)}
             className="flex h-5 w-5 items-center justify-center rounded-full border border-dashed border-tan text-xs text-espresso/50 hover:border-espresso/40 hover:text-espresso"
-            aria-label="Add flag"
+            aria-label={t.addFlagAria}
             aria-expanded={open}
           >
             +
@@ -99,7 +123,7 @@ export function FlagsCell({
                   onClick={() => toggleFlag(flag, true)}
                   className="block w-full rounded-lg px-2 py-1.5 text-left text-xs font-semibold text-espresso hover:bg-beige disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  + {FLAG_META[flag].label}
+                  + {flagLabel(t, flag)}
                 </button>
               ))}
             </div>
