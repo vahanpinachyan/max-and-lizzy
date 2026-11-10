@@ -148,7 +148,7 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
     "sale-11-11": {
       title: "11.11 — 10% զեղչ",
       subtitle: "10% զեղչ ողջ տեսականու վրա՝ մինչև նոյեմբերի 13-ը",
-      ctaLabel: "Դիտել զեղչերը",
+      ctaLabel: "Այցելել խանութ",
     },
     "musical-toys": {
       title: "Նոր՝ երաժշտական խաղալիքներ",
@@ -175,7 +175,7 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
     "sale-11-11": {
       title: "11.11 — скидка 10%",
       subtitle: "Скидка 10% на весь ассортимент до 13 ноября",
-      ctaLabel: "Смотреть скидки",
+      ctaLabel: "Посетить магазин",
     },
     "musical-toys": {
       title: "Новинка: музыкальные игрушки",

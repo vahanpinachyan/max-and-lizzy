@@ -6,14 +6,6 @@ export interface Promotion {
   href: string;
   ctaLabel: string;
   /**
-   * For slides whose artwork already carries its own headline. The overlay
-   * gradient and text are skipped and the whole slide becomes the link, so the
-   * design is not printed over twice — and nothing is laid across the
-   * characters' faces, which is what happens when a centred design meets a
-   * left-aligned text block.
-   */
-  artworkOnly?: boolean;
-  /**
    * Optional run dates, YYYY-MM-DD in shop time. A slide outside its window is
    * not rendered at all, so a dated campaign takes itself down instead of
    * sitting on the homepage advertising a discount that has expired — which
@@ -34,8 +26,7 @@ export const promotions: Promotion[] = [
     subtitle: "Ten percent off the whole catalogue until 13 November",
     image: "/images/promotions/sale-11-11-v3.jpg",
     href: "/shop",
-    ctaLabel: "Shop the sale",
-    artworkOnly: true,
+    ctaLabel: "Visit the store",
     startsOn: "2026-11-10",
     endsOn: "2026-11-13",
   },
