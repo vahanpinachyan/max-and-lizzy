@@ -127,21 +127,32 @@ export function PromoCarousel() {
               className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="100vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-espresso/60 via-espresso/20 to-transparent" />
-            <div className="relative z-10 px-6 sm:px-20 lg:px-24">
-              <p className="max-w-md text-2xl font-bold text-cream sm:text-3xl">{promo.title}</p>
-              <p className="mt-2 max-w-sm text-sm text-cream/90 sm:text-base">{promo.subtitle}</p>
+            {promo.artworkOnly ? (
               <Link
                 href={promo.href}
+                aria-label={promo.ctaLabel}
+                className="absolute inset-0 z-10"
                 tabIndex={i === index ? 0 : -1}
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-cream px-5 py-2 text-sm font-semibold text-espresso transition-colors hover:bg-terracotta hover:text-white"
-              >
-                {promo.ctaLabel}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path d="M5 12h14M13 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
-            </div>
+              />
+            ) : (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-r from-espresso/60 via-espresso/20 to-transparent" />
+                <div className="relative z-10 px-6 sm:px-20 lg:px-24">
+                  <p className="max-w-md text-2xl font-bold text-cream sm:text-3xl">{promo.title}</p>
+                  <p className="mt-2 max-w-sm text-sm text-cream/90 sm:text-base">{promo.subtitle}</p>
+                  <Link
+                    href={promo.href}
+                    tabIndex={i === index ? 0 : -1}
+                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-cream px-5 py-2 text-sm font-semibold text-espresso transition-colors hover:bg-terracotta hover:text-white"
+                  >
+                    {promo.ctaLabel}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                      <path d="M5 12h14M13 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>

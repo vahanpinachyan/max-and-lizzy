@@ -5,9 +5,29 @@ export interface Promotion {
   image: string;
   href: string;
   ctaLabel: string;
+  /**
+   * For slides whose artwork already carries its own headline. The overlay
+   * gradient and text are skipped and the whole slide becomes the link, so the
+   * design is not printed over twice — and nothing is laid across the
+   * characters' faces, which is what happens when a centred design meets a
+   * left-aligned text block.
+   */
+  artworkOnly?: boolean;
 }
 
 export const promotions: Promotion[] = [
+  {
+    // Leads the carousel while the 11.11 sale runs. The artwork carries the
+    // numbers only — "11.11" and "10%" read the same in all three languages —
+    // so the copy below stays translatable instead of being baked into the JPEG.
+    slug: "sale-11-11",
+    title: "11.11 — 10% off everything",
+    subtitle: "Ten percent off the whole catalogue until 13 November",
+    image: "/images/promotions/sale-11-11-v3.jpg",
+    href: "/shop",
+    ctaLabel: "Shop the sale",
+    artworkOnly: true,
+  },
   {
     slug: "musical-toys",
     title: "New: Musical Toys",
