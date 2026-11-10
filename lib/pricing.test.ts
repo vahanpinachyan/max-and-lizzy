@@ -151,16 +151,16 @@ describe("activeSalePercent with cache-serialized dates", () => {
 describe("promotion run windows", () => {
   // The 11.11 slide has "valid until 13.11.2026" printed inside the artwork,
   // so it must disappear on its own. These pin the boundary in shop time.
-  const starts = shopDayStart("2026-11-10")!;
+  const starts = shopDayStart("2026-11-11")!;
   const ends = shopDayEnd("2026-11-13")!;
   const running = (now: Date) => now >= starts && now < ends;
 
   it("is hidden the day before it starts", () => {
-    expect(running(new Date("2026-11-09T12:00:00Z"))).toBe(false);
+    expect(running(new Date("2026-11-10T12:00:00Z"))).toBe(false);
   });
 
   it("is showing on the first day, from local midnight", () => {
-    expect(running(new Date("2026-11-09T20:00:00Z"))).toBe(true); // 10 Nov 00:00 Yerevan
+    expect(running(new Date("2026-11-10T20:00:00Z"))).toBe(true); // 11 Nov 00:00 Yerevan
   });
 
   it("is still showing late on the final day", () => {

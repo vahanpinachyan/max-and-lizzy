@@ -27,7 +27,7 @@ export const promotions: Promotion[] = [
     image: "/images/promotions/sale-11-11-v3.jpg",
     href: "/shop",
     ctaLabel: "Visit the store",
-    startsOn: "2026-11-10",
+    startsOn: "2026-11-11",
     endsOn: "2026-11-13",
   },
   {
