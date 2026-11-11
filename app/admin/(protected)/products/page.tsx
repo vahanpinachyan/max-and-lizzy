@@ -5,16 +5,21 @@ import { CsvImportForm } from "@/components/admin/CsvImportForm";
 import { requireManagerSession } from "@/lib/admin/permissions";
 import { isLowStock } from "@/lib/inventory";
 import { getAdminLocale, getAdminDictionary } from "@/lib/admin/i18n";
+import { hasSaleSchedule, saleBadge } from "@/lib/admin/sale-status";
 import { interpolate } from "@/lib/i18n/interpolate";
 
 export default async function AdminProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lowStock?: string; outOfStock?: string }>;
+  searchParams: Promise<{ lowStock?: string; outOfStock?: string; onSale?: string }>;
 }) {
   await requireManagerSession();
-  const t = getAdminDictionary(await getAdminLocale()).productsList;
-  const { lowStock, outOfStock } = await searchParams;
+  const locale = await getAdminLocale();
+  const t = getAdminDictionary(locale).productsList;
+  const { lowStock, outOfStock, onSale } = await searchParams;
+  // One clock for the whole page, so a row cannot be counted as scheduled in
+  // the filter tab and rendered as active in the table.
+  const now = new Date();
   // Only the columns the table actually renders. Selecting everything pulled
   // all three languages of description and safetyInfo as well — about 1.9MB
   // per page load, none of which is displayed here.
@@ -34,6 +39,9 @@ export default async function AdminProductsPage({
       bestseller: true,
       newArrival: true,
       onSale: true,
+      salePercent: true,
+      saleStartsAt: true,
+      saleEndsAt: true,
       pickBy: true,
       images: true,
     },
@@ -58,11 +66,13 @@ export default async function AdminProductsPage({
         onSale: p.onSale,
         pickBy: p.pickBy,
         image: images[0]?.src ?? null,
+        sale: saleBadge(p, now),
       };
     })
     .filter((p) => {
       if (lowStock === "1") return isLowStock(p);
       if (outOfStock === "1") return !p.inStock;
+      if (onSale === "1") return p.sale !== null;
       return true;
     });
 
@@ -71,7 +81,11 @@ export default async function AdminProductsPage({
   // populate quantities has never run, so every product's stockQuantity is
   // null and a quantity-based count would always read zero.
   const outOfStockCount = products.filter((p) => !p.inStock).length;
-  const filtered = lowStock === "1" || outOfStock === "1";
+  // Both halves of a campaign: running now, and set up but not started. Staff
+  // need to see the scheduled ones most — those are the ones nothing else on
+  // the screen reveals.
+  const onSaleCount = products.filter((p) => hasSaleSchedule(p, now)).length;
+  const filtered = lowStock === "1" || outOfStock === "1" || onSale === "1";
 
   return (
     <div>
@@ -104,6 +118,12 @@ export default async function AdminProductsPage({
         >
           {t.filterOutOfStock} {outOfStockCount > 0 && `(${outOfStockCount})`}
         </Link>
+        <Link
+          href="/admin/products?onSale=1"
+          className={`rounded-full px-3 py-1.5 text-sm font-semibold ${onSale === "1" ? "bg-wood text-white" : "bg-white text-espresso border border-tan/50"}`}
+        >
+          {t.filterSaleScheduled} {onSaleCount > 0 && `(${onSaleCount})`}
+        </Link>
       </div>
 
       <div className="mt-6">
@@ -111,7 +131,7 @@ export default async function AdminProductsPage({
       </div>
 
       <div className="mt-6">
-        <BulkProductsTable products={rows} t={t} />
+        <BulkProductsTable products={rows} t={t} locale={locale} />
       </div>
     </div>
   );

@@ -93,6 +93,10 @@ export interface AdminDictionary {
     filterAll: string;
     filterLowStock: string;
     filterOutOfStock: string;
+    filterSaleScheduled: string;
+    saleActiveUntil: string;
+    saleActiveOpen: string;
+    saleScheduledFrom: string;
     selectedCount: string;
     clearSelection: string;
     price: string;
@@ -233,6 +237,10 @@ const en: AdminDictionary = {
     filterAll: "All",
     filterLowStock: "Low stock",
     filterOutOfStock: "Out of stock",
+    filterSaleScheduled: "On sale",
+    saleActiveUntil: "{percent}% off until {date}",
+    saleActiveOpen: "{percent}% off, no end date",
+    saleScheduledFrom: "{percent}% off from {date}",
     selectedCount: "{n} selected",
     clearSelection: "Clear selection",
     price: "Price",
@@ -373,6 +381,10 @@ const hy: AdminDictionary = {
     filterAll: "Բոլորը",
     filterLowStock: "Քիչ պաշար",
     filterOutOfStock: "Առկա չէ",
+    filterSaleScheduled: "Զեղչված",
+    saleActiveUntil: "{percent}% զեղչ մինչև {date}",
+    saleActiveOpen: "{percent}% զեղչ, առանց ավարտի ամսաթվի",
+    saleScheduledFrom: "{percent}% զեղչ {date}-ից",
     selectedCount: "Ընտրված է {n} ապրանք",
     clearSelection: "Մաքրել ընտրությունը",
     price: "Գին",

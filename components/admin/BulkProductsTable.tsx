@@ -8,9 +8,11 @@ import { formatAmd } from "@/lib/format";
 import { deleteProduct, toggleStock, bulkUpdateProducts, type BulkFlagUpdates } from "@/app/admin/(protected)/products/actions";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { FlagsCell } from "@/components/admin/FlagsCell";
+import { SaleBadge } from "@/components/admin/SaleBadge";
 import { isLowStock } from "@/lib/inventory";
 import { filterProducts } from "@/lib/admin/product-search";
-import type { AdminDictionary } from "@/lib/admin/i18n";
+import type { AdminDictionary, AdminLocale } from "@/lib/admin/i18n";
+import type { AdminSaleBadge } from "@/lib/admin/sale-status";
 import { interpolate } from "@/lib/i18n/interpolate";
 
 export type ProductRow = {
@@ -29,6 +31,11 @@ export type ProductRow = {
   onSale: boolean;
   pickBy: string | null;
   image: string | null;
+  // The scheduled-sale state, decided on the server. A scheduled sale is
+  // applied when the storefront reads a product and never written into
+  // priceAmd, so without this the table shows the regular price all through a
+  // live sale and staff have no way to confirm the campaign they just set up.
+  sale: AdminSaleBadge | null;
 };
 
 // The table used to render every product at once. At 705 rows that is ~24,000
@@ -51,9 +58,11 @@ function flagLabel(t: AdminDictionary["productsList"], key: keyof BulkFlagUpdate
 export function BulkProductsTable({
   products,
   t,
+  locale,
 }: {
   products: ProductRow[];
   t: AdminDictionary["productsList"];
+  locale: AdminLocale;
 }) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -462,10 +471,20 @@ export function BulkProductsTable({
                   <td className="px-4 py-3 font-mono text-xs text-espresso/70">{p.sku}</td>
                   <td className="px-4 py-3 text-espresso/70">{p.category}</td>
                   <td className="px-4 py-3">
-                    <span className="font-semibold text-espresso">{formatAmd(p.priceAmd)}</span>
-                    {p.compareAtPriceAmd && (
-                      <span className="ml-1.5 text-xs text-espresso/50 line-through">{formatAmd(p.compareAtPriceAmd)}</span>
+                    {p.sale?.kind === "active" ? (
+                      <>
+                        <span className="font-semibold text-terracotta-dark">{formatAmd(p.sale.salePrice)}</span>
+                        <span className="ml-1.5 text-xs text-espresso/50 line-through">{formatAmd(p.sale.regularPrice)}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-semibold text-espresso">{formatAmd(p.priceAmd)}</span>
+                        {p.compareAtPriceAmd && (
+                          <span className="ml-1.5 text-xs text-espresso/50 line-through">{formatAmd(p.compareAtPriceAmd)}</span>
+                        )}
+                      </>
                     )}
+                    {p.sale && <SaleBadge sale={p.sale} t={t} locale={locale} />}
                   </td>
                   <td className="px-4 py-3">
                     <form action={boundToggle}>
