@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Bitter, Golos_Text, Noto_Serif_Armenian, Noto_Sans_Armenian } from "next/font/google";
 import "../globals.css";
 import { site } from "@/data/site";
 import { CartProvider } from "@/lib/cart-context";
@@ -17,6 +16,7 @@ import { PostHogInit } from "@/components/marketing/PostHogInit";
 import { ScrollToTopOnNavigate } from "@/components/layout/ScrollToTopOnNavigate";
 import { I18nProvider } from "@/lib/i18n/context";
 import { getLocale } from "@/lib/i18n/server";
+import { FontPreloads } from "@/components/layout/FontPreloads";
 
 // Type system: Bitter (a confident slab serif — its sturdy serif "feet"
 // echo the geometry of the actual product, chunky wooden blocks and
@@ -26,29 +26,11 @@ import { getLocale } from "@/lib/i18n/server";
 // gets the best-available pairing — Noto Serif/Sans Armenian — matched to
 // the same serif/sans split so switching languages doesn't feel like a
 // different brand. See globals.css for the :lang(hy) overrides.
-const bitter = Bitter({
-  variable: "--font-bitter",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["700", "800", "900"],
-});
-
-const golosText = Golos_Text({
-  variable: "--font-golos",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const notoSerifArmenian = Noto_Serif_Armenian({
-  variable: "--font-noto-serif-armenian",
-  subsets: ["armenian", "latin"],
-  weight: ["700", "800", "900"],
-});
-
-const notoSansArmenian = Noto_Sans_Armenian({
-  variable: "--font-noto-sans-armenian",
-  subsets: ["armenian", "latin"],
-  weight: ["400", "500", "600", "700"],
-});
+//
+// The faces themselves are vendored in public/fonts and declared in
+// app/fonts.css, which also defines --font-bitter and friends; they used to
+// come from next/font/google, which downloaded them from Google on every
+// build and failed roughly one build in four.
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -92,9 +74,10 @@ export default async function RootLayout({
     <html
       lang={locale}
       data-scroll-behavior="smooth"
-      className={`${bitter.variable} ${golosText.variable} ${notoSerifArmenian.variable} ${notoSansArmenian.variable} h-full antialiased`}
+      className="fonts-site h-full antialiased"
     >
       <body className="min-h-full flex flex-col">
+        <FontPreloads locale={locale} />
         <JsonLd data={organizationJsonLd()} />
         <GoogleAnalytics />
         <OmnisendSnippet />
