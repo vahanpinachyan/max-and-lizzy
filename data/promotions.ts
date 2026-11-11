@@ -18,13 +18,15 @@ export interface Promotion {
 
 export const promotions: Promotion[] = [
   {
-    // Leads the carousel while the 11.11 sale runs. The artwork carries the
-    // numbers only — "11.11" and "10%" read the same in all three languages —
-    // so the copy below stays translatable instead of being baked into the JPEG.
+    // Leads the carousel while the 11.11 sale runs. Unlike the other slides
+    // this one has words inside the artwork ("OFF STOREWIDE", the validity
+    // date), so there is a JPEG per language: this English one is also what
+    // Russian visitors see, since no Russian artwork was made and English
+    // reads closer than Armenian for them. See localizePromotions.
     slug: "sale-11-11",
     title: "11.11 Sale: 10% off everything",
     subtitle: "Ten percent off the whole catalogue until 13 November",
-    image: "/images/promotions/sale-11-11-v3.jpg",
+    image: "/images/promotions/sale-11-11-en-v1.jpg",
     href: "/shop",
     ctaLabel: "Visit the store",
     startsOn: "2026-11-11",
