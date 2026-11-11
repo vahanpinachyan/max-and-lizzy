@@ -56,6 +56,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Vendored font files (see app/fonts.css). The subset and the axis
+        // are part of each filename, so a changed face is a changed URL and
+        // these can be cached as hard as the hashed build assets are —
+        // anything under /public is otherwise revalidated on every visit.
+        source: "/fonts/:file*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
         source: "/(.*)",
         headers: [
           { key: "X-Frame-Options", value: "DENY" },
