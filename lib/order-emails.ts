@@ -70,16 +70,12 @@ const SUBJECT_AND_BODY: Record<OrderStatus, (ctx: OrderEmailContext) => { subjec
            <p>Order reference: ${ctx.orderId.slice(-10)}</p>`,
   }),
   // Staff set this once the order is physically in the customer's hands —
-  // collected at the counter, or delivered. It is the one moment the customer
-  // is most likely to leave a review, so this is where the Google ask goes.
+  // collected at the counter, or delivered. One wording covers both, matching
+  // the live Omnisend email, which does not branch on fulfilment either.
   completed: (ctx) => ({
     subject: `Thank you for your purchase — ${site.name}`,
     html: `<p>Hi ${ctx.customerName ?? "there"},</p>
-           <p>${
-             ctx.fulfillmentMethod === "pickup"
-               ? "Thank you for collecting your order, and for coming to see us."
-               : "Thank you for your order — we hope it arrived safely."
-           } We hope your little one loves it.</p>
+           <p>Thank you for your order — we hope your little one loves it.</p>
            ${REF(ctx.orderId)}
            <p style="margin-top:28px;">If you have a moment, a short Google review genuinely helps a small shop like ours — it is how most families in Yerevan find us.</p>
            ${BUTTON(reviewHref(), "Leave a Google review")}
