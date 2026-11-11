@@ -141,6 +141,10 @@ interface PromotionTranslation {
   title: string;
   subtitle: string;
   ctaLabel: string;
+  // Only for a slide whose artwork has words in it. Everything else uses one
+  // JPEG for all three languages, and a slide that leaves this out keeps the
+  // image from data/promotions.ts.
+  image?: string;
 }
 
 const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTranslation>> = {
@@ -149,6 +153,7 @@ const promotionTranslations: Record<"hy" | "ru", Record<string, PromotionTransla
       title: "11.11 զեղչ՝ 10% ողջ տեսականու վրա",
       subtitle: "10% զեղչ ողջ տեսականու վրա՝ մինչև նոյեմբերի 13-ը",
       ctaLabel: "Այցելել խանութ",
+      image: "/images/promotions/sale-11-11-hy-v1.jpg",
     },
     "musical-toys": {
       title: "Նոր՝ երաժշտական խաղալիքներ",
