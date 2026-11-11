@@ -3,6 +3,11 @@ export interface Promotion {
   title: string;
   subtitle: string;
   image: string;
+  // Optional artwork cut for the slide's shape on a phone. The wide image is
+  // 3.2:1 and the phone slide is 1.44:1, so object-cover throws away more than
+  // half its width — anything placed clear of the copy on a desktop is simply
+  // gone. A slide without this keeps using `image` at both sizes.
+  imageMobile?: string;
   href: string;
   ctaLabel: string;
   /**
@@ -27,6 +32,9 @@ export const promotions: Promotion[] = [
     title: "11.11 Sale: 10% off everything",
     subtitle: "Ten percent off the whole catalogue until 13 November",
     image: "/images/promotions/sale-11-11-en-v1.jpg",
+    // One mobile file for all three languages: it is just Max and Lizzy, with
+    // none of the wording the wide artwork carries.
+    imageMobile: "/images/promotions/sale-11-11-mobile-v1.jpg",
     href: "/shop",
     ctaLabel: "Visit the store",
     startsOn: "2026-11-11",

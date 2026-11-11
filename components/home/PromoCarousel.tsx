@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n/context";
@@ -113,24 +112,33 @@ export function PromoCarousel() {
         {promotions.map((promo, i) => (
           <div
             key={promo.slug}
-            className="group relative flex aspect-[16/6] min-h-[260px] w-full shrink-0 items-center overflow-hidden sm:aspect-[16/5]"
+            className="group relative flex aspect-[16/6] min-h-[300px] w-full shrink-0 items-center overflow-hidden sm:aspect-[16/5] sm:min-h-[260px]"
             aria-hidden={i !== index}
             role="group"
             aria-roledescription="slide"
             aria-label={interpolate(t.home.promoOfAria, { n: i + 1, count })}
           >
-            <Image
-              src={promo.image}
-              alt=""
-              fill
-              priority={i === 0}
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="100vw"
-            />
+            {/* A <picture> rather than next/image: images are served
+                unoptimized (see next.config.ts), so next/image emits a plain
+                <img> here anyway, and <source> lets the phone fetch only the
+                artwork cut for its shape instead of downloading both. */}
+            <picture>
+              {promo.imageMobile && (
+                <source media="(max-width: 639px)" srcSet={promo.imageMobile} />
+              )}
+              <img
+                src={promo.image}
+                alt=""
+                fetchPriority={i === 0 ? "high" : "auto"}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            </picture>
             <div className="absolute inset-0 bg-gradient-to-r from-espresso/60 via-espresso/20 to-transparent" />
             <div className="relative z-10 px-6 sm:px-20 lg:px-24">
-              <p className="max-w-md text-2xl font-bold text-cream sm:text-3xl">{promo.title}</p>
-              <p className="mt-2 max-w-sm text-sm text-cream/90 sm:text-base">{promo.subtitle}</p>
+              <p className="max-w-[58%] text-2xl font-bold text-cream sm:max-w-md sm:text-3xl">{promo.title}</p>
+              <p className="mt-2 max-w-[58%] text-sm text-cream/90 sm:max-w-sm sm:text-base">{promo.subtitle}</p>
               <Link
                 href={promo.href}
                 tabIndex={i === index ? 0 : -1}

@@ -58,6 +58,17 @@ describe("localizePromotions — run dates", () => {
     expect(localizePromotions("en", after).some((p) => p.slug === "sale-11-11")).toBe(false);
   });
 
+  it("gives every language the same wordless mobile artwork", () => {
+    // The wide artwork has the offer written into it, so each language needs
+    // its own. The phone cut is just Max and Lizzy, so one file serves all
+    // three — and the Armenian override must not drop it.
+    const during = new Date("2026-11-11T12:00:00Z");
+    for (const locale of ["en", "hy", "ru"] as const) {
+      const sale = localizePromotions(locale, during).find((p) => p.slug === "sale-11-11");
+      expect(sale?.imageMobile).toBe("/images/promotions/sale-11-11-mobile-v1.jpg");
+    }
+  });
+
   it("leaves the undated slides alone whatever the date", () => {
     const longAfter = new Date("2027-06-01T12:00:00Z");
     const slugs = localizePromotions("en", longAfter).map((p) => p.slug);
