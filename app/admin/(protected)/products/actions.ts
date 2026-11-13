@@ -8,6 +8,12 @@ import { prisma } from "@/lib/db";
 import { requireManagerAction } from "@/lib/admin/permissions";
 import { translateFields } from "@/lib/translate";
 import { parseCsv } from "@/lib/csv";
+import {
+  csvCreateData,
+  csvRowToRecord,
+  csvUpdateData,
+  isEmptyUpdate,
+} from "@/lib/admin/csv-import";
 
 type Record_ = Record<string, string | null | undefined>;
 
@@ -32,8 +38,9 @@ function str(input: string | null | undefined): string | null {
 
 // Booleans are pre-normalized to the literal strings "true"/"false" by each
 // caller (formDataToRecord for the admin form, csvRowToRecord for imports)
-// since "absent" means something different in each source — an unchecked
-// HTML checkbox vs. a blank spreadsheet cell.
+// since "absent" means something different in each source: an unchecked HTML
+// checkbox is a definite false, while a blank spreadsheet cell means "do not
+// touch", so csvRowToRecord omits the key entirely rather than defaulting it.
 function bool(input: string | null | undefined): boolean {
   return input === "true";
 }
@@ -350,14 +357,6 @@ export async function autoTranslateProduct(input: {
   };
 }
 
-const CSV_TRUE_VALUES = new Set(["true", "1", "yes", "y", "in stock", "on"]);
-
-function csvBool(raw: string | undefined, defaultValue: boolean): string {
-  const s = (raw ?? "").trim().toLowerCase();
-  if (!s) return defaultValue ? "true" : "false";
-  return CSV_TRUE_VALUES.has(s) ? "true" : "false";
-}
-
 export type CsvImportResult = {
   error: string | null;
   created: number;
@@ -388,16 +387,7 @@ export async function importProductsFromCsv(formData: FormData): Promise<CsvImpo
     const rawRow = rows[i];
     if (rawRow.every((cell) => !cell.trim())) continue;
 
-    const record: Record_ = {};
-    headers.forEach((h, idx) => {
-      record[h] = rawRow[idx] ?? "";
-    });
-    record.inStock = csvBool(record.inStock ?? undefined, true);
-    record.featured = csvBool(record.featured ?? undefined, false);
-    record.bestseller = csvBool(record.bestseller ?? undefined, false);
-    record.newArrival = csvBool(record.newArrival ?? undefined, false);
-    record.onSale = csvBool(record.onSale ?? undefined, false);
-
+    const { record, supplied } = csvRowToRecord(headers, rawRow);
     const data = buildProductData(record);
     if (!data.slug || !data.name || !data.sku) {
       skipped.push({ row: i + 1, reason: "Missing slug, name, or SKU." });
@@ -407,10 +397,16 @@ export async function importProductsFromCsv(formData: FormData): Promise<CsvImpo
     try {
       const existing = await prisma.product.findUnique({ where: { slug: data.slug } });
       if (existing) {
-        await prisma.product.update({ where: { slug: data.slug }, data });
+        // Only the columns this CSV actually supplied — see lib/admin/csv-import.ts.
+        const patch = csvUpdateData(data, supplied);
+        if (isEmptyUpdate(patch)) {
+          skipped.push({ row: i + 1, reason: "No columns to update." });
+          continue;
+        }
+        await prisma.product.update({ where: { slug: data.slug }, data: patch });
         updated++;
       } else {
-        await prisma.product.create({ data });
+        await prisma.product.create({ data: csvCreateData(data, supplied) as typeof data });
         created++;
       }
     } catch (err) {
