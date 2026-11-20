@@ -204,3 +204,54 @@ textarea:focus-visible,
     animation: none;
   }
 }
+
+/* ===========================================================================
+   Christmas 2026
+   ===========================================================================
+   Everything below is additive. No existing token, rule or value above this
+   line is changed, so turning the season off (CHRISTMAS_MODE in lib/season.ts)
+   restores the ordinary site exactly: the custom properties here simply stop
+   being referenced, and the `[data-season="christmas"]` rules stop matching
+   because the attribute is no longer on <html>.
+
+   Contrast, measured against the existing cream #f7f2e6 background:
+     holly       6.55:1  — AA for body text
+     holly-dark  8.95:1  — AAA
+     pine        9.01:1  — AAA
+     pine-light  6.28:1  — AA
+     gold        2.15:1  — FAILS. Decoration only: stars, borders, ornament.
+     gold-deep   5.23:1  — AA. Use this whenever gold has to carry words.
+   And cream #f7f2e6 on holly 6.55:1, on pine 9.01:1; snow #fffaf0 on holly
+   7.04:1, on pine 9.68:1. So cream or snow text on either dark is safe. */
+:root {
+  /* Deep and slightly muted, like red cotton paper — not a signal red. */
+  --color-holly: #a3262a;
+  --color-holly-dark: #7f1d21;
+  /* Dark and warm, the green of real pine rather than a bright leaf green. */
+  --color-pine: #1f4a33;
+  --color-pine-light: #2e6347;
+  /* Soft antique gold. Never a body-text colour — see the table above. */
+  --color-gold: #c9a24a;
+  --color-gold-deep: #7d611a;
+  /* Warm white, not pure white: #fff next to this site's cream reads blue. */
+  --color-snow: #fffaf0;
+}
+
+@theme inline {
+  --color-holly: var(--color-holly);
+  --color-holly-dark: var(--color-holly-dark);
+  --color-pine: var(--color-pine);
+  --color-pine-light: var(--color-pine-light);
+  --color-gold: var(--color-gold);
+  --color-gold-deep: var(--color-gold-deep);
+  --color-snow: var(--color-snow);
+}
+
+/* The season's one hook. Every Christmas style hangs off this attribute, so
+   the whole layer is scoped to it and costs nothing for the rest of the year.
+   Set in app/(site)/layout.tsx from lib/season-server.ts. */
+:root[data-season="christmas"] {
+  /* Reserved for the season's own overrides. Deliberately empty for now:
+     Phase 2 establishes the switch and the palette only, and repainting the
+     site's base surfaces is a Phase 6 decision made against real pages. */
+}

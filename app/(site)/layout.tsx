@@ -17,6 +17,7 @@ import { ScrollToTopOnNavigate } from "@/components/layout/ScrollToTopOnNavigate
 import { I18nProvider } from "@/lib/i18n/context";
 import { getLocale } from "@/lib/i18n/server";
 import { FontPreloads } from "@/components/layout/FontPreloads";
+import { getSeason } from "@/lib/season-server";
 
 // Type system: Bitter (a confident slab serif — its sturdy serif "feet"
 // echo the geometry of the actual product, chunky wooden blocks and
@@ -69,11 +70,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  const season = await getSeason();
 
   return (
+    // data-season is the Christmas layer's single hook: every seasonal style
+    // in globals.css hangs off it, and every seasonal component checks the
+    // same value. Absent for most of the year, and absent immediately when
+    // CHRISTMAS_MODE is turned off in lib/season.ts.
     <html
       lang={locale}
       data-scroll-behavior="smooth"
+      data-season={season === "christmas" ? "christmas" : undefined}
       className="fonts-site h-full antialiased"
     >
       <body className="min-h-full flex flex-col">
