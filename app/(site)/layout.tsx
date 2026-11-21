@@ -93,7 +93,7 @@ export default async function RootLayout({
         <ScrollToTopOnNavigate />
         <I18nProvider locale={locale}>
           <CartProvider>
-            <Header />
+            <Header season={season} />
             <AnnouncementBar />
             <main id="main-content" className="flex-1">
               {children}

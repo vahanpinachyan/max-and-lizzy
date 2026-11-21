@@ -3,6 +3,7 @@ import { site } from "@/data/site";
 import { getAllProductSlugs } from "@/data/products";
 import { categories } from "@/data/categories";
 import { blogPosts } from "@/data/blog-posts";
+import { seasonForDate } from "@/lib/season";
 
 // Without this, sitemap.ts is a Route Handler that's cached indefinitely at
 // build time (no request-time API is used here), so admin changes to the
@@ -25,6 +26,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site.url}/policies/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${site.url}/policies/terms`, changeFrequency: "yearly", priority: 0.3 },
   ];
+
+  // The Christmas Collection is listed only while it exists. Out of season
+  // the page itself is a 404, and a sitemap that kept pointing at it would be
+  // telling search engines to go and fetch one. `seasonForDate` is used here
+  // rather than `getSeason` deliberately: the staff preview cookie must not
+  // decide what the whole world's sitemap says, and reading a cookie would
+  // make this route dynamic on every request.
+  if (seasonForDate(new Date()) === "christmas") {
+    staticPages.push({
+      url: `${site.url}/shop/christmas`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    });
+  }
 
   const categoryPages: MetadataRoute.Sitemap = categories.map((cat) => ({
     url: `${site.url}/shop/${cat.slug}`,

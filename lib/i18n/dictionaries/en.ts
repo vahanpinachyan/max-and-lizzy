@@ -408,6 +408,24 @@ export const en = {
     shelfAlt: "Wooden toy display shelves inside the shop",
     counterAlt: "A parent and child browsing the toy shelves",
   },
+
+  /* The Christmas layer. Every string the season adds lives here, so turning
+     CHRISTMAS_MODE off in lib/season.ts leaves an unused block and nothing
+     else. No offer, discount, delivery promise or gift-wrapping claim
+     appears in any of it — none of those have been confirmed. */
+  christmas: {
+    navLabel: "Christmas",
+    collectionTitle: "Christmas Collection",
+    collectionIntro:
+      "Our pick of presents for little hands: the toys we would put under our own tree.",
+    collectionEyebrow: "Chosen by Max & Lizzy",
+    metaTitle: "Christmas Collection",
+    metaDescription:
+      "Wooden and eco-friendly toys chosen as Christmas presents for babies and young children, from the Max & Lizzy shop on Mashtots Avenue in Yerevan.",
+    greeting: "Merry Christmas & Happy New Year from Max & Lizzy",
+    emptyCart: "Your sleigh is empty.",
+    notFound: "This page has gone missing, like a mitten in December.",
+  },
 } as const;
 
 type Widen<T> = T extends string

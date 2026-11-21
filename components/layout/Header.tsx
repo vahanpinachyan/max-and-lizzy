@@ -14,8 +14,10 @@ import { HeartIcon } from "@/components/ui/HeartIcon";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { localizeCategories } from "@/lib/i18n/localize-data";
+import type { Season } from "@/lib/season";
+import { HollySprig } from "@/components/christmas/ornaments";
 
-export function Header() {
+export function Header({ season }: { season: Season }) {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
@@ -121,6 +123,18 @@ export function Header() {
                   transition={{ duration: 0.18, ease: "easeOut" }}
                   className="absolute left-0 top-[calc(100%+0.75rem)] grid w-[560px] grid-cols-2 gap-4 rounded-2xl border border-tan/60 bg-white p-6 shadow-2xl"
                 >
+                  {season === "christmas" && (
+                    <div className="col-span-2 -mt-1">
+                      <Link
+                        href="/shop/christmas"
+                        className="christmas-menu-link flex items-center gap-2 rounded-xl px-3 py-2.5 font-semibold text-holly"
+                        onClick={() => setCategoriesOpen(false)}
+                      >
+                        <HollySprig />
+                        {t.christmas.collectionTitle}
+                      </Link>
+                    </div>
+                  )}
                   {categories.map((cat) => (
                     <div key={cat.slug}>
                       <Link
@@ -256,6 +270,16 @@ export function Header() {
           >
             <Container className="flex flex-col gap-1 py-4">
               <p className="px-2 pt-2 pb-1 text-xs font-bold uppercase text-espresso/70">{t.nav.shop}</p>
+              {season === "christmas" && (
+                <Link
+                  href="/shop/christmas"
+                  className="christmas-menu-link flex items-center gap-2 rounded-lg px-2 py-2 font-semibold text-holly"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <HollySprig />
+                  {t.christmas.collectionTitle}
+                </Link>
+              )}
               {categories.map((cat) => (
                 <Link
                   key={cat.slug}

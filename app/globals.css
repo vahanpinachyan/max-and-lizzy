@@ -377,3 +377,58 @@ textarea:focus-visible,
     animation: none;
   }
 }
+
+/* --- Candy stripe -------------------------------------------------------
+   components/christmas/CandyStripe.tsx. The thin red-and-cream barber rule
+   that runs through the board, as a repeating gradient rather than an image
+   so it is sharp at any width and weighs nothing. */
+.christmas-candy-stripe {
+  height: 8px;
+  border-radius: 999px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-holly) 0 7px,
+    #f7f2e6 7px 14px
+  );
+  /* Full-strength stripe is loud next to the catalogue; this keeps it as
+     trim rather than letting it compete with the products. */
+  opacity: 0.8;
+}
+
+/* --- Christmas Collection page ----------------------------------------- */
+:root[data-season="christmas"] .christmas-collection-head {
+  position: relative;
+  padding-block: 0.5rem 0.25rem;
+}
+
+/* The Christmas Collection's entry in the Shop menu, on a tint of its own so
+   it reads as this season's addition rather than a twelfth category. */
+:root[data-season="christmas"] .christmas-menu-link {
+  background-color: color-mix(in srgb, var(--color-holly) 7%, transparent);
+  transition: background-color 150ms ease-out;
+}
+
+:root[data-season="christmas"] .christmas-menu-link:hover {
+  background-color: color-mix(in srgb, var(--color-holly) 14%, transparent);
+}
+
+/* --- Script lettering ---------------------------------------------------
+   components/christmas/ScriptLettering.tsx. The SVG is a mask with the
+   colour painted behind it, so one file serves holly red on the collection
+   page and cream on the espresso footer. Loaded through <img> it could not:
+   an SVG in an <img> is its own document, and its currentColor is black.
+
+   The mask image itself is set inline on the element, not here. Written as
+   `mask-image: var(--something)` the build's CSS processor cannot resolve
+   the url at compile time and drops the whole rule on the floor, silently —
+   which is exactly what it did the first time this was written that way. */
+.christmas-lettering {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
