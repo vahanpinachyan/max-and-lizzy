@@ -255,3 +255,125 @@ textarea:focus-visible,
      Phase 2 establishes the switch and the palette only, and repainting the
      site's base surfaces is a Phase 6 decision made against real pages. */
 }
+
+/* --- The Christmas lights scrollbar ------------------------------------
+   components/christmas/LightsScrollbar.tsx. Which of the two strings shows
+   is decided here rather than in JavaScript, so the markup the server sends
+   and the markup the browser renders are always the same. */
+
+/* Touch screens get the horizontal progress string; pointer screens get the
+   vertical one in place of their scrollbar. A touch laptop keeps its real
+   scrollbar and its horizontal string, which is the safe way round: nothing
+   is taken away from a device that cannot drag a 16px lane. */
+.ml-lights-v {
+  display: none;
+}
+
+.ml-lights-h {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 45;
+  pointer-events: none;
+  line-height: 0;
+}
+
+@media (min-width: 768px) and (pointer: fine) {
+  .ml-lights-v {
+    display: block;
+    position: fixed;
+    inset: 0 0 0 auto;
+    z-index: 45;
+    pointer-events: none;
+  }
+
+  .ml-lights-h {
+    display: none;
+  }
+
+  /* The native scrollbar goes only where the string actually replaces it.
+     Scrolling itself is untouched — wheel, trackpad, keyboard, find-in-page
+     and anchor jumps all behave exactly as they did. */
+  :root[data-season="christmas"] {
+    scrollbar-width: none;
+  }
+
+  :root[data-season="christmas"]::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
+/* The wire. Dark pine, not black, and thin enough to read as flex. */
+.ml-wire {
+  stroke: #1b3a2a;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0.75;
+}
+
+.ml-track {
+  fill: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* An unlit bulb is dim, cool and a little see-through — the glass of a bulb
+   with nothing behind it — rather than a smaller version of the lit one. */
+.ml-bulb .ml-glass {
+  fill: var(--ml-bulb);
+  opacity: 0.34;
+  transition: opacity 260ms ease-out;
+}
+
+.ml-bulb .ml-collar {
+  fill: #6b5a3c;
+  opacity: 0.8;
+}
+
+.ml-bulb .ml-shine {
+  fill: #fffaf0;
+  opacity: 0.18;
+  transition: opacity 260ms ease-out;
+}
+
+.ml-bulb .ml-glow {
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity 320ms ease-out;
+}
+
+.ml-bulb.is-lit .ml-glass {
+  opacity: 1;
+}
+
+.ml-bulb.is-lit .ml-shine {
+  opacity: 0.75;
+}
+
+.ml-bulb.is-lit .ml-glow {
+  opacity: 0.5;
+  animation: ml-twinkle var(--ml-twinkle-dur, 4s) ease-in-out var(--ml-twinkle-delay, 0s) infinite;
+}
+
+/* Very gentle, and never all the way off: a string where bulbs blink out
+   looks broken, not festive. Each bulb carries its own duration and delay,
+   so the string never pulses in unison. */
+@keyframes ml-twinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  45% {
+    opacity: 0.86;
+  }
+  70% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-bulb.is-lit .ml-glow {
+    animation: none;
+  }
+}

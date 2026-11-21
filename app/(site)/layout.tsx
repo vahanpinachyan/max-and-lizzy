@@ -18,6 +18,7 @@ import { I18nProvider } from "@/lib/i18n/context";
 import { getLocale } from "@/lib/i18n/server";
 import { FontPreloads } from "@/components/layout/FontPreloads";
 import { getSeason } from "@/lib/season-server";
+import { LightsScrollbar } from "@/components/christmas/LightsScrollbar";
 
 // Type system: Bitter (a confident slab serif — its sturdy serif "feet"
 // echo the geometry of the actual product, chunky wooden blocks and
@@ -101,6 +102,9 @@ export default async function RootLayout({
             <CartDrawer />
             <WishlistDrawer />
             <WelcomeModal />
+            {/* Every seasonal piece is mounted here, past the season check, so
+                out of season none of it is sent to the browser at all. */}
+            {season === "christmas" && <LightsScrollbar />}
           </CartProvider>
         </I18nProvider>
       </body>
