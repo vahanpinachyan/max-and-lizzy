@@ -20,7 +20,7 @@ import { FontPreloads } from "@/components/layout/FontPreloads";
 import { getSeason } from "@/lib/season-server";
 import { LightsScrollbar } from "@/components/christmas/LightsScrollbar";
 import { Snowfall } from "@/components/christmas/Snowfall";
-import { HeaderLights } from "@/components/christmas/HeaderLights";
+import { HeaderGarland } from "@/components/christmas/HeaderGarland";
 
 // Type system: Bitter (a confident slab serif — its sturdy serif "feet"
 // echo the geometry of the actual product, chunky wooden blocks and
@@ -101,7 +101,7 @@ export default async function RootLayout({
                 the bar's own text. */}
             <div className="relative z-30">
               <AnnouncementBar />
-              {season === "christmas" && <HeaderLights />}
+              {season === "christmas" && <HeaderGarland />}
             </div>
             <main id="main-content" className="flex-1">
               {children}
