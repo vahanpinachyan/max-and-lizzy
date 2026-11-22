@@ -95,13 +95,7 @@ export default async function RootLayout({
         <I18nProvider locale={locale}>
           <CartProvider>
             <Header season={season} />
-            {/* The garland hangs from the announcement bar's lower edge rather
-                than the header's, so it falls into the page instead of across
-                the bar's own text. */}
-            <div className="relative z-30">
-              <AnnouncementBar />
-              {season === "christmas" && <div className="christmas-header-garland" aria-hidden="true" />}
-            </div>
+            <AnnouncementBar />
             <main id="main-content" className="flex-1">
               {children}
             </main>
