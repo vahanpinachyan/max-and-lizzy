@@ -84,6 +84,36 @@ wrong, just quieter.
 
 ---
 
+## 5. A licence for the background pattern — needs a decision before launch
+
+**What:** permission to use the Christmas doodles that now tile behind every
+page, or a replacement I am allowed to use.
+
+**Why this is here:** the drawings are cut out of the reference picture you
+sent me. I did not draw them and I have no idea who did — it came off
+Pinterest, which almost always means somebody's paid illustration pack. Six
+ornaments are lifted from it: a present, a snowflake, holly, a candy cane, a
+bauble and a gingerbread man.
+
+That is fine for looking at on your own screen. It is not fine on a shop that
+takes money, where using someone's artwork without a licence is the owner's
+problem, not mine. **Do not let this go live as it stands.**
+
+Three ways out, cheapest first:
+1. **Find the original.** If the artist sells the pack (these usually go for
+   $5-20 on Creative Market or Etsy), buy it and send me the files. Straight
+   swap, same look.
+2. **Buy an equivalent.** Any "Christmas line art doodle" set with a
+   commercial licence. Send me the files and I will cut a new tile.
+3. **Have it drawn.** The same person who drew Max and Lizzy could draw six
+   ornaments in their style, which would look better than any of this.
+
+`scripts/build-christmas-pattern.py` does the cutting, so replacing the source
+picture and rerunning it is the whole job — the layout, the strength and the
+spacing all stay as they are.
+
+---
+
 ## Already here, nothing needed
 
 - `collection-en.svg`, `collection-ru.svg` — "Christmas Collection" as drawn

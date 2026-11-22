@@ -257,39 +257,39 @@ textarea:focus-visible,
 }
 
 /* --- The season's background ---------------------------------------------
-   public/christmas/ornament-scatter.svg tiled behind the whole page, so the
+   public/christmas/ornament-scatter.webp tiled behind every page, so the
    cream the site is built on reads as wrapping paper for the season instead
    of as plain paper.
 
-   Deliberately almost invisible. The pattern lies under product photographs,
-   prices and body text on every page, and anything strong enough to notice
-   on an empty stretch is far too strong behind a paragraph. It is a texture
-   you feel rather than a picture you look at; if it is the first thing
-   anyone sees, it is wrong.
+   The drawings are cut from a reference the shop supplied, not redrawn: six
+   ornaments lifted out of it — a present, a snowflake, holly, a candy cane,
+   a bauble and a gingerbread man — and laid out on a fresh scatter.
+   scripts/build-christmas-pattern.py is the cut, so the strength, the
+   spacing or the choice of drawings can be changed without doing any of it
+   by hand again. See public/christmas/NEEDED.md: the artwork is somebody
+   else's and needs a licence before this goes near the live shop.
 
-   Nothing here touches contrast where it matters: cards, the header and the
-   footer paint their own solid backgrounds over it, so text always sits on
-   flat colour and every ratio measured for the palette still holds.
+   Every drawing is rebuilt from one ink colour at half coverage, which is a
+   contrast ceiling rather than a taste call: a letter that lands on a stroke
+   still has to be readable, and at this strength body text measures 4.9:1
+   against the ink, above the 4.5:1 the guidelines ask for. Stronger looks
+   better in isolation and fails that test.
+
+   The scatter is irregular on purpose. A tile repeats on a grid whatever is
+   in it, so drawings at tidy positions print as rows and the eye follows
+   them; no two of these share a height or a distance from the left, and all
+   six sit clear of the edges so the tile joins itself without a cut drawing.
 
    Attached to the body rather than fixed, so it travels with the page like
-   print on paper. A fixed pattern slides under the content as you scroll,
-   which reads as a screen effect and fights the snow, which is fixed and is
-   meant to.
-
-   The file is a plain SVG rather than an inline data URI so it stays legible
-   and editable — spacing, motif and tint are all obvious in it — and so the
-   browser caches it once for every page of the site. */
+   print on paper. Cards, the header and the footer paint their own solid
+   backgrounds over it, so text mostly sits on flat colour anyway. */
 :root[data-season="christmas"] body {
-  background-image: url("/christmas/ornament-scatter.svg");
+  background-image: url("/christmas/ornament-scatter.webp");
   background-repeat: repeat;
-  /* The size does two jobs at once: it sets how big a shape is and how far
-     apart the shapes sit. Drawn at 400px the motifs are large enough to look
-     at one by one, which makes them clip art; much below 200px they crowd
-     into wallpaper. 440px is the loosest setting that still keeps them small:
-     five shapes spread over that much page is thinner on the ground than two
-     were at 240px, which is what lets the tile hold a mixture without the
-     page filling up. */
-  background-size: 440px 440px;
+  /* Drawn at 600 and shown smaller: the drawings keep their detail while the
+     gaps between them close to something that reads as a pattern rather than
+     as six pictures that happen to share a page. */
+  background-size: 460px 460px;
 }
 
 /* --- The Christmas lights scrollbar ------------------------------------
