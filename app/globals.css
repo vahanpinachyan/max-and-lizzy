@@ -282,13 +282,12 @@ textarea:focus-visible,
 :root[data-season="christmas"] body {
   background-image: url("/christmas/ornament-scatter.svg");
   background-repeat: repeat;
-  /* Half the artboard. The size is what decides whether this reads as
-     patterned paper or as clip art dropped on the page: at the drawn 400px
-     the motifs are big enough to look at one by one, and the gaps between
-     them look like mistakes. Shrinking the tile shrinks the shapes and
-     closes the gaps at the same time, and somewhere around 200px they stop
-     being pictures and turn into texture. */
-  background-size: 200px 200px;
+  /* The size does two jobs at once: it sets how big a shape is and how far
+     apart the shapes sit. Drawn at 400px the motifs are large enough to look
+     at one by one, which makes them clip art; much below 200px they crowd
+     into wallpaper. 240px keeps them small enough to read as texture and far
+     enough apart to stay out of the way of the catalogue. */
+  background-size: 240px 240px;
 }
 
 /* --- The Christmas lights scrollbar ------------------------------------
