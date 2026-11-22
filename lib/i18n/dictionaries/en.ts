@@ -414,6 +414,16 @@ export const en = {
      else. No offer, discount, delivery promise or gift-wrapping claim
      appears in any of it — none of those have been confirmed. */
   christmas: {
+    /* PLACEHOLDER — these need your real Christmas messages. Every line
+       here is either an existing year-round fact or a plain statement about
+       the collection. Nothing claims an offer, a discount, a delivery date
+       or gift wrapping, because none of those have been confirmed. */
+    announcements: [
+      "Christmas gifts, chosen by Max & Lizzy",
+      "Free pickup at our Yerevan store on every order",
+      "Safety-tested, eco-friendly toys for ages 0–6",
+      "Local delivery available across Yerevan",
+    ],
     navLabel: "Christmas",
     collectionTitle: "Christmas Collection",
     collectionIntro:

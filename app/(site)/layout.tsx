@@ -19,6 +19,8 @@ import { getLocale } from "@/lib/i18n/server";
 import { FontPreloads } from "@/components/layout/FontPreloads";
 import { getSeason } from "@/lib/season-server";
 import { LightsScrollbar } from "@/components/christmas/LightsScrollbar";
+import { Snowfall } from "@/components/christmas/Snowfall";
+import { HeaderLights } from "@/components/christmas/HeaderLights";
 
 // Type system: Bitter (a confident slab serif — its sturdy serif "feet"
 // echo the geometry of the actual product, chunky wooden blocks and
@@ -94,17 +96,28 @@ export default async function RootLayout({
         <I18nProvider locale={locale}>
           <CartProvider>
             <Header season={season} />
-            <AnnouncementBar />
+            {/* The garland hangs from the announcement bar's lower edge rather
+                than the header's, so it falls into the page instead of across
+                the bar's own text. */}
+            <div className="relative z-30">
+              <AnnouncementBar />
+              {season === "christmas" && <HeaderLights />}
+            </div>
             <main id="main-content" className="flex-1">
               {children}
             </main>
             <Footer />
-            <CartDrawer />
+            <CartDrawer season={season} />
             <WishlistDrawer />
             <WelcomeModal />
             {/* Every seasonal piece is mounted here, past the season check, so
                 out of season none of it is sent to the browser at all. */}
-            {season === "christmas" && <LightsScrollbar />}
+            {season === "christmas" && (
+              <>
+                <Snowfall />
+                <LightsScrollbar />
+              </>
+            )}
           </CartProvider>
         </I18nProvider>
       </body>

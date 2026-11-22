@@ -2,12 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { getSeason } from "@/lib/season-server";
+import { PineTree } from "@/components/christmas/ornaments";
 
 // Rendered inside the site layout, so the header, cart and footer stay put —
 // a 404 should feel like a room in the shop you walked into by mistake, not
 // like the site fell over. Replaces the stock black-on-white Next.js page.
 export default async function SiteNotFound() {
   const { dict: t } = await getServerDictionary();
+  const christmas = (await getSeason()) === "christmas";
 
   return (
     <Container className="py-20 sm:py-28">
@@ -24,6 +27,14 @@ export default async function SiteNotFound() {
           {t.errorPages.notFoundTitle}
         </h1>
         <p className="mt-4 text-espresso/70">{t.errorPages.notFoundBody}</p>
+        {/* An extra line in season, not a replacement: the real explanation
+            of what went wrong still has to be the first thing read. */}
+        {christmas && (
+          <p className="mt-3 flex items-center gap-2 text-espresso/60">
+            <PineTree className="h-7 w-auto" />
+            {t.christmas.notFound}
+          </p>
+        )}
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link

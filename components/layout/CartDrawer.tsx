@@ -9,9 +9,10 @@ import { formatAmd } from "@/lib/format";
 import { LinkButton } from "@/components/ui/Button";
 import { Mascot } from "@/components/ui/Mascot";
 import { useTranslations, useI18n } from "@/lib/i18n/context";
+import type { Season } from "@/lib/season";
 import { interpolate } from "@/lib/i18n/interpolate";
 
-export function CartDrawer() {
+export function CartDrawer({ season }: { season: Season }) {
   const { items, isDrawerOpen, closeDrawer, updateQuantity, removeItem, subtotalAmd, discountAmd, totalAmd, promoCode } = useCart();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const { locale } = useI18n();
@@ -76,7 +77,7 @@ export function CartDrawer() {
               {items.length === 0 ? (
                 <div className="mt-6 flex flex-col items-center text-center">
                   <Mascot className="h-28 w-28" />
-                  <p className="mt-3 text-espresso/70">{t.cart.empty}</p>
+                  <p className="mt-3 text-espresso/70">{season === "christmas" ? t.christmas.emptyCart : t.cart.empty}</p>
                   <LinkButton href="/shop" size="sm" className="mt-4" onClick={closeDrawer}>
                     {t.cart.startShopping}
                   </LinkButton>

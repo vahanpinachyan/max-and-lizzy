@@ -82,8 +82,14 @@ export function Header({ season }: { season: Season }) {
         {t.nav.skipToContent}
       </a>
       <Container className="flex h-20 items-center justify-between gap-4">
-        <Link href="/" className="flex items-center shrink-0" aria-label={`${site.name} home`}>
+        <Link href="/" className="relative flex items-center shrink-0" aria-label={`${site.name} home`}>
           <Image src="/images/logo.png" alt={`${site.name} logo`} width={813} height={560} priority className="h-12 w-auto sm:h-14" />
+          {/* Pinned to the logo rather than drawn into it: the shop's mark is
+              not ours to redraw, and in January this disappears with the
+              season instead of leaving an edited logo behind. */}
+          {season === "christmas" && (
+            <HollySprig className="absolute -right-1 -top-1 h-4 w-4 sm:-right-2 sm:h-5 sm:w-5" />
+          )}
         </Link>
 
         <nav aria-label={t.nav.mainNavigation} className="hidden lg:flex items-center gap-1">

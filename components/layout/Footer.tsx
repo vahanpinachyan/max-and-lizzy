@@ -4,13 +4,33 @@ import { Container } from "@/components/ui/Container";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
 import { PaymentLogos } from "@/components/layout/PaymentLogos";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { getSeason } from "@/lib/season-server";
+import { StockingGarland } from "@/components/christmas/StockingGarland";
+import { ScriptLettering } from "@/components/christmas/ScriptLettering";
 import { localizeCategories } from "@/lib/i18n/localize-data";
+
+/**
+ * The seasonal greeting is drawn lettering where a script face exists for the
+ * language. Armenian has none under an open licence, so Armenian gets the
+ * sentence set in the site's own serif instead. Same reasoning, and the same
+ * two files, as the Christmas Collection headline.
+ */
+const GREETING_LETTERING: Record<string, { src: string; ratio: number } | null> = {
+  en: { src: "/christmas/lettering-en.svg", ratio: 4.88 },
+  ru: { src: "/christmas/lettering-ru.svg", ratio: 5.47 },
+  hy: null,
+};
 
 export async function Footer() {
   const { dict: t, locale } = await getServerDictionary();
   const categories = localizeCategories(locale);
+  const season = await getSeason();
+  const christmas = season === "christmas";
+  const greetingLettering = GREETING_LETTERING[locale] ?? null;
+
   return (
-    <footer className="mt-24 bg-espresso text-cream">
+    <footer className="relative mt-24 bg-espresso text-cream">
+      {christmas && <StockingGarland />}
       <Container className="py-16">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
@@ -89,6 +109,27 @@ export async function Footer() {
         <div className="mt-10 border-t border-cream/15 pt-6">
           <PaymentLogos label={t.footer.weAccept} />
         </div>
+
+        {christmas && (
+          <p className="mt-10 border-t border-cream/15 pt-8 text-center">
+            {greetingLettering ? (
+              <ScriptLettering
+                src={greetingLettering.src}
+                ratio={greetingLettering.ratio}
+                label={t.christmas.greeting}
+                className="mx-auto w-full max-w-[260px] text-gold sm:max-w-[320px]"
+              />
+            ) : (
+              <span className="font-heading text-xl text-gold sm:text-2xl">
+                {t.christmas.greeting}
+              </span>
+            )}
+            {/* The lettering says only "Merry Christmas"; the full greeting
+                is the label a screen reader is given, and this is the same
+                sentence for anyone reading the page. */}
+            <span className="mt-3 block text-sm text-cream/55">{t.christmas.greeting}</span>
+          </p>
+        )}
 
         <div className="mt-6 flex flex-col gap-4 border-t border-cream/15 pt-6 text-sm text-cream/60 sm:flex-row sm:items-center sm:justify-between">
           <address className="not-italic">
