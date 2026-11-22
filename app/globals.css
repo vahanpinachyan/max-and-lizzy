@@ -285,9 +285,11 @@ textarea:focus-visible,
   /* The size does two jobs at once: it sets how big a shape is and how far
      apart the shapes sit. Drawn at 400px the motifs are large enough to look
      at one by one, which makes them clip art; much below 200px they crowd
-     into wallpaper. 240px keeps them small enough to read as texture and far
-     enough apart to stay out of the way of the catalogue. */
-  background-size: 240px 240px;
+     into wallpaper. 440px is the loosest setting that still keeps them small:
+     five shapes spread over that much page is thinner on the ground than two
+     were at 240px, which is what lets the tile hold a mixture without the
+     page filling up. */
+  background-size: 440px 440px;
 }
 
 /* --- The Christmas lights scrollbar ------------------------------------
@@ -433,6 +435,12 @@ textarea:focus-visible,
 :root[data-season="christmas"] .christmas-collection-head {
   position: relative;
   padding-block: 0.5rem 0.25rem;
+  /* Opaque cream, so the page's ornament pattern stops at this block. The
+     collection's name is drawn script, and a silhouette crossing the middle
+     of a letterform does not read as texture behind it — it reads as damage
+     to the lettering. Same cream as the page, so there is no visible edge;
+     the pattern simply has nothing to show through here. */
+  background-color: var(--color-cream);
 }
 
 /* The Christmas Collection's entry in the Shop menu, on a tint of its own so
