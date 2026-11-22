@@ -18,7 +18,13 @@ const BULB_COLORS = ["#c33a33", "#2f7350", "#c9a24a", "#3f6fa8", "#c47d99"] as c
 
 /** Roughly how far apart the bulbs hang. The real spacing divides evenly. */
 const PITCH = 54;
-const HEIGHT = 30;
+/**
+ * Tall enough that a lit bulb's glow finishes inside the SVG. A bulb reaches
+ * about (11 + 6) × the scale below past its anchor, and an SVG clips to its
+ * own box, so too short a box slices the bulbs in half.
+ */
+const HEIGHT = 34;
+const BULB_SCALE = 0.68;
 
 function hash(i: number, salt: number) {
   const x = Math.sin((i + 1) * 12.9898 + salt * 78.233) * 43758.5453;
@@ -66,7 +72,7 @@ export function HeaderLights() {
         <svg width={width} height={HEIGHT} viewBox={`0 0 ${width} ${HEIGHT}`} fill="none">
           <path className="ml-wire" d={wire} />
           {anchors.map((a, i) => (
-            <g key={i} transform={`translate(${a.x.toFixed(1)} ${a.y}) scale(0.78)`}>
+            <g key={i} transform={`translate(${a.x.toFixed(1)} ${a.y}) scale(${BULB_SCALE})`}>
               <g
                 className="ml-bulb is-lit"
                 transform={`rotate(${((hash(i, 3) - 0.5) * 18).toFixed(1)})`}

@@ -33,16 +33,34 @@ const BULB_COLORS = ["#c33a33", "#2f7350", "#c9a24a", "#3f6fa8", "#c47d99"] as c
  * laptop window touch each other and read as one striped ribbon, and the
  * alternative — shrinking them to fit — leaves specks nobody can see.
  */
-const BULB_PITCH = 34;
+const BULB_PITCH = 36;
 const MIN_BULBS = 20;
 const MAX_BULBS = 30;
 const HORIZONTAL_BULBS = 18;
 
 /**
- * Width of the vertical strip. Wide enough that a lit bulb's blurred glow
- * finishes inside the SVG instead of being sliced off at its edge.
+ * The vertical strip, and how big a bulb is drawn inside it.
+ *
+ * These two are a pair and have to be chosen together. An SVG clips to its
+ * own box, so a bulb whose glow reaches past the strip is sliced down the
+ * middle — which is exactly what a wider bulb in a narrower strip did. A
+ * lit bulb reaches about (11 + 6) × BULB_SCALE from its anchor: 11 is the
+ * glow circle's radius and 6 is its blur. Both anchors below must sit at
+ * least that far inside both edges.
+ *
+ * 24 is not an arbitrary width: it is the gutter the site's own Container
+ * already leaves (`sm:px-6`) at the narrowest width this string appears at.
+ * The lights hang in that margin rather than on top of anything. Above
+ * 1024px the gutter grows to 32 and the page is centred besides, so there
+ * is only ever more room, never less.
+ *
+ * The SVG is also allowed to overflow (globals.css). The glass of a bulb
+ * always finishes inside the strip, but a glow is a soft blurred circle
+ * that may graze the edge, and a blur fading out past the boundary is
+ * invisible where a blade-straight cut through a bulb is not.
  */
-const STRIP_W = 46;
+const STRIP_W = 24;
+const BULB_SCALE = 0.62;
 
 /**
  * The first bulb hangs below the header rather than behind it. The header is
@@ -240,7 +258,7 @@ export function LightsScrollbar() {
   // --- the vertical string -------------------------------------------------
   const vGap = vSpan / (vCount - 1);
   const vAnchors = Array.from({ length: vCount }, (_, i) => ({
-    x: i % 2 === 0 ? 17 : 31,
+    x: i % 2 === 0 ? 9 : 15,
     y: TOP_INSET + i * vGap,
   }));
   // The wire droops between bulbs instead of running straight, which is what
@@ -272,10 +290,20 @@ export function LightsScrollbar() {
   return (
     <>
       <div className="ml-lights-v" aria-hidden="true">
-        <svg width={STRIP_W} height={height} viewBox={`0 0 ${STRIP_W} ${height}`} fill="none">
+        {/* An SVG clips to its own box, which would cut a bulb's glow off
+            with a blade-straight edge down the side of the strip. Set here
+            rather than in the stylesheet: written as a CSS rule the build
+            prunes it, and the clipping comes silently back. */}
+        <svg
+          width={STRIP_W}
+          height={height}
+          viewBox={`0 0 ${STRIP_W} ${height}`}
+          fill="none"
+          style={{ overflow: "visible" }}
+        >
           <path className="ml-wire" d={vWire} />
           {vAnchors.map((a, i) => (
-            <g key={i} transform={`translate(${a.x} ${a.y.toFixed(1)}) scale(1.22)`}>
+            <g key={i} transform={`translate(${a.x} ${a.y.toFixed(1)}) scale(${BULB_SCALE})`}>
               <Bulb
                 index={i}
                 color={BULB_COLORS[i % BULB_COLORS.length]}
@@ -287,9 +315,9 @@ export function LightsScrollbar() {
               the very edge, so nothing elsewhere on the page loses a click. */}
           <rect
             className="ml-track"
-            x={STRIP_W - 16}
+            x={STRIP_W - 14}
             y="0"
-            width="16"
+            width="14"
             height={height}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
