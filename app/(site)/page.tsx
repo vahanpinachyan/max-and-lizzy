@@ -34,12 +34,13 @@ export default async function HomePage() {
   const { dict: t, locale } = await getServerDictionary();
   const featured = await getFeaturedProducts(locale);
   const bestsellers = await getBestsellers(locale);
-  const christmas = (await getSeason()) === "christmas";
+  const season = await getSeason();
+  const christmas = season === "christmas";
 
   return (
     <>
       <JsonLd data={localBusinessJsonLd()} />
-      <PromoCarousel />
+      <PromoCarousel season={season} />
       <Hero />
       <CategoryTiles />
       <FeaturedBentoGrid eyebrow={t.home.featuredEyebrow} title={t.home.featuredTitle} products={featured} />

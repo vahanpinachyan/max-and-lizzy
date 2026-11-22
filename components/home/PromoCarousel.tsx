@@ -5,15 +5,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n/context";
 import { interpolate } from "@/lib/i18n/interpolate";
 import { localizePromotions } from "@/lib/i18n/localize-data";
+import type { Season } from "@/lib/season";
 
 const AUTOPLAY_MS = 6000;
 const GESTURE_LOCK_MS = 700;
 
-export function PromoCarousel() {
+export function PromoCarousel({ season }: { season: Season }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const { dict: t, locale } = useI18n();
-  const promotions = localizePromotions(locale);
+  // Handed down from the page rather than worked out here, so that the staff
+  // preview cookie reaches it — see localizePromotions.
+  const promotions = localizePromotions(locale, undefined, season);
   const count = promotions.length;
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const gestureLocked = useRef(false);
