@@ -446,22 +446,40 @@ textarea:focus-visible,
 }
 
 /* --- Header garland -----------------------------------------------------
-   components/christmas/HeaderGarland.tsx. Hangs from the header's lower edge
-   into the page, so it reads as strung along the shelf rather than drawn
-   inside the bar. Hidden exactly where the scrollbar's own horizontal
-   string appears, so a phone never shows two garlands stacked at the top.
+   A real photographed-and-painted fir garland rather than a drawn one, hung
+   from the header's lower edge into the page so it reads as strung along a
+   shelf rather than printed inside the bar.
 
    Ornaments rather than bulbs, deliberately: the scrollbar down the right
    edge is already a light string, and a second one across the top reads as
-   one effect repeated instead of as a decorated shop. */
+   one effect repeated instead of as a decorated shop.
+
+   The artwork is `public/christmas/garland-tile.webp`, from Pixabay (author
+   Alexey_Hulsov, pixabay.com/illustrations/new-year-christmas-decoration-1911483/)
+   under the Pixabay Content License: free for commercial use, no attribution
+   required. It is cropped to the upper band, toned down from the original's
+   bright green so it sits with this site's palette, and mirror-paired — the
+   file is the strip followed by its own reflection, so `repeat-x` joins it to
+   itself at a reflection every time and never shows a seam, at any width.
+
+   A background image rather than an <img> or an SVG component: it needs no
+   markup, no measuring and no JavaScript, so it costs nothing on any page it
+   is not shown on. Hidden where the scrollbar's own horizontal string
+   appears, so a phone never shows two garlands stacked at the top. */
 .christmas-header-garland {
   position: absolute;
   left: 0;
   right: 0;
   top: 100%;
+  height: 75px;
   display: none;
-  line-height: 0;
   pointer-events: none;
+  background-image: url("/christmas/garland-tile.webp");
+  background-repeat: repeat-x;
+  background-position: left top;
+  /* `auto` on the width is what keeps the tile's aspect ratio while the
+     height is pinned, so the foliage never squashes. */
+  background-size: auto 75px;
 }
 
 @media (min-width: 768px) and (pointer: fine) {

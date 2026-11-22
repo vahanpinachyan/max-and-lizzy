@@ -86,6 +86,21 @@ wrong, just quieter.
 
 ## Already here, nothing needed
 
+- `garland-tile.webp` — the fir garland that hangs under the announcement bar
+  on a desktop. Not drawn by me and not AI-generated: it is a free stock
+  illustration by Alexey_Hulsov on Pixabay
+  (pixabay.com/illustrations/new-year-christmas-decoration-1911483/) under the
+  **Pixabay Content License** — free for commercial use, no attribution
+  required, no payment. I cropped it to the upper band, toned the original's
+  bright green down to sit with our palette, and mirrored it so it repeats
+  across any screen width without a seam.
+
+  If you would rather have a nicer one, this is a single file to replace:
+  anything roughly 1600 x 150, transparent background, garland flush to the
+  top edge, drops straight in. The two Pinterest pins you sent are both paid
+  stock; buying one of those (about $10-30, or free on an existing Adobe
+  subscription) and sending me the PNG would be a straight swap.
+
 - `collection-en.svg`, `collection-ru.svg` — "Christmas Collection" as drawn
   script lettering (Pinyon Script and Marck Script, both SIL Open Font
   License 1.1, converted to outlines).
