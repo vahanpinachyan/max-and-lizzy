@@ -457,10 +457,18 @@ textarea:focus-visible,
    The artwork is `public/christmas/garland-tile.webp`, from Pixabay (author
    Alexey_Hulsov, pixabay.com/illustrations/new-year-christmas-decoration-1911483/)
    under the Pixabay Content License: free for commercial use, no attribution
-   required. It is cropped to the upper band, toned down from the original's
-   bright green so it sits with this site's palette, and mirror-paired — the
-   file is the strip followed by its own reflection, so `repeat-x` joins it to
-   itself at a reflection every time and never shows a seam, at any width.
+   required. `scripts/build-christmas-garland.py` is the exact recipe that turns
+   that download into this file, so it can be re-tuned without guesswork: crop
+   to the upper band; move the original's gold baubles onto the deep red the
+   announcement bar already uses, since gold was the one colour in the header
+   that belonged to nothing else; soften the stuck-on white snowflake decals,
+   which read as printed stickers rather than as part of the greenery; then
+   take the whole thing down in saturation and brightness so it sits with the
+   rest of the palette instead of shouting over it.
+
+   The file is mirror-paired — the strip followed by its own reflection — so
+   `repeat-x` joins it to itself at a reflection every time and never shows a
+   seam, at any width.
 
    A background image rather than an <img> or an SVG component: it needs no
    markup, no measuring and no JavaScript, so it costs nothing on any page it

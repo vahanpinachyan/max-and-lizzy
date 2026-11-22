@@ -91,9 +91,12 @@ wrong, just quieter.
   illustration by Alexey_Hulsov on Pixabay
   (pixabay.com/illustrations/new-year-christmas-decoration-1911483/) under the
   **Pixabay Content License** — free for commercial use, no attribution
-  required, no payment. I cropped it to the upper band, toned the original's
-  bright green down to sit with our palette, and mirrored it so it repeats
-  across any screen width without a seam.
+  required, no payment. I cropped it to the upper band, changed its gold
+  baubles to the same deep red as the announcement bar, took off the white
+  snowflake stickers that were stuck on the branches, quietened the whole
+  thing down to sit with our palette, and mirrored it so it repeats across any
+  screen width without a seam. `scripts/build-christmas-garland.py` is the
+  recipe, so any of that can be re-tuned later.
 
   If you would rather have a nicer one, this is a single file to replace:
   anything roughly 1600 x 150, transparent background, garland flush to the
