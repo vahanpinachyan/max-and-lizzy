@@ -485,11 +485,7 @@ export default function CartPage() {
               )}
             </div>
 
-            {fulfillmentMethod === "pickup" ? (
-              <p className="mt-4 rounded-xl bg-sage/10 px-3 py-2 text-sm text-sage-dark">
-                {t.cart.pickupReadyNote}
-              </p>
-            ) : (
+            {fulfillmentMethod !== "pickup" && (
               <fieldset className="mt-4 border-t border-tan/50 pt-4">
                 <legend className="text-sm font-semibold text-espresso">{t.cart.deliveryAddressLabel}</legend>
                 <div className="mt-2 space-y-2">
@@ -577,6 +573,16 @@ export default function CartPage() {
                 className="mt-2 w-full rounded-xl border border-tan bg-white px-3 py-2 text-sm focus:outline-none"
               />
             </div>
+
+            {/* Last thing before the money. Beside the pickup radio it was read
+                as a label on the choice and skipped; here it answers the
+                question someone actually has at the moment they are about to
+                pay — how will I know when to come and collect it. */}
+            {fulfillmentMethod === "pickup" && (
+              <p className="mt-4 rounded-xl bg-sage/10 px-3 py-2 text-sm text-sage-dark">
+                {t.cart.pickupReadyNote}
+              </p>
+            )}
 
             <div className="mt-4 space-y-1.5 border-t border-tan/50 pt-4">
               <div className="flex justify-between text-espresso/80">
