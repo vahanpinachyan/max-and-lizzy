@@ -44,6 +44,10 @@ export async function generateMetadata(): Promise<Metadata> {
     title: t.christmas.metaTitle,
     description: t.christmas.metaDescription,
     pathname: "/shop/christmas",
+    // The shop shares this link on WhatsApp, so it gets its own card rather
+    // than the shop-interior one: presents under a tree, not a counter.
+    image: "/images/share/christmas-v1.jpg",
+    imageIsShareCard: true,
     keywords: [
       "Christmas toys Yerevan",
       "Christmas gifts for kids Armenia",
