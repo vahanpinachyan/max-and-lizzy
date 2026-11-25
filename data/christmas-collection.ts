@@ -9,8 +9,9 @@ import { getProductsBySlugs, getBestsellers, getFeaturedProducts } from "@/data/
  * catalogue. To change it, add or remove a slug below and nothing else; the
  * order here is the order they appear on the page.
  *
- * Five of the numbers the shop sent are not in the catalogue and so are not
- * here: 51491, 61883, 12236, 80601 and 80314.
+ * Sixteen of the numbers the shop sent are not in the catalogue and so are
+ * not here: 12236, 14135, 14136, 14151, 14167, 14168, 14175, 15555, 15570,
+ * 51491, 58718, 59961, 59964, 61883, 80314 and 80601.
  *
  * A slug that no longer exists is skipped rather than breaking the page, and
  * if that leaves the collection short, bestsellers and featured products fill
@@ -32,6 +33,22 @@ export const CHRISTMAS_PICKS = [
   "holztiger-baby-jesus-in-manger", // 80310
   "holztiger-noahs-wife", // 80345
   "holztiger-joseph", // 80297
+  "goki-activity-cube", // 58735
+  "goki-music-box-ballerina-with-drawer", // 15566
+  "goki-humming-top-forest-friends", // 53780
+  "goki-humming-top-lifestyle-mallow", // 53797
+  "goki-dolls-house-living-room-set", // 51904
+  "goki-portable-dollhouse-eco", // 51458
+  "goki-kaleidoscope-with-melody", // 14156
+  "goki-kaleidoscope-large-with-rotating-chamber", // 14057
+  "goki-telescope-pirates", // 60714
+  "goki-kaleidoscope-pirates", // 60861
+  "goki-doctors-case", // 51009
+  "goki-dolls-house-furniture-childrens-room", // 51905
+  "goki-dolls-furniture-childrens-room", // 51953
+  "ride-on-vehicle-blue", // 14166
+  "goki-ride-on-car-black", // 14164
+  "goki-pedal-car-red-1938", // 14062
 ] as const;
 
 /** How few products are too few to call it a collection. */
