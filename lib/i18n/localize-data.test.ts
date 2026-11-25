@@ -76,3 +76,45 @@ describe("localizePromotions — run dates", () => {
     expect(slugs).not.toContain("sale-11-11");
   });
 });
+
+describe("localizePromotions — the seasonal slide", () => {
+  const inDecember = new Date("2026-12-10T12:00:00Z");
+  const inJuly = new Date("2027-07-10T12:00:00Z");
+
+  it("shows the Christmas slide while the dressing is up", () => {
+    const slugs = localizePromotions("en", inDecember, "christmas").map((p) => p.slug);
+    expect(slugs).toContain("christmas-collection");
+    // It leads: it is the first thing a visitor sees in season.
+    expect(slugs[0]).toBe("christmas-collection");
+  });
+
+  it("hides it the moment the season is off, whatever the date", () => {
+    // This is the case that matters. The slide points at /shop/christmas, a
+    // route that does not exist out of season, so a slide left behind by the
+    // master switch would be a link straight to a 404.
+    const slugs = localizePromotions("en", inDecember, "none").map((p) => p.slug);
+    expect(slugs).not.toContain("christmas-collection");
+  });
+
+  it("hides it in July without anyone editing a date", () => {
+    expect(
+      localizePromotions("en", inJuly).some((p) => p.slug === "christmas-collection"),
+    ).toBe(false);
+  });
+
+  it("translates the copy but keeps one set of wordless artwork", () => {
+    for (const locale of ["en", "hy", "ru"] as const) {
+      const slide = localizePromotions(locale, inDecember, "christmas").find(
+        (p) => p.slug === "christmas-collection",
+      );
+      expect(slide?.image).toBe("/images/promotions/christmas-collection-v1.jpg");
+      expect(slide?.imageMobile).toBe("/images/promotions/christmas-collection-mobile-v1.jpg");
+      expect(slide?.href).toBe("/shop/christmas");
+    }
+    expect(
+      localizePromotions("ru", inDecember, "christmas").find(
+        (p) => p.slug === "christmas-collection",
+      )?.title,
+    ).toBe("Рождественская коллекция");
+  });
+});

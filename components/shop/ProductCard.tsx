@@ -34,8 +34,10 @@ export function ProductCard({
       ? Math.round(100 - (product.priceAmd / product.compareAtPriceAmd) * 100)
       : null;
 
+  // `product-card` is a hook for the season's ribbon (see globals.css) and
+  // nothing else. It is present all year and does nothing out of season.
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-tan/50 bg-white transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
+    <div className="product-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-tan/50 bg-white transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
       <Link
         href={`/product/${product.slug}`}
         className={`relative block overflow-hidden bg-beige ${

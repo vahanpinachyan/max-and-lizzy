@@ -17,6 +17,9 @@ import { ScrollToTopOnNavigate } from "@/components/layout/ScrollToTopOnNavigate
 import { I18nProvider } from "@/lib/i18n/context";
 import { getLocale } from "@/lib/i18n/server";
 import { FontPreloads } from "@/components/layout/FontPreloads";
+import { getSeason } from "@/lib/season-server";
+import { LightsScrollbar } from "@/components/christmas/LightsScrollbar";
+import { Snowfall } from "@/components/christmas/Snowfall";
 
 // Type system: Bitter (a confident slab serif — its sturdy serif "feet"
 // echo the geometry of the actual product, chunky wooden blocks and
@@ -69,11 +72,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  const season = await getSeason();
 
   return (
+    // data-season is the Christmas layer's single hook: every seasonal style
+    // in globals.css hangs off it, and every seasonal component checks the
+    // same value. Absent for most of the year, and absent immediately when
+    // CHRISTMAS_MODE is turned off in lib/season.ts.
     <html
       lang={locale}
       data-scroll-behavior="smooth"
+      data-season={season === "christmas" ? "christmas" : undefined}
       className="fonts-site h-full antialiased"
     >
       <body className="min-h-full flex flex-col">
@@ -85,15 +94,23 @@ export default async function RootLayout({
         <ScrollToTopOnNavigate />
         <I18nProvider locale={locale}>
           <CartProvider>
-            <Header />
+            <Header season={season} />
             <AnnouncementBar />
             <main id="main-content" className="flex-1">
               {children}
             </main>
             <Footer />
-            <CartDrawer />
+            <CartDrawer season={season} />
             <WishlistDrawer />
             <WelcomeModal />
+            {/* Every seasonal piece is mounted here, past the season check, so
+                out of season none of it is sent to the browser at all. */}
+            {season === "christmas" && (
+              <>
+                <Snowfall />
+                <LightsScrollbar />
+              </>
+            )}
           </CartProvider>
         </I18nProvider>
       </body>

@@ -10,6 +10,8 @@ import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { BrandTrust } from "@/components/home/BrandTrust";
 import { Testimonials } from "@/components/home/Testimonials";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { getSeason } from "@/lib/season-server";
+import { SnowDrift } from "@/components/christmas/SnowDrift";
 
 export const metadata: Metadata = buildMetadata({
   title: "Max & Lizzy | Wooden & Eco-Friendly Toys in Yerevan",
@@ -32,16 +34,22 @@ export default async function HomePage() {
   const { dict: t, locale } = await getServerDictionary();
   const featured = await getFeaturedProducts(locale);
   const bestsellers = await getBestsellers(locale);
+  const season = await getSeason();
+  const christmas = season === "christmas";
 
   return (
     <>
       <JsonLd data={localBusinessJsonLd()} />
-      <PromoCarousel />
+      <PromoCarousel season={season} />
       <Hero />
       <CategoryTiles />
       <FeaturedBentoGrid eyebrow={t.home.featuredEyebrow} title={t.home.featuredTitle} products={featured} />
+      {/* Two drifts, not one per section: a divider between every pair of
+          sections stops reading as weather and starts reading as a pattern. */}
+      {christmas && <SnowDrift />}
       <BrandTrust />
       <FeaturedProducts eyebrow={t.home.bestsellersEyebrow} title={t.home.bestsellersTitle} products={bestsellers} />
+      {christmas && <SnowDrift />}
       <Testimonials />
     </>
   );

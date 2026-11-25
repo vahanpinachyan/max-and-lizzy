@@ -204,3 +204,422 @@ textarea:focus-visible,
     animation: none;
   }
 }
+
+/* ===========================================================================
+   Christmas 2026
+   ===========================================================================
+   Everything below is additive. No existing token, rule or value above this
+   line is changed, so turning the season off (CHRISTMAS_MODE in lib/season.ts)
+   restores the ordinary site exactly: the custom properties here simply stop
+   being referenced, and the `[data-season="christmas"]` rules stop matching
+   because the attribute is no longer on <html>.
+
+   Contrast, measured against the existing cream #f7f2e6 background:
+     holly       6.55:1  — AA for body text
+     holly-dark  8.95:1  — AAA
+     pine        9.01:1  — AAA
+     pine-light  6.28:1  — AA
+     gold        2.15:1  — FAILS. Decoration only: stars, borders, ornament.
+     gold-deep   5.23:1  — AA. Use this whenever gold has to carry words.
+   And cream #f7f2e6 on holly 6.55:1, on pine 9.01:1; snow #fffaf0 on holly
+   7.04:1, on pine 9.68:1. So cream or snow text on either dark is safe. */
+:root {
+  /* Deep and slightly muted, like red cotton paper — not a signal red. */
+  --color-holly: #a3262a;
+  --color-holly-dark: #7f1d21;
+  /* Dark and warm, the green of real pine rather than a bright leaf green. */
+  --color-pine: #1f4a33;
+  --color-pine-light: #2e6347;
+  /* Soft antique gold. Never a body-text colour — see the table above. */
+  --color-gold: #c9a24a;
+  --color-gold-deep: #7d611a;
+  /* Warm white, not pure white: #fff next to this site's cream reads blue. */
+  --color-snow: #fffaf0;
+}
+
+@theme inline {
+  --color-holly: var(--color-holly);
+  --color-holly-dark: var(--color-holly-dark);
+  --color-pine: var(--color-pine);
+  --color-pine-light: var(--color-pine-light);
+  --color-gold: var(--color-gold);
+  --color-gold-deep: var(--color-gold-deep);
+  --color-snow: var(--color-snow);
+}
+
+/* The season's one hook. Every Christmas style hangs off this attribute, so
+   the whole layer is scoped to it and costs nothing for the rest of the year.
+   Set in app/(site)/layout.tsx from lib/season-server.ts. */
+:root[data-season="christmas"] {
+  /* Reserved for the season's own overrides. Deliberately empty for now:
+     Phase 2 establishes the switch and the palette only, and repainting the
+     site's base surfaces is a Phase 6 decision made against real pages. */
+}
+
+/* --- The season's background ---------------------------------------------
+   public/christmas/ornament-scatter.webp tiled behind every page, so the
+   cream the site is built on reads as wrapping paper for the season instead
+   of as plain paper.
+
+   The drawings are cut from a reference the shop supplied, not redrawn: six
+   ornaments lifted out of it — a present, a snowflake, holly, a candy cane,
+   a bauble and a gingerbread man — and laid out on a fresh scatter.
+   scripts/build-christmas-pattern.py is the cut, so the strength, the
+   spacing or the choice of drawings can be changed without doing any of it
+   by hand again. See public/christmas/NEEDED.md: the artwork is somebody
+   else's and needs a licence before this goes near the live shop.
+
+   Every drawing is rebuilt from one ink colour at half coverage, which is a
+   contrast ceiling rather than a taste call: a letter that lands on a stroke
+   still has to be readable, and at this strength body text measures 4.9:1
+   against the ink, above the 4.5:1 the guidelines ask for. Stronger looks
+   better in isolation and fails that test.
+
+   The scatter is irregular on purpose. A tile repeats on a grid whatever is
+   in it, so drawings at tidy positions print as rows and the eye follows
+   them; no two of these share a height or a distance from the left, and all
+   six sit clear of the edges so the tile joins itself without a cut drawing.
+
+   Attached to the body rather than fixed, so it travels with the page like
+   print on paper. Cards, the header and the footer paint their own solid
+   backgrounds over it, so text mostly sits on flat colour anyway. */
+:root[data-season="christmas"] #main-content {
+  position: relative;
+}
+
+:root[data-season="christmas"] #main-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Behind the sections' own backgrounds, exactly where a body background
+     would sit — but on an element of its own, so it can be faded out at the
+     bottom. A mask on #main-content itself would fade the page's text too. */
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("/christmas/ornament-scatter.webp");
+  background-repeat: repeat;
+  /* Drawn at 600 and shown smaller: the drawings keep their detail while the
+     gaps between them close to something that reads as a pattern rather than
+     as six pictures that happen to share a page. */
+  background-size: 460px 460px;
+  /* The footer is solid brown and starts the moment the page's content ends.
+     A drawing straddling that line would be eaten in half by it and read as
+     broken rather than as pattern, so the pattern stops a drawing's height
+     short of the footer and fades out instead of being cut. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 130px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 130px), transparent 100%);
+}
+
+/* --- The Christmas lights scrollbar ------------------------------------
+   components/christmas/LightsScrollbar.tsx. Which of the two strings shows
+   is decided here rather than in JavaScript, so the markup the server sends
+   and the markup the browser renders are always the same. */
+
+/* Touch screens get the horizontal progress string; pointer screens get the
+   vertical one in place of their scrollbar. A touch laptop keeps its real
+   scrollbar and its horizontal string, which is the safe way round: nothing
+   is taken away from a device that cannot drag a 16px lane. */
+.ml-lights-v {
+  display: none;
+}
+
+.ml-lights-h {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 45;
+  pointer-events: none;
+  line-height: 0;
+}
+
+@media (min-width: 768px) and (pointer: fine) {
+  .ml-lights-v {
+    display: block;
+    position: fixed;
+    inset: 0 0 0 auto;
+    z-index: 45;
+    pointer-events: none;
+  }
+
+  .ml-lights-h {
+    display: none;
+  }
+
+  /* The native scrollbar goes only where the string actually replaces it.
+     Scrolling itself is untouched — wheel, trackpad, keyboard, find-in-page
+     and anchor jumps all behave exactly as they did. */
+  :root[data-season="christmas"] {
+    scrollbar-width: none;
+  }
+
+  :root[data-season="christmas"]::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
+/* The wire. Dark pine, not black, and thin enough to read as flex. */
+.ml-wire {
+  stroke: #1b3a2a;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0.75;
+}
+
+.ml-track {
+  fill: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* An unlit bulb is dim, cool and a little see-through — the glass of a bulb
+   with nothing behind it — rather than a smaller version of the lit one. */
+.ml-bulb .ml-glass {
+  fill: var(--ml-bulb);
+  opacity: 0.34;
+  transition: opacity 260ms ease-out;
+}
+
+.ml-bulb .ml-collar {
+  fill: #6b5a3c;
+  opacity: 0.8;
+}
+
+.ml-bulb .ml-shine {
+  fill: #fffaf0;
+  opacity: 0.18;
+  transition: opacity 260ms ease-out;
+}
+
+.ml-bulb .ml-glow {
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity 320ms ease-out;
+}
+
+.ml-bulb.is-lit .ml-glass {
+  opacity: 1;
+}
+
+.ml-bulb.is-lit .ml-shine {
+  opacity: 0.75;
+}
+
+.ml-bulb.is-lit .ml-glow {
+  opacity: 0.5;
+  animation: ml-twinkle var(--ml-twinkle-dur, 4s) ease-in-out var(--ml-twinkle-delay, 0s) infinite;
+}
+
+/* Very gentle, and never all the way off: a string where bulbs blink out
+   looks broken, not festive. Each bulb carries its own duration and delay,
+   so the string never pulses in unison. */
+@keyframes ml-twinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  45% {
+    opacity: 0.86;
+  }
+  70% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-bulb.is-lit .ml-glow {
+    animation: none;
+  }
+}
+
+/* --- Candy stripe -------------------------------------------------------
+   components/christmas/CandyStripe.tsx. The thin red-and-cream barber rule
+   that runs through the board, as a repeating gradient rather than an image
+   so it is sharp at any width and weighs nothing. */
+.christmas-candy-stripe {
+  height: 8px;
+  border-radius: 999px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-holly) 0 7px,
+    #f7f2e6 7px 14px
+  );
+  /* Full-strength stripe is loud next to the catalogue; this keeps it as
+     trim rather than letting it compete with the products. */
+  opacity: 0.8;
+}
+
+/* --- Christmas Collection page ----------------------------------------- */
+:root[data-season="christmas"] .christmas-collection-head {
+  position: relative;
+  padding-block: 0.5rem 0.25rem;
+  /* Holds the cream veil below in its own stacking context, so the veil can
+     sit above the page pattern and still stay behind the lettering. */
+  isolation: isolate;
+}
+
+/* A pool of cream under the collection's name. The name is drawn script, and
+   a drawing crossing the middle of a letterform does not read as texture
+   behind it — it reads as damage to the lettering. A flat block of cream
+   would clear the lettering but slice every drawing along its top and bottom
+   edge, so the cream fades out instead: solid where the words are, gone by
+   the time it reaches the pattern, with nothing cut anywhere. */
+:root[data-season="christmas"] .christmas-collection-head::before {
+  content: "";
+  position: absolute;
+  inset: -2.5rem -1.5rem;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    var(--color-cream) 0%,
+    var(--color-cream) 42%,
+    transparent 78%
+  );
+}
+
+/* The Christmas Collection's entry in the Shop menu, on a tint of its own so
+   it reads as this season's addition rather than a twelfth category. */
+:root[data-season="christmas"] .christmas-menu-link {
+  background-color: color-mix(in srgb, var(--color-holly) 7%, transparent);
+  transition: background-color 150ms ease-out;
+}
+
+:root[data-season="christmas"] .christmas-menu-link:hover {
+  background-color: color-mix(in srgb, var(--color-holly) 14%, transparent);
+}
+
+/* --- Script lettering ---------------------------------------------------
+   components/christmas/ScriptLettering.tsx. The SVG is a mask with the
+   colour painted behind it, so one file serves holly red on the collection
+   page and cream on the espresso footer. Loaded through <img> it could not:
+   an SVG in an <img> is its own document, and its currentColor is black.
+
+   The mask image itself is set inline on the element, not here. Written as
+   `mask-image: var(--something)` the build's CSS processor cannot resolve
+   the url at compile time and drops the whole rule on the floor, silently —
+   which is exactly what it did the first time this was written that way. */
+.christmas-lettering {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* --- Snow ---------------------------------------------------------------
+   components/christmas/Snowfall.tsx. In front of the page and in front of
+   the header, because snow falling behind a sticky header looks like snow
+   behind a window; never in front of the drawers and modals, which have to
+   stay the clear focus while they are open. */
+.christmas-snow {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  pointer-events: none;
+}
+
+/* --- Stocking garland ---------------------------------------------------
+   components/christmas/StockingGarland.tsx. Hung across the top of the
+   footer, cropped rather than wrapped on a narrow screen — which is what a
+   real garland strung across a wall does. */
+.christmas-garland {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -26px;
+  height: 52px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.christmas-garland-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 14px;
+  height: 2px;
+  background: var(--color-pine);
+  opacity: 0.85;
+}
+
+.christmas-garland-row {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding-top: 8px;
+}
+
+.christmas-garland-sock {
+  flex: 0 0 auto;
+  height: 38px;
+  width: auto;
+  filter: drop-shadow(0 2px 3px rgba(31, 22, 15, 0.35));
+}
+
+/* Hung by hand, so no two hang at quite the same angle. */
+.christmas-garland-sock:nth-child(3n) {
+  transform: rotate(-5deg);
+}
+
+.christmas-garland-sock:nth-child(3n + 1) {
+  transform: rotate(4deg);
+}
+
+.christmas-garland-sock:nth-child(4n) {
+  transform: rotate(-2deg) translateY(2px);
+}
+
+
+/* --- Product cards ------------------------------------------------------
+   A small ribbon bow tied to the corner of every card, in season only.
+
+   Done entirely here rather than in the component: the card is a Client
+   Component rendered in a dozen places, and threading the season through all
+   of them to paint one decoration would be a lot of plumbing for a picture.
+   The `product-card` class is the only thing the component knows about.
+
+   The bow is a data URI, so it costs no request. Its attributes are in
+   single quotes: double quotes inside a double-quoted url() end the string
+   early and the build refuses the whole stylesheet. */
+:root[data-season="christmas"] .product-card::after {
+  content: "";
+  position: absolute;
+  top: 0.4rem;
+  right: 3.1rem;
+  width: 34px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 28'><path d='M20 12C16.4 6.6 11.8 4 6.6 4.8 2.8 5.4 1.2 9 3.4 11.9c2 2.6 7.1 3.4 16.6 1.6z' fill='%23a3262a'/><path d='M20 12c3.6-5.4 8.2-8 13.4-7.2 3.8.6 5.4 4.2 3.2 7.1-2 2.6-7.1 3.4-16.6 1.6z' fill='%23a3262a'/><path d='M18.4 14.6 11 26.2l7.6-5.1z' fill='%237f1d21'/><path d='M21.6 14.6 29 26.2l-7.6-5.1z' fill='%237f1d21'/><ellipse cx='20' cy='13' rx='3.4' ry='2.9' fill='%237f1d21'/></svg>");
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* Decoration above the photograph, below the heart the visitor clicks. */
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(61, 43, 31, 0.25));
+}
+
+/* --- Snow drift divider -------------------------------------------------
+   components/christmas/SnowDrift.tsx. A negative bottom margin pulls the
+   section below up under the bank, so the drift sits against it rather than
+   leaving a seam of background between the two. */
+.christmas-drift {
+  line-height: 0;
+  margin-bottom: -1px;
+}
+
+.christmas-drift svg {
+  display: block;
+  width: 100%;
+  height: 44px;
+}
+
+@media (min-width: 768px) {
+  .christmas-drift svg {
+    height: 70px;
+  }
+}
