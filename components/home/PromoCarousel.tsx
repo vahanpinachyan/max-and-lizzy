@@ -7,7 +7,12 @@ import { interpolate } from "@/lib/i18n/interpolate";
 import { localizePromotions } from "@/lib/i18n/localize-data";
 import type { Season } from "@/lib/season";
 
+// How long a slide sits still before the next one comes in. The Christmas
+// slides carry a photograph and a longer line of copy, so they get half again
+// as long to be looked at; the everyday slides are plainer and keep the
+// shorter beat.
 const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS_CHRISTMAS = 9000;
 const GESTURE_LOCK_MS = 700;
 
 export function PromoCarousel({ season }: { season: Season }) {
@@ -55,13 +60,16 @@ export function PromoCarousel({ season }: { season: Season }) {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mediaQuery.matches) return;
 
-    timerRef.current = setInterval(() => {
-      setIndex((i) => (i + 1) % count);
-    }, AUTOPLAY_MS);
+    timerRef.current = setInterval(
+      () => {
+        setIndex((i) => (i + 1) % count);
+      },
+      season === "christmas" ? AUTOPLAY_MS_CHRISTMAS : AUTOPLAY_MS
+    );
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [paused, count]);
+  }, [paused, count, season]);
 
   function lockGesture() {
     gestureLocked.current = true;

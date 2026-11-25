@@ -8,11 +8,16 @@
  *
  * It is a divider, not content, so it is hidden from screen readers; the
  * sections either side are already separated by their own headings.
+ *
+ * The snow is slightly see-through. Solid, it would eat a clean horizontal
+ * bite out of the season's background pattern and the drawings along that
+ * line would read as broken; let it through faintly and a drawing passes
+ * under the drift instead of being cut off at it.
  */
 export function SnowDrift({ className = "" }: { className?: string }) {
   return (
     <div className={`christmas-drift ${className}`} aria-hidden="true">
-      <svg viewBox="0 0 1200 70" preserveAspectRatio="none" fill="none">
+      <svg viewBox="0 0 1200 70" preserveAspectRatio="none" fill="none" opacity="0.62">
         <path
           d="M0 70V34c120-18 210 6 318 14 108 8 168-26 282-28 114-2 186 30 300 26 114-4 186-26 300-14v38z"
           fill="#fffaf0"

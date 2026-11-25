@@ -13,7 +13,7 @@ const LOGO_SRC: Record<string, string | undefined> = {
 export async function BrandTrust() {
   const { dict: t } = await getServerDictionary();
   return (
-    <section className="relative overflow-hidden bg-[#ebe9db] py-16">
+    <section className="relative overflow-hidden bg-sage/10 py-16">
       <SectionDecorations variant="clouds" />
       <Container className="relative">
         <SectionHeading

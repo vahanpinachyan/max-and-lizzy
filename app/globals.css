@@ -283,13 +283,31 @@ textarea:focus-visible,
    Attached to the body rather than fixed, so it travels with the page like
    print on paper. Cards, the header and the footer paint their own solid
    backgrounds over it, so text mostly sits on flat colour anyway. */
-:root[data-season="christmas"] body {
+:root[data-season="christmas"] #main-content {
+  position: relative;
+}
+
+:root[data-season="christmas"] #main-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Behind the sections' own backgrounds, exactly where a body background
+     would sit — but on an element of its own, so it can be faded out at the
+     bottom. A mask on #main-content itself would fade the page's text too. */
+  z-index: -1;
+  pointer-events: none;
   background-image: url("/christmas/ornament-scatter.webp");
   background-repeat: repeat;
   /* Drawn at 600 and shown smaller: the drawings keep their detail while the
      gaps between them close to something that reads as a pattern rather than
      as six pictures that happen to share a page. */
   background-size: 460px 460px;
+  /* The footer is solid brown and starts the moment the page's content ends.
+     A drawing straddling that line would be eaten in half by it and read as
+     broken rather than as pattern, so the pattern stops a drawing's height
+     short of the footer and fades out instead of being cut. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 130px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 130px), transparent 100%);
 }
 
 /* --- The Christmas lights scrollbar ------------------------------------
@@ -435,12 +453,29 @@ textarea:focus-visible,
 :root[data-season="christmas"] .christmas-collection-head {
   position: relative;
   padding-block: 0.5rem 0.25rem;
-  /* Opaque cream, so the page's ornament pattern stops at this block. The
-     collection's name is drawn script, and a silhouette crossing the middle
-     of a letterform does not read as texture behind it — it reads as damage
-     to the lettering. Same cream as the page, so there is no visible edge;
-     the pattern simply has nothing to show through here. */
-  background-color: var(--color-cream);
+  /* Holds the cream veil below in its own stacking context, so the veil can
+     sit above the page pattern and still stay behind the lettering. */
+  isolation: isolate;
+}
+
+/* A pool of cream under the collection's name. The name is drawn script, and
+   a drawing crossing the middle of a letterform does not read as texture
+   behind it — it reads as damage to the lettering. A flat block of cream
+   would clear the lettering but slice every drawing along its top and bottom
+   edge, so the cream fades out instead: solid where the words are, gone by
+   the time it reaches the pattern, with nothing cut anywhere. */
+:root[data-season="christmas"] .christmas-collection-head::before {
+  content: "";
+  position: absolute;
+  inset: -2.5rem -1.5rem;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    var(--color-cream) 0%,
+    var(--color-cream) 42%,
+    transparent 78%
+  );
 }
 
 /* The Christmas Collection's entry in the Shop menu, on a tint of its own so
