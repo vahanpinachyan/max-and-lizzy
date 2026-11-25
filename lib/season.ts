@@ -24,7 +24,10 @@ export const CHRISTMAS_MODE = true;
 /**
  * Month/day rather than full dates, so the window repeats every year without
  * anyone having to remember to edit it. Both ends are inclusive: the dressing
- * is up all day on 1 December and all day on 7 January, and gone on the 8th.
+ * is up all day on 25 November and all day on 7 January, and gone on the 8th.
+ *
+ * It opens in late November at the shop's request, to catch the people who
+ * start buying presents before December does.
  *
  * The far end is deliberately past 25 December. In Armenia the gift-giving
  * occasion is New Year — Dzmer Papik comes on the 31st — the Apostolic Church
@@ -33,7 +36,7 @@ export const CHRISTMAS_MODE = true;
  * the shop's own customers start buying.
  */
 export const CHRISTMAS_WINDOW = {
-  start: { month: 12, day: 1 },
+  start: { month: 11, day: 25 },
   end: { month: 1, day: 7 },
 } as const;
 
@@ -61,8 +64,21 @@ export function seasonForDate(now: Date): Season {
   const day = shifted.getUTCDate();
 
   const { start, end } = CHRISTMAS_WINDOW;
-  // The window straddles New Year, so it is two ranges, not one.
-  if (month === start.month && day >= start.day) return "christmas";
-  if (month === end.month && day <= end.day) return "christmas";
-  return "none";
+  // Compare on a single number per date, MMDD, so a window may span any
+  // number of months rather than only the two it is pinned between. Written
+  // the short way — matching the start month and the end month and nothing
+  // else — a window running 25 November to 7 January would skip the whole of
+  // December, which is the month it exists for.
+  const stamp = month * 100 + day;
+  const from = start.month * 100 + start.day;
+  const to = end.month * 100 + end.day;
+
+  const inWindow =
+    from <= to
+      ? // An ordinary window, inside one calendar year.
+        stamp >= from && stamp <= to
+      : // One that straddles New Year: late in the year, or early in it.
+        stamp >= from || stamp <= to;
+
+  return inWindow ? "christmas" : "none";
 }
