@@ -6,11 +6,25 @@ export function absoluteUrl(pathname: string): string {
   return new URL(pathname, site.url).toString();
 }
 
+/**
+ * The picture WhatsApp, Facebook, Telegram and iMessage show when somebody
+ * pastes a link to the shop. Every page needs one: without it the link
+ * arrives as bare blue text with no card at all, which is what people scroll
+ * past. Pages that have something better to show — a product, a category, the
+ * Christmas collection — pass their own and this is only the backstop.
+ *
+ * 1200x630 is the size every platform documents, and the file is kept under
+ * 200KB because WhatsApp gives up on large ones and shows nothing instead.
+ * scripts/build-share-cards.py is the crop.
+ */
+const DEFAULT_SHARE_IMAGE = "/images/share/default-v1.jpg";
+
 export function buildMetadata({
   title,
   description,
   pathname,
   image,
+  imageIsShareCard,
   noIndex,
   keywords,
 }: {
@@ -18,10 +32,19 @@ export function buildMetadata({
   description: string;
   pathname: string;
   image?: string;
+  /**
+   * Only for an image already cut to the 1200x630 card shape. Left off, the
+   * size is not declared at all, which is right for a product photograph:
+   * claiming a square picture is 1200x630 makes apps stretch or crop it.
+   */
+  imageIsShareCard?: boolean;
   noIndex?: boolean;
   keywords?: string[];
 }): Metadata {
   const url = absoluteUrl(pathname);
+  const usingDefault = !image;
+  const shareImage = absoluteUrl(image ?? DEFAULT_SHARE_IMAGE);
+  const cardSized = usingDefault || imageIsShareCard;
   return {
     title,
     description,
@@ -35,13 +58,20 @@ export function buildMetadata({
       siteName: site.name,
       type: "website",
       locale: "en_US",
-      images: image ? [{ url: absoluteUrl(image) }] : undefined,
+      // The dimensions are declared so an app can lay the card out before it
+      // has finished downloading the picture, and so it picks the big card
+      // rather than the thumbnail-beside-text one.
+      images: [
+        cardSized
+          ? { url: shareImage, width: 1200, height: 630, alt: title }
+          : { url: shareImage, alt: title },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: image ? [absoluteUrl(image)] : undefined,
+      images: [shareImage],
     },
   };
 }
