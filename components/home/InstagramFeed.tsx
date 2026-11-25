@@ -10,7 +10,7 @@ export async function InstagramFeed() {
   const { dict: t } = await getServerDictionary();
   const instagramPosts = await getInstagramPosts();
   return (
-    <section className="relative overflow-hidden bg-beige/60 py-16">
+    <section className="relative overflow-hidden bg-[#f2e7d3] py-16">
       <SectionDecorations variant="clouds" />
       <Container className="relative">
         <div className="flex flex-wrap items-end justify-between gap-4">

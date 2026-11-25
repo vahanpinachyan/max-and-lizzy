@@ -50,7 +50,12 @@ MOTIFS = {
     "gingerbread": (63, 255, 175, 385),
 }
 
-SCALE = 0.72
+# Small on purpose. The pattern lies under sections that paint their own
+# background — a tinted band, a curved divider, a card — and a background is
+# always clipped by whatever sits on top of it. At full size that clip lands
+# mid-drawing and reads as a broken present; at this size a drawing caught by
+# an edge reads as what it is, a pattern continuing underneath something.
+SCALE = 0.44
 TILE = 600
 
 # Placed by hand on an irregular scatter: no two drawings share a height or a

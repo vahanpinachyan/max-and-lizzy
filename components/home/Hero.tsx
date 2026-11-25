@@ -9,7 +9,7 @@ import { getServerDictionary } from "@/lib/i18n/server";
 export async function Hero() {
   const { dict: t } = await getServerDictionary();
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-beige to-tan/60">
+    <section className="relative overflow-hidden bg-gradient-to-b from-beige to-[#e5d6bc]">
       {/* Very light, decorative clouds and flowers — a soft kid-friendly texture, not focal content. */}
       <Cloud className="pointer-events-none absolute left-[8%] top-10 h-auto w-28 opacity-40 sm:w-36" />
       <Cloud className="animate-float-slow-reverse pointer-events-none absolute right-[18%] top-6 h-auto w-20 opacity-30 sm:w-28" />
