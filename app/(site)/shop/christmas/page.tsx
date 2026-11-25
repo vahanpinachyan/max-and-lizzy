@@ -108,7 +108,11 @@ export default async function ChristmasCollectionPage() {
 
         <p className="mx-auto mt-5 max-w-xl text-espresso/75">{t.christmas.collectionIntro}</p>
 
-        <CandyStripe className="mx-auto mt-8 w-full max-w-sm" />
+        {/* Held to roughly the width of the name above it at every size. Left
+            to fill the column, it runs the full width of a phone screen and
+            reads as a heavy rule rather than the small flourish it is on a
+            wide screen. */}
+        <CandyStripe className="mx-auto mt-8 w-64 max-w-full sm:w-full sm:max-w-sm" />
       </header>
 
       <div className="mt-12 grid grid-cols-2 gap-5 lg:grid-cols-4">

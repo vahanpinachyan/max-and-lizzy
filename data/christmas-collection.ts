@@ -5,12 +5,12 @@ import { getProductsBySlugs, getBestsellers, getFeaturedProducts } from "@/data/
 /**
  * What goes in the Christmas Collection.
  *
- * PLACEHOLDER. These eight were chosen from the existing catalogue as things
- * that read as presents — the rocking horse because it is the shop's own
- * emblem, then a spread of prices from 8,500 to 39,500 AMD and of ages from
- * first blocks to pretend play, so the page is useful whoever is shopping.
- * Nobody has signed off on this list. Replace it with the real one: edit the
- * slugs below and nothing else.
+ * The shop's own list, given by article number and looked up in the
+ * catalogue. To change it, add or remove a slug below and nothing else; the
+ * order here is the order they appear on the page.
+ *
+ * Five of the numbers the shop sent are not in the catalogue and so are not
+ * here: 51491, 61883, 12236, 80601 and 80314.
  *
  * A slug that no longer exists is skipped rather than breaking the page, and
  * if that leaves the collection short, bestsellers and featured products fill
@@ -18,14 +18,20 @@ import { getProductsBySlugs, getBestsellers, getFeaturedProducts } from "@/data/
  * happens to the catalogue.
  */
 export const CHRISTMAS_PICKS = [
-  "wooden-rocking-horse",
-  "colorful-building-block-box",
-  "wooden-shop-cash-register",
-  "color-sorting-board",
-  "wooden-bead-maze",
-  "exploration-building-blocks",
-  "wooden-cooking-set",
-  "hammer-bench",
+  "goki-tiny-house-hygge", // 51477
+  "goki-dolls-house-3-floors", // 51957
+  "holztiger-father-christmas", // 80318
+  "goki-crocodile-music-station", // 61854
+  "rocking-motorcycle", // 53837
+  "wooden-rocking-horse", // 53933
+  "holztiger-king", // 80237
+  "holztiger-queen", // 80238
+  "holztiger-shepherd-with-staff", // 80316
+  "holztiger-archangel", // 80299
+  "holztiger-angel-with-star", // 80288
+  "holztiger-baby-jesus-in-manger", // 80310
+  "holztiger-noahs-wife", // 80345
+  "holztiger-joseph", // 80297
 ] as const;
 
 /** How few products are too few to call it a collection. */
